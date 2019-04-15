@@ -15,10 +15,25 @@ class Aporte(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     
 
-    
+    def present_value(self, final_date=None):
+        today = datetime.date.today()
+        print(today)
+        data_final = ""
+        if final_date:
+            data_final = final_date.strftime('%d/%m/%Y')
+        else:
+            if self.final_date > today:
+                print("Aporte: {} - Data final {} maior que o dia de hoje {}.".format(self.amount, self.final_date, str(today.strftime('%d/%m/%Y')) ))
+                data_final = today.strftime('%d/%m/%Y')
+            else:
+                data_final = self.final_date.strftime('%d/%m/%Y')
 
-    def amont_mais_10(self):
+        selic = corrigir_selic(self.amount, self.date.strftime('%d/%m/%Y'), data_final)
+        selic_real = re.search('(?<=\ )(.*?)(?=\ )', selic["valorCorrigido"]).group(1)
+        return selic_real
+
+    def amount_mais_selic(self):
         # takes value inserted in the database
-        print(self.date) # format 2019-01-01 year-month-day
-
-        return self.amount + 10
+        # print(self.date) # format 2019-01-01 year-month-day
+        # print(self.final_date)
+        return self.present_value()

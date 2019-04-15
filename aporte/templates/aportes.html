@@ -10,7 +10,7 @@
                 <td>Amount</td>
                 <td>Date</td>
                 <td>Final Date</td>
-                <td>Amount + 10</td>
+                <td>Amount + SELIC</td>
             </tr>
         </thead>
         <tbody>
@@ -19,7 +19,7 @@
                 <td>{{i.amount}}</td> 
                 <td>{{i.date|date:'d/m/Y'}}</td> <!-- Template tags Date -->
                 <td>{{i.final_date}}</td>
-                <td>{{i.amont_mais_10}}</td>
+                <td>{{i.amount_mais_selic}}</td>
             </tr>
             {% endfor %}
         </tbody>
