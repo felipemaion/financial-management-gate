@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h2>List Aportes</h2>
+<div class="container">
+
+    <table class="table table-bordered table-responsive">
+        <thead>
+            <tr>
+                <td>Amount</td>
+                <td>Date</td>
+                <td>Final Date</td>
+                <td>Amount + 10</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in aporte_list %}
+            <tr>
+                <td>{{i.amount}}</td> 
+                <td>{{i.date|date:'d/m/Y'}}</td> <!-- Template tags Date -->
+                <td>{{i.final_date}}</td>
+                <td>{{i.amont_mais_10}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock content %}
