@@ -9,7 +9,7 @@ import json
 # Create your models here.
 
 class Grupo(models.Model):
-    name = models.TextField()
+    name = models.CharField(unique=True)
 
     def __str__(self):
         return self.name
