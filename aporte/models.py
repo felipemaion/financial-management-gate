@@ -8,17 +8,25 @@ import json
 
 # Create your models here.
 
+class Grupo(models.Model):
+    name = models.TextField()
+
+    def __str__(self):
+        return self.name
+
 class Aporte(models.Model):
     amount = models.DecimalField("Amount", max_digits=10, decimal_places=2)
     date = models.DateField("Date")
-    final_date = models.DateField("Final Date",auto_now=False, auto_now_add=False,null=True)
+    final_date = models.DateField("Final Date",auto_now=False, auto_now_add=False,null=True, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
-    
+    grupo  = models.ForeignKey(Grupo,on_delete=models.CASCADE)
 
     def present_value(self, final_date=None):
         today = datetime.date.today()
         print(today)
         data_final = ""
+        if not self.final_date:
+            final_date = today
         if final_date:
             data_final = final_date.strftime('%d/%m/%Y')
         else:
