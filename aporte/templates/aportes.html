@@ -11,6 +11,7 @@
                 <td>Date</td>
                 <td>Final Date</td>
                 <td>Amount + SELIC</td>
+                <td> Aportado em</td>
             </tr>
         </thead>
         <tbody>
@@ -20,6 +21,8 @@
                 <td>{{i.date|date:'d/m/Y'}}</td> <!-- Template tags Date -->
                 <td>{{i.final_date}}</td>
                 <td>{{i.amount_mais_selic}}</td>
+                <td>{{i.grupo}}</td>
+
             </tr>
             {% endfor %}
         </tbody>
