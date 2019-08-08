@@ -17,3 +17,5 @@ from .serializers import AporteSerializer
 class AporteModelViewSet(ModelViewSet):
     queryset = Aporte.objects.all()
     serializer_class = AporteSerializer
+
+ 
