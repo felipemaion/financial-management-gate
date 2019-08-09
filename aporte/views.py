@@ -7,10 +7,16 @@ from .models import Aporte, Selic
 from .forms import AporteForm
 
 class AporteListView(ListView):
-    Selic.update_me()
     model = Aporte
     template_name = "aportes.html"
     query_set = Aporte.objects.all()
+    
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        #busca a Selic 
+        Selic.update_me()
+        return context
     
 
 class AporteCreateView(CreateView):
