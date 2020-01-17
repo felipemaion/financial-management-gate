@@ -8,10 +8,11 @@
 
 
 from rest_framework.routers import SimpleRouter
-from .views import AporteModelViewSet
+from .views import AporteModelViewSet#, CorrigeModelViewSet
 
 router = SimpleRouter()
 router.register("aporte", AporteModelViewSet)
+# router.register("corrige", CorrigeModelViewSet)
 
 
 urlpatterns = router.urls
