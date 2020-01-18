@@ -23,8 +23,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+# aqui tem duas rotas em branco no caso root na primeira rota ele vai dar o get 
+# e nao passa para segunda então tem que nomear
+# então a rota vai ficar localhost:port/selic/exemplo testa ai
+
 urlpatterns = [
     path('',include('aporte.urls',namespace="aporte")),
+    path('selic/',include('selic.urls',namespace="selic")),
     path('admin/', admin.site.urls),
     path('api/', include('api.urls')),
 ]

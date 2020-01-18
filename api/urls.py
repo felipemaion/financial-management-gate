@@ -8,11 +8,13 @@
 
 
 from rest_framework.routers import SimpleRouter
-from .views import AporteModelViewSet#, CorrigeModelViewSet
+from .views import AporteModelViewSet
+
+app_name='api'
 
 router = SimpleRouter()
 router.register("aporte", AporteModelViewSet)
-# router.register("corrige", CorrigeModelViewSet)
+
 
 
 urlpatterns = router.urls

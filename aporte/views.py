@@ -3,8 +3,10 @@ from django.views.generic import ListView
 from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView
 # Create your views here.
-from .models import Aporte, Selic
+from .models import Aporte#, Selic
 from .forms import AporteForm
+from selic.models import Selic
+
 
 class AporteListView(ListView):
     model = Aporte
