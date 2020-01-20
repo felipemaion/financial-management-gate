@@ -37,6 +37,9 @@ class Selic(models.Model):
         # print(f"Data Inicial: {initial_date}, Data Final: {final_date}, Fator: {fator}")
         selic_real = amount * fator
         return round(selic_real,2)
+    
+    def update_me():
+        update_me()
 
 
 
