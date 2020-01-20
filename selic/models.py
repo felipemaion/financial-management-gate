@@ -25,7 +25,9 @@ class Selic(models.Model):
     def save(self, *args, **kwargs):
         if self.validate_unique():
             super(Selic, self).save(*args, **kwargs)
+
     def present_value(amount, initial_date, final_date=None):
+        update_me()
         amount = Decimal(amount)
         today = datetime.date.today()
         if not final_date:
@@ -36,24 +38,7 @@ class Selic(models.Model):
         selic_real = amount * fator
         return round(selic_real,2)
 
-    def update_me(): # sem self mesmo... chamado no View get_context_data
-        try:
-            last_info = Selic.objects.latest('date').date.strftime("%d/%m/%Y")
-            print(last_info)
-            today = datetime.date.today().strftime("%d/%m/%Y")
-            if today == last_info:
-                print("Atualizado")
-                return
-            url = "https://api.bcb.gov.br/dados/serie/bcdata.sgs.11/dados?dataInicial="+last_info+"&dataFinal="+today
-            # input(url)
-            r = requests.get(url)
-            populate_selic(json.loads(r.content))
-            last_info = Selic.objects.latest('date')
-        except:
-            r = requests.get("https://api.bcb.gov.br/dados/serie/bcdata.sgs.11/dados")
-            populate_selic(json.loads(r.content))
-            last_info = Selic.objects.latest('date')
-        return last_info.date
+
 
     def __str__(self):
         return "Data: {}, Fator Diário: {}".format(self.date, self.daily_factor)
@@ -68,6 +53,28 @@ class Selic(models.Model):
         # selic_real = re.search('(?<=\ )(.*?)(?=\ )', selic["valorCorrigido"]).group(1)
         # return str(str(mult) + str(selic_real))
 
+def update_me(): # sem self mesmo... chamado no View get_context_data
+    try:
+        last_info = Selic.objects.latest('date').date.strftime("%d/%m/%Y")
+        # print("Último dado no Sistema:", last_info)
+        today = datetime.date.today().strftime("%d/%m/%Y")
+        url = "https://api.bcb.gov.br/dados/serie/bcdata.sgs.11/dados?dataInicial="+last_info+"&dataFinal="+today
+        r = requests.get(url)
+        # print("Último dado no Servidor do Governo:", json.loads(r.content)[0]['data'])
+        if last_info == json.loads(r.content)[0]['data']:
+            print("Atualizado")
+            return False
+        url = "https://api.bcb.gov.br/dados/serie/bcdata.sgs.11/dados?dataInicial="+last_info+"&dataFinal="+today
+        # input(url)
+        r = requests.get(url)
+        populate_selic(json.loads(r.content))
+        last_info = Selic.objects.latest('date')
+    except:
+        print("Algum erro ocorreu ao verificar banco de dados SELIC, atualizando tudo.")
+        r = requests.get("https://api.bcb.gov.br/dados/serie/bcdata.sgs.11/dados")
+        populate_selic(json.loads(r.content))
+        last_info = Selic.objects.latest('date')
+    return last_info.date
 
 def populate_selic(dados):
         for dado in dados:
