@@ -1,20 +1,15 @@
-# from django.urls import path
-# from .views import *
-
-# urlpatterns = [
-#             path('aporte/<int:pk>', AporteDeleteUpdate.as_view()),
-#             path('aporte/', AporteView.as_view()),
-# ]
-
-
+from .auth import urls as urls_auth
+from django.urls import path, include
 from rest_framework.routers import SimpleRouter
 from .views import AporteModelViewSet
 
-app_name='api'
+app_name = 'api'
 
 router = SimpleRouter()
 router.register("aporte", AporteModelViewSet)
 
+urlpatterns = [
+    path('', include(router.urls)),
+    path('auth/', include(urls_auth)),
 
-
-urlpatterns = router.urls
+]
