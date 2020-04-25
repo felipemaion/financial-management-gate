@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h2>List Aportes</h2>
+<div class="container">
+
+    <table class="table table-bordered table-responsive" id="records_table">
+        <thead>
+            <tr>
+                <td>Amount</td>
+                <td>Date</td>
+                <td>Final Date</td>
+                <td>Amount + SELIC</td>
+                <td> Aportado em</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in aporte_list %}
+            <tr>
+                <td>{{i.amount}}</td> 
+                <td>{{i.date|date:'d/m/Y'}}</td> 
+                <td>{{i.final_date|date:'d/m/Y'}}</td>
+                <td>{{i.present_value}}</td>
+                <td>{{i.grupo}}</td>
+
+            </tr>
+            {% endfor %}
+
+            <!-- <button id="botaoView" class="btn-info navbar-btn"> Atualizar </button> -->
+        </tbody>
+    </table>
+</div>
+
+{% endblock content %}
+ 
+{% block script %}
+<script>
+{% comment %} $('#botaoView').click(function() {
+    $("#botaoView").attr("disabled", true);
+    $('#botaoView').html("Atualizando...");
+    const link = "http://127.0.0.1:8000/api/aporte/";
+    $.ajax({
+        url: link,
+        type: 'GET',
+        dataType: 'json',
+  
+      })
+      .done(function(data) {
+        console.log("success");
+        console.log(data[0]["amount"]);
+        var trHTML = '';
+        $.each(data, function(index) {
+            trHTML += '<tr><td>' + data[index].amount + '</td><td>' +
+                                 data[index].date + '</td><td>' +
+                                 data[index].final_date + '</td><td>' +
+                                 data[index].selic + '</td><td>' + 
+                                 data[index].grupo_name+ '</td></tr>';
+        });
+        $('#records_table').append(trHTML);
+        $("#botaoView").attr("disabled", true);
+
+        $('#botaoView').html("Atualizado");
+        // var aportes = JSON.parse(data);
+        // alert(aportes);
+      })
+      .fail(function() {
+        console.log("error");
+      })
+      .always(function() {
+        console.log("complete");
+      });
+  }); {% endcomment %}
+
+</script>
+  {% endblock script %}
+
+
