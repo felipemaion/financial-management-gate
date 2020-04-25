@@ -7,6 +7,7 @@ import { AuthRoutingModule } from './auth-routing.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AccountService } from './account.service';
 import { SharedComponentsModule } from '../shared-components/shared-components.module';
+import { SuiMessageModule } from 'ng2-semantic-ui';
 
 
 
@@ -19,6 +20,7 @@ import { SharedComponentsModule } from '../shared-components/shared-components.m
   imports: [
     CommonModule,
     FormsModule,
+    SuiMessageModule,
     ReactiveFormsModule,
     AuthRoutingModule,
     SharedComponentsModule
