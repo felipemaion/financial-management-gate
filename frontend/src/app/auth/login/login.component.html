@@ -1,0 +1,124 @@
+<!-- <ng-container *ngFor="let error of errors?.error?.non_field_errors">
+    <div class="alert alert-dark alert-dismissible fade show" role="alert">
+        <strong> <i class="ion-android-sad"></i> </strong> {{error}}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+</ng-container>
+
+<div *ngIf="!isLogged">
+    <h4>Tela de Login</h4>
+    <form (keyup.enter)="logar()" [formGroup]="form" (ngSubmit)="logar()">
+        <div class="form-group">
+            <label>Usuário</label>
+            <input autofocus autocomplete="off" formControlName="username" type="text" required class="form-control"
+                placeholder="Nome de usuário">
+            <app-campo-error [mostraError]="verificaValidTouched('username')"
+                msgError="Campo Obrigatório Minimo 3 Caracteres">
+            </app-campo-error>
+        </div>
+
+        <div class="form-group">
+            <label>Senha</label>
+            <input autocomplete="off" formControlName="password" type="password" required class="form-control"
+                placeholder="Senha">
+            <app-campo-error [mostraError]="verificaValidTouched('password')"
+                msgError="Campo Obrigatório">
+            </app-campo-error>
+        </div>
+
+
+        <button *ngIf="loading" class="btn btn-dark mr-1" type="submit" [disabled]="loading">
+            <ng-container *ngIf="loading">
+                <span class=" spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            </ng-container>
+            Carregando
+        </button>
+
+        <button *ngIf="!loading" class="btn btn-dark mr-1" type="submit">
+            Entrar
+        </button>
+        <a routerLink="/register" class="btn btn-dark">Sou Novo</a>
+    </form>
+</div>
+
+<div *ngIf="isLogged">
+    <div class="text-center">
+        <div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+        <h1>Direcionando...</h1>
+    </div>
+</div> -->
+
+
+<ng-container *ngFor="let error of errors?.error?.non_field_errors">
+  <div class="alert alert-dark alert-dismissible fade show" role="alert">
+    <strong> <i class="ion-android-sad"></i> </strong> {{error}}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+</ng-container>
+
+<div class="ui middle aligned center aligned grid">
+  <div class="column">
+    <h2 class="ui teal image header">
+      <div class="content">
+        Log-in to your account
+      </div>
+    </h2>
+
+    <div *ngIf="!isLogged">
+      <form (keyup.enter)="logar()" [formGroup]="form" (ngSubmit)="logar()" class="ui large form">
+        <div class="ui stacked">
+          <div class="field">
+            <div class="ui left icon input">
+              <i class="user icon"></i>
+              <input autofocus autocomplete="off" formControlName="username" type="text" required
+                placeholder="Nome de usuário">
+            </div>
+            <app-campo-error [mostraError]="verificaValidTouched('username')"
+              msgError="Campo Obrigatório Minimo 3 Caracteres">
+            </app-campo-error>
+          </div>
+          <div class="field">
+            <div class="ui left icon input">
+              <i class="lock icon"></i>
+              <input autocomplete="off" formControlName="password" type="password" required class="form-control"
+                placeholder="Senha">
+
+            </div>
+            <app-campo-error [mostraError]="verificaValidTouched('password')"
+              msgError="Campo Obrigatório Minimo 3 Caracteres">
+            </app-campo-error>
+          </div>
+
+
+
+          <button *ngIf="!loading" class="ui fluid large teal submit button" type="submit">
+            Entrar
+          </button>
+
+        </div>
+
+        <div class="ui error message"></div>
+
+      </form>
+    </div>
+    <div class="ui message">
+      New to us? <a routerLink="/register">Sou Novo</a>
+    </div>
+  </div>
+</div>
+
+
+<div *ngIf="isLogged">
+  <div class="text-center">
+    <div class="spinner-border" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+    <h1>Direcionando...</h1>
+  </div>
+</div>

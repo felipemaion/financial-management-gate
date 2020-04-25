@@ -5,6 +5,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { SuiModule } from 'ng2-semantic-ui';
 import { LayoutModule } from './layout/layout.module';
+import { HomeModule } from './pages/home/home.module';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -14,7 +16,9 @@ import { LayoutModule } from './layout/layout.module';
     BrowserModule,
     AppRoutingModule,
     SuiModule,
-    LayoutModule
+    HttpClientModule,
+    LayoutModule,
+    HomeModule
   ],
   providers: [],
   bootstrap: [AppComponent]
