@@ -1,0 +1,25 @@
+<div *ngIf="loading" class="ui active inverted dimmer">
+  <div class="ui large text loader">Carregando...</div>
+</div>
+
+
+<div style="display: flex;
+justify-content: space-between;
+align-items: center">
+
+  <button (click)="openDialog()" class="ui icon button">
+    <i class="add icon"></i>
+    Nova Carteira
+  </button>
+
+
+
+  <mat-form-field *ngIf="carteiras.length > 0">
+    <mat-label>Selecionar Carteira</mat-label>
+    <mat-select>
+      <mat-option *ngFor="let item of carteiras" [value]="item?.description">
+        {{item?.description}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>

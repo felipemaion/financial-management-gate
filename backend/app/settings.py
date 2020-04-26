@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'rest_framework_jwt',
     'crispy_forms',
     'account',
+    'wallet',
     'aporte',
     'selic',
     'api',

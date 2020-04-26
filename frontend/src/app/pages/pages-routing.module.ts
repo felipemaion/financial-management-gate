@@ -13,6 +13,10 @@ const routes: Routes = [
         path: 'home',
         component: HomeComponent
       },
+      {
+        path: 'wallets',
+        loadChildren: () => import('./wallet/wallet.module').then(m => m.WalletModule)
+      },
       { path: '**', redirectTo: 'home' }
     ]
   }

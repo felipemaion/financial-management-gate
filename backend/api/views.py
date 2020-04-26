@@ -1,9 +1,9 @@
-from django.shortcuts import render
-from rest_framework.generics import ListAPIView, CreateAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.viewsets import ModelViewSet
-from aporte.models import Aporte#, Corrige
-from .serializers import AporteSerializer#, CorrigeSerializer
-# Create your views here.
+from aporte.models import Aporte #, Corrige
+from .serializers import AporteSerializer, WalletSerializer#, CorrigeSerializer
+from rest_framework import mixins,viewsets
+from wallet.models import Wallet
+from rest_framework.permissions import IsAuthenticated
 
 # class AporteDeleteUpdate(RetrieveUpdateDestroyAPIView):
 #     queryset = Aporte.objects.all()
@@ -22,4 +22,13 @@ class AporteModelViewSet(ModelViewSet):
 #     queryset = Corrige.objects.all()
 #     serializer_class = CorrigeSerializer
 
- 
+
+class WalletModelViewSet(mixins.ListModelMixin,
+                         mixins.CreateModelMixin,
+                         viewsets.GenericViewSet):
+    queryset = Wallet.objects.all()
+    serializer_class = WalletSerializer
+    permission_classes = [IsAuthenticated, ]
+
+    def get_object(self):
+        return Wallet.objects.filter(user_id=self.request.user.id)

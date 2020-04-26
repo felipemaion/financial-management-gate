@@ -1,6 +1,8 @@
 
 from rest_framework import serializers
 from aporte.models import Aporte, Grupo#, Corrige
+from wallet.models import Wallet
+
 
 class AporteSerializer(serializers.ModelSerializer):
     grupo = serializers.CharField()
@@ -25,6 +27,14 @@ class AporteSerializer(serializers.ModelSerializer):
             grupo_id = Grupo.objects.get(name=grupo)
         data.update({'grupo': grupo_id})
         return data
+
+
+class WalletSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
+    class Meta:
+        model = Wallet
+        fields = '__all__'
 
 # class CorrigeSerializer(serializers.ModelSerializer):
 #     class Meta:

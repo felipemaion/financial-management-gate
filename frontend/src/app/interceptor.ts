@@ -29,7 +29,7 @@ export class JWTInterceptor implements HttpInterceptor {
             return this;
           }
           localStorage.removeItem('token');
-          this.router.navigate(['']);
+          this.router.navigate(['/auth']);
         }
       })
     );

@@ -62,7 +62,7 @@ export class LoginComponent implements OnInit, OnDestroy {
             asyncLocalStorage.setItem('token', data.token).then(() => {
               return asyncLocalStorage.getItem('token').then((value) => {
                 setTimeout(() => {
-                  router.navigate(['/home']);
+                  router.navigate(['/user']);
                 }, 2000);
               });
             });
