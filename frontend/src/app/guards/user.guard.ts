@@ -37,13 +37,13 @@ export class UserGuard implements CanActivate, CanActivateChild, CanLoad {
       const decoded = jwt_decode(token);
       const currentTime = new Date().getTime() / 1000;
       if (currentTime > decoded.exp) {
-        this.router.navigate(['/']);
+        this.router.navigate(['/auth']);
         return false;
       } else {
         return true;
       }
     } else {
-      this.router.navigate(['/']);
+      this.router.navigate(['/auth']);
       return false;
     }
   }

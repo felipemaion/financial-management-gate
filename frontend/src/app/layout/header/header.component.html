@@ -1,18 +1,23 @@
-<div class="ui menu">
+<div class="ui secondary top attached menu">
   <a class="item">Financial App Manager</a>
-  <div class="ui pointing dropdown link item" suiDropdown>
+  <!-- <div class="ui pointing dropdown link item" suiDropdown>
     <span class="text">Ações</span>
     <i class="dropdown icon"></i>
     <div class="menu" suiDropdownMenu>
       <div class="header">AÇÕES</div>
       <div class="item">Meus Ativos</div>
     </div>
-  </div>
+  </div> -->
+
+  <a class="item" routerLink="/user/home" routerLinkActive="active">
+    <i class="icon shopping bag"></i> Inicio</a>
   <a class="item"> <i class="icon shopping bag
     "></i> Carteiras</a>
   <a class="item">Suporte</a>
   <a class="item">Sujerir</a>
-  <a class="item" (click)="sair()">
-    <i class="icon power off"></i>
-    Sair</a>
+  <div class="right menu">
+    <a class="item" (click)="sair()">
+      <i class="icon power off"></i>
+      Sair</a>
+  </div>
 </div>

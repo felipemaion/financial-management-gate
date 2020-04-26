@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from './header/header.component';
 import { SuiModule } from 'ng2-semantic-ui';
+import { RouterModule } from '@angular/router';
 
 
 const COMPONENTS = [
@@ -14,7 +15,8 @@ const COMPONENTS = [
   declarations: COMPONENTS,
   imports: [
     CommonModule,
-    SuiModule
+    SuiModule,
+    RouterModule
   ],
   exports: [
     COMPONENTS
