@@ -45,7 +45,7 @@ export class RegisterComponent implements OnInit {
             this.isLogged = true;
             localStorage.setItem('token', data.token);
             setTimeout(() => {
-              this.router.navigate(['/home']);
+              this.router.navigate(['/user']);
             }, 2000);
           },
           error => {
