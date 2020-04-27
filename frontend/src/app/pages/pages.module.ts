@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { PagesRoutingModule } from './pages-routing.module';
 import { PagesComponent } from './pages.component';
 import { LayoutModule } from 'src/app/layout/layout.module';
+import { MatCardModule } from '@angular/material/card';
 
 
 @NgModule({
@@ -11,7 +12,8 @@ import { LayoutModule } from 'src/app/layout/layout.module';
   imports: [
     CommonModule,
     PagesRoutingModule,
-    LayoutModule
+    LayoutModule,
+    MatCardModule
   ]
 })
 export class PagesModule { }
