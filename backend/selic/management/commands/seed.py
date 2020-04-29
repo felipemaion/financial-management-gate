@@ -11,8 +11,12 @@ class Command(BaseCommand):
 		# VOu por apenas os obrigatorios
 		# Faz o makemigrations criar as tabelas 
 		# try:
-		df = pd.read_csv("InstrumentsConsolidatedFile_20200424_1.csv", sep=";", encoding='mac_roman')  # está dando erro com utf-8
-		print(df.loc[df['TckrSymb'] == "AFCR11"]['CrpnNm'] )
+		df = pd.read_csv("InstrumentsConsolidatedFile_20200424_1.csv", sep=";", encoding='latin',
+						 low_memory=False, usecols = ["TckrSymb","CrpnNm"])
+
+		print(df.loc[df['TckrSymb'] == "AFCR11"])
+		# está dando erro com utf-8
+		# print(df.loc[df['TckrSymb'] == "AFCR11"]['CrpnNm'])
 		# except:
 		# 	print('Deu eror')
 
