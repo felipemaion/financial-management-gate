@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
-import { WalletService } from './services/wallet.service';
 import { Subscription } from 'rxjs';
 import { Wallet } from 'src/app/models/wallet.models';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { WalletService } from './services/wallet.service';
 
 export interface DialogData {
   description: string;
@@ -17,10 +17,12 @@ export class WalletComponent implements OnInit, OnDestroy {
 
   subscriptions: Subscription = new Subscription();
   description: string = '';
-  carteiras: Wallet[];
+  carteiras: Wallet[]; // pq em pt?
   loading = false;
   collapse: false;
-  constructor(private walletService: WalletService, public dialog: MatDialog) { }
+  constructor(private walletService: WalletService, public dialog: MatDialog) { 
+
+  }
 
   ngOnInit(): void {
     this.getWallets();

@@ -9,6 +9,7 @@ import { Wallet } from 'src/app/models/wallet.models';
 })
 export class WalletService {
   api = environment.baseApi;
+  
   constructor(private http: HttpClient) { }
 
   getWallets() {
