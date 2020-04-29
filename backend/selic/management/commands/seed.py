@@ -19,6 +19,8 @@ class Command(BaseCommand):
 			print(petr.mktNm)
 			petr.mktNm = "PETROLEO BRASILEIRO S.A. PETROBRAS"
 			petr.save()
+			petr = Instrument.objects.get(tckrSymb="PETR4")
+			print(petr.mktNm)
 			print('Atualizou') # Só o create não?
 
 			item = Instrument.objects.get(tckrSymb="PETR4").delete() # deixa aqui comigo
