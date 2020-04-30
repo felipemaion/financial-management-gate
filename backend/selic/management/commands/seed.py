@@ -7,14 +7,20 @@ class Command(BaseCommand):
 	help = 'Criação de Dados Basicos para o funcionamento de Sistema '
 	
 	def handle(self, *args, **options):
-		# entendeu?	
-		# VOu por apenas os obrigatorios
-		# Faz o makemigrations criar as tabelas 
-		# try:
-		df = pd.read_csv("InstrumentsConsolidatedFile_20200424_1.csv", sep=";", encoding='latin',
-						 low_memory=False, usecols = ["TckrSymb","CrpnNm"])
 
-		print(df.loc[df['TckrSymb'] == "AFCR11"])
+		# try:
+		# df = pd.read_csv("InstrumentsConsolidatedFile_20200424_1.csv", sep=";", encoding='latin',
+		# 				 iterator=True, low_memory=False,
+		# 				 chunksize=10000,
+		# 				 usecols = ["TckrSymb","CrpnNm", "RptDt", "ISIN", "TradgCcy", "MktCptlstn"])
+		# for i in df:
+		# 	print(i)
+
+		df = pd.read_csv("InstrumentsConsolidatedFile_20200424_1.csv", sep=";", encoding='latin', low_memory=False)
+
+		for index, row in df.iterrows():
+			print(index, row['TckrSymb'], row['ISIN'])
+		# print(df.loc[df['TckrSymb'] == "AFCR11"])
 		# está dando erro com utf-8
 		# print(df.loc[df['TckrSymb'] == "AFCR11"]['CrpnNm'])
 		# except:
