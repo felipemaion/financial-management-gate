@@ -153,13 +153,13 @@ class DateTimeModel(models.Model):
 
 class Instrument(DateTimeModel):
     tckrSymb = models.CharField('tckrSymb', max_length=20,unique=True)
-    crpNm = models.CharField('crpnNm', max_length=20, blank=True, null=True)
     sgmtNm = models.CharField('sgmtNm', max_length=20, blank=True, null=True)
     mktNm = models.CharField('mktNm', max_length=20, blank=True, null=True)
-    mctyCtgyNm = models.CharField('mctyCtgyNm', max_length=20, blank=True, null=True)
+    sctyCtgyNm = models.CharField("SctyCtgyNm",max_length=20, blank=True, null=True)
     isin = models.CharField('isin', max_length=20, blank=True, null=True)
-    corpGovnLvlNm = models.CharField('corpGovnLvlNm', max_length=20, blank=True, null=True)
     cFICd = models.CharField('cFICd', max_length=20, blank=True, null=True)
+    crpnNm = models.CharField('crpnNm', max_length=20, blank=True, null=True)
+    corpGovnLvlNm = models.CharField('corpGovnLvlNm', max_length=20, blank=True, null=True)
     created_at = models.DateTimeField('created at', auto_now_add=True, blank=True)
 
     class Meta:
