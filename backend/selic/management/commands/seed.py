@@ -7,10 +7,14 @@ class Command(BaseCommand):
 	help = 'Criação de Dados Basicos para o funcionamento de Sistema '
 	
 	def handle(self, *args, **options):
-
+		file_name = "InstrumentsConsolidatedFile_20200424_1.csv"
 		print("Opening CSV File:")
-		df = pd.read_csv("InstrumentsConsolidatedFile_20200424_1.csv", sep=";", encoding='latin', low_memory=False)
-		print(df.head())
+		try:
+			df = pd.read_csv(file_name, sep=";", encoding='latin', low_memory=False)
+			print(df.head())
+			self.stdout.write(self.style.SUCCESS('Success loading file.'))
+		except:
+			self.stdout.write(self.style.ERROR('Not able to load file:', file_name))	
 		# For quick reference:
 		# all_fields = ["RptDt", "TckrSymb", "Asst", "AsstDesc", "SgmtNm", "MktNm", "SctyCtgyNm", "XprtnDt", "XprtnCd",
 		# 			  "TradgStartDt", "TradgEndDt", "BaseCd", "ConvsCritNm", "MtrtyDtTrgtPt", "ReqrdConvsInd", "ISIN", "CFICd",
@@ -41,5 +45,5 @@ class Command(BaseCommand):
 			# print("Sucesso!!")
 			self.stdout.write(self.style.SUCCESS('Instruments populated.'))
 		except:
-			print("Error creating Instruments into database. Is it populated already?")
-			self.stdout.write(self.style.ERROR('Not able to create Instruments.'))
+			print("Error seeding Instruments into database. \n\tIs it populated already?")
+			self.stdout.write(self.style.ERROR('Error populating Instruments.'))

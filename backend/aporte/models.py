@@ -6,7 +6,8 @@ import datetime
 from decimal import Decimal
 from selic.models import Selic
 from wallet.models import Wallet
-
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 # Extend User: https://simpleisbetterthancomplex.com/tutorial/2016/07/22/how-to-extend-django-user-model.html
 
 
@@ -62,6 +63,9 @@ class TipoAtivo(Grupo):
 
 class Ativo(Aporte):
     None
+
+
+
 
 
 ### Usuário
@@ -167,6 +171,8 @@ class Instrument(DateTimeModel):
         verbose_name_plural = "Instruments"
         ordering = ['-id']
     
+    def __str__(self):
+        return "{}: {}".format(self.tckrSymb, self.crpnNm)
 
 class Moviment(DateTimeModel):
 
@@ -174,29 +180,35 @@ class Moviment(DateTimeModel):
         (0, 'COMPRA'),
         (1, 'VENDA'),
     )
-
+    wallet = models.ForeignKey(Wallet,on_delete=models.CASCADE)
     instrument = models.ForeignKey(Instrument, on_delete=models.CASCADE)
-    type = models.IntegerField('type', choices=TYPE_CHOICES)
+    type = models.IntegerField('type', choices=TYPE_CHOICES, blank=True , null=True)
     quantity = models.IntegerField('quantity')
     price = models.DecimalField('price', decimal_places=2, max_digits=10)
     costs = models.DecimalField('costs', decimal_places=2, max_digits=10)
-    created_at = models.DateTimeField('created at', auto_now_add=True, blank=True)
-    
+    date = models.DateField('date')
+    def save(self, *args, **kwargs):
+        if self.quantity > 0:
+            self.type = 0
+        else:
+            self.type = 1
+                
+        super(Moviment,self).save(*args,**kwargs) #	
 
+# to digitando e parei
+# quer dizer eu acho que tava modelando errado voce pode colocar a carteia diretamento no movimento j
+#a que nao vai ter nenhum daddo entre os 2
+# Isso  minha vez... haha
+# que loko nao foi haahha
 
+# é porque ele sempre vai chamar o save
+# @receiver(post_save, sender=Moviment) # iaew O q vc fez? so passei esse parametro created que verifica se o obj esta sendo criado. e qm está passando esse parametro? E eum chama esse save_instrument? 
+# # quem passa é o decorator 
+# # pode ser assim tbm
 
-class MovimentWallet(DateTimeModel):
-    moviment = models.ForeignKey(Moviment, on_delete=models.CASCADE) 
-    wallet = models.ForeignKey(Wallet, on_delete=models.CASCADE)
-
-    class Meta:
-        verbose_name = 'Moviments Wallet'
-        verbose_name_plural = 'Moviments Wallets'
-
-
-
-# vo la na estrutura
-
+#     def save_instrument(sender, instance, created, **kwargs):
+#         if created:
+#             instance.chamafuncao()
 
 # acho que ta pronto 
 # ?? seguinte vou fazer aqui StoryUser

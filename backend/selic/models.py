@@ -86,3 +86,7 @@ def populate_selic(dados):
             p = Selic(date=datetime.datetime.strptime(dado['data'],"%d/%m/%Y"), daily_factor=float(dado['valor'])/100+1)
             p.save()
 
+# ta no aporte...
+
+
+    
