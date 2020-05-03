@@ -184,8 +184,8 @@ class Moviment(DateTimeModel):
     instrument = models.ForeignKey(Instrument, on_delete=models.CASCADE)
     type = models.IntegerField('type', choices=TYPE_CHOICES, blank=True , null=True)
     quantity = models.IntegerField('quantity')
-    price = models.DecimalField('price', decimal_places=2, max_digits=10)
-    costs = models.DecimalField('costs', decimal_places=2, max_digits=10)
+    total_investment = models.DecimalField('price', decimal_places=2, max_digits=10)
+    total_costs = models.DecimalField('costs', decimal_places=2, max_digits=10)
     date = models.DateField('date')
     def save(self, *args, **kwargs):
         if self.quantity > 0:
