@@ -53,7 +53,7 @@ class Moviment(DateTimeModel):
     type = models.IntegerField('type', choices=TYPE_CHOICES, blank=True , null=True)
     quantity = models.IntegerField('quantity')
     total_investment = models.DecimalField('price', decimal_places=2, max_digits=10)
-    total_costs = models.DecimalField('costs', decimal_places=2, max_digits=10)
+    total_costs = models.DecimalField('costs', decimal_places=2, max_digits=10, blank=True , null=True)
     date = models.DateField('date')
     def save(self, *args, **kwargs):
         if self.quantity > 0:
