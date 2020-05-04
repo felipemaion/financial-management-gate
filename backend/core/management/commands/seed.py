@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from aporte.models import Instrument
+from wallet.models import Wallet, Instrument, Moviment
 import pandas as pd
 # o nome do comando é o nome do arquivo no caso seed excuta ai ./manage.py seed
 
@@ -7,15 +7,13 @@ class Command(BaseCommand):
 	help = 'Criação de Dados Basicos para o funcionamento de Sistema '
 	
 	def handle(self, *args, **options):
-		file_name = "InstrumentsConsolidatedFile_20200424_1.csv"
-		print("Opening CSV File:")
-		try:
-			df = pd.read_csv(file_name, sep=";", encoding='latin', low_memory=False)
-			print(df.head())
-			self.stdout.write(self.style.SUCCESS('Success loading file.'))
-		except:
-			self.stdout.write(self.style.ERROR('Not able to load file:', file_name))	
-		# For quick reference:
+		self.populateInstrument(*args, **options)
+
+	def populateInstrument(self, *args, **options):
+		'''
+		populateInstrument tries to populate the db using an csv file named: InstrumentsConsolidatedFile_20200424_1.csv
+		'''
+				# For quick reference:
 		# all_fields = ["RptDt", "TckrSymb", "Asst", "AsstDesc", "SgmtNm", "MktNm", "SctyCtgyNm", "XprtnDt", "XprtnCd",
 		# 			  "TradgStartDt", "TradgEndDt", "BaseCd", "ConvsCritNm", "MtrtyDtTrgtPt", "ReqrdConvsInd", "ISIN", "CFICd",
 		# 			  "DlvryNtceStartDt", "DlvryNtceEndDt", "OptnTp", "CtrctMltplr", "AsstQtnQty", "AllcnRndLot", "TradgCcy",
@@ -25,11 +23,19 @@ class Command(BaseCommand):
 		# 			  "SpcfctnCd", "CrpnNm", "CorpActnStartDt", "CtdyTrtmntTpNm", "MktCptlstn", "CorpGovnLvlNm"]
 
 		# db_fields = [tckrSymb, sgmtNm, mktNm, sctyCtgyNm, isin, cFICd, crpnNm, corpGovnLvlNm]
+		file_name = "InstrumentsConsolidatedFile_20200424_1.csv"
+		print("Opening CSV File:")
+		try:
+			df = pd.read_csv(file_name, sep=";", encoding='latin', low_memory=False)
+			print(df.head())
+			self.stdout.write(self.style.SUCCESS('Success loading file.'))
+		except:
+			self.stdout.write(self.style.ERROR('Not able to load file:', file_name))
 
 		csv_fields = ["TckrSymb", "SgmtNm", "MktNm", "SctyCtgyNm", "ISIN", "CFICd", "CrpnNm", "CorpGovnLvlNm"]
 		acoes = df.loc[df["SgmtNm"]=="CASH"]
 		info = acoes[csv_fields] # [2203 rows x 8 columns]
-		print("Trying to populate database:")
+		print("Trying to populate Instrument's database:")
 		try:
 			for id, row in info.iterrows():
 				new_data = Instrument.objects.create(
@@ -47,3 +53,6 @@ class Command(BaseCommand):
 		except:
 			print("Error seeding Instruments into database. \n\tIs it populated already?")
 			self.stdout.write(self.style.ERROR('Error populating Instruments.'))
+	
+	# def walletFullTest(self, *args, **options):
+	# 	wallet = 

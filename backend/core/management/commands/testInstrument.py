@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from aporte.models import Instrument
+from wallet.models import Instrument
 # o nome do comando é o nome do arquivo no caso seed excuta ai ./manage.py seed
 
 class Command(BaseCommand):
