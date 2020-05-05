@@ -27,7 +27,7 @@ class Selic(models.Model):
             super(Selic, self).save(*args, **kwargs)
 
     def present_value(amount, initial_date, final_date=None):
-        update_me()
+        # update_me()
         amount = Decimal(amount)
         today = datetime.date.today()
         if not final_date:
