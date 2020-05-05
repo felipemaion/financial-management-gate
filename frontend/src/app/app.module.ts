@@ -8,7 +8,7 @@ import { LayoutModule } from './layout/layout.module';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { PagesModule } from './pages/pages.module';
 import { WalletModule } from './pages/wallet/wallet.module';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { JWTInterceptor } from './interceptor';
 
@@ -18,10 +18,10 @@ import { JWTInterceptor } from './interceptor';
   ],
   imports: [
     BrowserModule,
-    
     AppRoutingModule,
     SuiModule,
     FormsModule,
+    ReactiveFormsModule,
     HttpClientModule,
     LayoutModule,
     WalletModule,

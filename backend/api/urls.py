@@ -1,7 +1,7 @@
 from .auth import urls as urls_auth
 from django.urls import path, include
 from rest_framework.routers import SimpleRouter
-from .views import AporteModelViewSet, WalletModelViewSet
+from .views import AporteModelViewSet, WalletModelViewSet, ImportWalletCsv
 
 app_name = 'api'
 router = SimpleRouter()
@@ -11,6 +11,7 @@ router.register("wallet", WalletModelViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('csv',ImportWalletCsv.as_view()),
     path('auth/', include(urls_auth)),
 
 ]

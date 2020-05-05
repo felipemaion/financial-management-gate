@@ -45,9 +45,7 @@ class Command(BaseCommand):
 		csv_fields = ["TckrSymb", "SgmtNm", "MktNm", "SctyCtgyNm", "ISIN", "CFICd", "CrpnNm", "CorpGovnLvlNm"]
 		acoes = df.loc[df["SgmtNm"]=="CASH"]
 		info = acoes[csv_fields] # [2203 rows x 8 columns]
-		print("Trying to populate Instrument's into database:")
-		try:
-			for id, row in info.iterrows():
+
 				new_data = Instrument.objects.create(
 					tckrSymb = row[csv_fields[0]],
 					sgmtNm = row[csv_fields[1]], 
@@ -59,10 +57,8 @@ class Command(BaseCommand):
 					corpGovnLvlNm = row[csv_fields[7]]
 				)
 			# print("Sucesso!!")
-			self.stdout.write(self.style.SUCCESS('Instruments populated.'))
-		except:
-			print("Error seeding Instruments into database. \n\tIs it populated already?")
-			self.stdout.write(self.style.ERROR('Error populating Instruments. Is it populated already?'))
+			# self.stdout.write(self.style.SUCCESS('Instruments populated.'))
+
 	
 	def walletFullTest(self, *args, **options):
 		print("Testing Wallet and Moviments:")
