@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'account',
     'wallet',
+    'instrument',
     'aporte',
     'selic',
     'api',

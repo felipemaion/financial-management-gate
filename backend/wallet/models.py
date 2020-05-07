@@ -1,11 +1,26 @@
 from django.db import models
 from django.utils.translation import ugettext as _
 from account.models import User
+from instrument.models import Instrument
+from datetime import datetime
 
 
 class Wallet(models.Model):
     user = models.ForeignKey(User, related_name="user_wallet", on_delete=models.CASCADE)
     description = models.TextField(_("Description"), max_length=80)
+
+    def moviments(self):
+        return Moviment.objects.all().filter(wallet=self) # self?? self.id?? 
+
+    # def events(self):
+    #     intruments = [asset for asset in self.position()["tckrSymb"]] ## Ouch.. nop... yeap... nop.. idk
+    #     return Events.objects.all().filter(intruments) # This don't exists yet.
+
+    def position(self, date=datetime.now()):
+        # Should return the Position, i.e:
+        # ASSETS = [{INTRUMENT QUANTITY PAID/INSTRUMENT CurrentPRICE/INSTRUMENT PL(=QTD*CurrPRICE)}]
+        # VALUE = $ (sum(ASSETS[PL]))
+        return #TODO
 
     def __str__(self):
         return "{}:{}".format(self.user, self.description)
@@ -23,24 +38,6 @@ class DateTimeModel(models.Model):
 
 
 
-class Instrument(DateTimeModel):
-    tckrSymb = models.CharField('tckrSymb', max_length=20,unique=True)
-    sgmtNm = models.CharField('sgmtNm', max_length=20, blank=True, null=True)
-    mktNm = models.CharField('mktNm', max_length=20, blank=True, null=True)
-    sctyCtgyNm = models.CharField("SctyCtgyNm",max_length=20, blank=True, null=True)
-    isin = models.CharField('isin', max_length=20, blank=True, null=True)
-    cFICd = models.CharField('cFICd', max_length=20, blank=True, null=True)
-    crpnNm = models.CharField('crpnNm', max_length=20, blank=True, null=True)
-    corpGovnLvlNm = models.CharField('corpGovnLvlNm', max_length=20, blank=True, null=True)
-    created_at = models.DateTimeField('created at', auto_now_add=True, blank=True)
-
-    class Meta:
-        verbose_name = "Instrument"
-        verbose_name_plural = "Instruments"
-        ordering = ['-id']
-    
-    def __str__(self):
-        return "{}: {}".format(self.tckrSymb, self.crpnNm)
 
 class Moviment(DateTimeModel):
 
@@ -57,11 +54,14 @@ class Moviment(DateTimeModel):
     date = models.DateField('date')
     def save(self, *args, **kwargs):
         if self.quantity > 0:
-            self.type = 0
+            self.type = 0 #C
         else:
-            self.type = 1
+            self.type = 1 #V
+        if self.total_costs == None: self.total_costs = 0
                 
         super(Moviment,self).save(*args,**kwargs) #	
+    def __str__(self):
+        return f"{self.date} {('C','V')[self.type]} {self.quantity} x {self.instrument} @ R$ {self.total_investment} (costs:R${self.total_costs}) "
 
 # to digitando e parei
 # quer dizer eu acho que tava modelando errado voce pode colocar a carteia diretamento no movimento j
