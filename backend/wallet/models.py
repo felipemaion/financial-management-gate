@@ -9,9 +9,10 @@ class Wallet(models.Model):
     user = models.ForeignKey(User, related_name="user_wallet", on_delete=models.CASCADE)
     description = models.TextField(_("Description"), max_length=80)
 
-    def moviments(self):
-        return Moviment.objects.all().filter(wallet=self) # self?? self.id?? 
-
+    def get_moviments(self):
+        return list(Moviment.objects.all().filter(wallet=self))
+    get_moviments.short_description = 'Moviments'
+    get_moviments.admin_order_field = 'wallet__movements'
     # def events(self):
     #     intruments = [asset for asset in self.position()["tckrSymb"]] ## Ouch.. nop... yeap... nop.. idk
     #     return Events.objects.all().filter(intruments) # This don't exists yet.
