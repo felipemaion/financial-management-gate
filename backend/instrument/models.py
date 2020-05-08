@@ -2,14 +2,10 @@ from django.db import models
 from django.utils.translation import ugettext as _
 from datetime import datetime
 import yfinance as yf
+from core.models import DateTimeModel
 # Create your models here.
 
-## Something is wrong here... duplicating this class... Help! 
-class DateTimeModel(models.Model):
-    created_at = models.DateTimeField('created at', auto_now_add=True, blank=True)
 
-    class Meta:
-        abstract = True 
 
 
 class Instrument(DateTimeModel):

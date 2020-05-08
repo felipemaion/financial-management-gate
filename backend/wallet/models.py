@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.translation import ugettext as _
 from account.models import User
 from instrument.models import Instrument
+from core.models import DateTimeModel
 from datetime import datetime
 
 
@@ -30,12 +31,6 @@ class Wallet(models.Model):
         verbose_name_plural = _("Wallets")
         unique_together = [['user', 'description']]
 
-
-class DateTimeModel(models.Model):
-    created_at = models.DateTimeField('created at', auto_now_add=True, blank=True)
-
-    class Meta:
-        abstract = True 
 
 
 
