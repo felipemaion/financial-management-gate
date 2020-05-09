@@ -56,9 +56,22 @@ class Instrument(DateTimeModel):
         )
 
     def events(self):
-         ## This .SA is for South America (since the instruments are (for now) from SA). Future bug reported.
+         ## This .SA is for South America (since the instruments are (for now) from SA). 
+        #  Future bug reported.
         stock = yf.Ticker(self.tckrSymb + ".SA")
         return stock.actions
+
+        # In [58]: stock = yf.Ticker("MGLU3.SA") 
+        # In [59]: h = stock.history(period="max")  
+        # In [60]: h[h["Stock Splits"]!=0]                                                                                                                                                                                             
+        # Out[60]: 
+        #             Open   High    Low  Close    Volume  Dividends  Stock Splits
+        # Date                                                                     
+        # 2015-10-01   0.13   0.14   0.13   0.13  23648000        0.0         0.125
+        # 2017-09-05   9.02   9.77   8.88   9.27  23837600        0.0         8.000
+        # 2019-08-06  35.34  36.80  35.28  36.35  17456100        0.0         8.000
+
+          
     
     def get_price(self, date=datetime.now()):
         try:
