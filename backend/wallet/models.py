@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.translation import ugettext as _
 from account.models import User
 from instrument.models import Instrument
-from core.models import DateTimeModel
+from core.models import BaseTimeModel
 from datetime import datetime
 
 
@@ -35,7 +35,7 @@ class Wallet(models.Model):
 
 
 
-class Moviment(DateTimeModel):
+class Moviment(BaseTimeModel):
 
     TYPE_CHOICES = (
         (0, 'COMPRA'),

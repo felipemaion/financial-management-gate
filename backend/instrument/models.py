@@ -2,13 +2,14 @@ from django.db import models
 from django.utils.translation import ugettext as _
 from datetime import datetime
 import yfinance as yf
-from core.models import DateTimeModel
+from core.models import BaseTimeModel
 # Create your models here.
 
 
+class Event(DateTimeField):
 
 
-class Instrument(DateTimeModel):
+class Instrument(BaseTimeModel):
     tckrSymb = models.CharField('tckrSymb', max_length=20,unique=True)
     sgmtNm = models.CharField('sgmtNm', max_length=20, blank=True, null=True)
     mktNm = models.CharField('mktNm', max_length=20, blank=True, null=True)
@@ -17,6 +18,7 @@ class Instrument(DateTimeModel):
     cFICd = models.CharField('cFICd', max_length=20, blank=True, null=True)
     crpnNm = models.CharField('crpnNm', max_length=20, blank=True, null=True)
     corpGovnLvlNm = models.CharField('corpGovnLvlNm', max_length=20, blank=True, null=True)
+    lastUpdate = models.DateTimeField('last update', blank=True, null=True)
     created_at = models.DateTimeField('created at', auto_now_add=True, blank=True)
 
     def history(self):

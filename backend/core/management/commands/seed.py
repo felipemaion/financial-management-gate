@@ -69,8 +69,8 @@ class Command(BaseCommand):
 	def walletFullTest(self, *args, **options):
 		print("Testing Wallet and Moviments:")
 		print("\tGetting user 1 to create Wallet:")
-		user = list(User.objects.all())[1] 
-		### Atenção que esse User no caso é o Maion
+		### Atenção que esse User no caso é o Maion - ERROR
+		user = list(User.objects.all())[0] 
 		## Checar para não criar carteira para um usuário aleatório:
 		if user.email != "felipe.maion@gmail.com": raise ValueError("Not able to get correct User for walletFullTest.")
 
