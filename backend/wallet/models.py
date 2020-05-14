@@ -7,19 +7,28 @@ from core.models import BaseTimeModel
 from datetime import datetime
 
 
+
+class WalletQuerySetManager(models.Manager):
+    def assets(self, asset):
+        return Instrument.objects.filter(tckrSymb=asset)
+
 class Wallet(models.Model):
     user = models.ForeignKey(User, related_name="user_wallet", on_delete=models.CASCADE)
     description = models.TextField(_("Description"), max_length=80)
     assets = []
     def get_moviments(self):
-        moviments =list(Moviment.objects.all().filter(wallet=self))
-        self.assets = set([mov.instrument for mov in moviments])
-        return moviments
+        return self.moviments.all()
+        # moviments =list(Moviment.objects.all().filter(wallet=self))
+        # self.assets = set([mov.instrument for mov in moviments])
+        # return moviments
     get_moviments.short_description = 'Moviments'
     get_moviments.admin_order_field = 'wallet__movements'
     # def events(self):
     #     intruments = [asset for asset in self.position()["tckrSymb"]] ## Ouch.. nop... yeap... nop.. idk
     #     return Events.objects.all().filter(intruments) # This don't exists yet.
+
+    objects = WalletQuerySetManager()
+
 
     def position(self, date=datetime.now()):
         # Should return the Position, i.e:
@@ -58,7 +67,7 @@ class Moviment(BaseTimeModel):
         (0, 'COMPRA'),
         (1, 'VENDA'),
     )
-    wallet = models.ForeignKey(Wallet,on_delete=models.CASCADE)
+    wallet = models.ForeignKey(Wallet,related_name='moviments', on_delete=models.CASCADE)
     instrument = models.ForeignKey(Instrument, on_delete=models.CASCADE)
     type = models.IntegerField('type', choices=TYPE_CHOICES, blank=True , null=True)
     quantity = models.IntegerField('quantity')
