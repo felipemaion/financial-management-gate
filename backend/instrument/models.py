@@ -103,8 +103,15 @@ class Event(BaseTimeModel):
     dividends = models.DecimalField(
         'dividends', decimal_places=6, max_digits=20)
     stock_splits = models.DecimalField(
-        'stock splits', decimal_places=6,max_digits=20
+        'stock splits', decimal_places=6, max_digits=20
     )
+
+    def __str__(self):
+        return 'SIMBOL:{} Date:{} Dividends: {} Stock Splits: {}' .format(
+            self.instrument.tckrSymb,
+            str(self.event_date),
+            str(self.dividends),
+            str(self.stock_splits))
 
     class Meta:
         unique_together = ('instrument', 'event_date',)
