@@ -96,7 +96,7 @@ class Instrument(BaseTimeModel):
 
 
 class Event(BaseTimeModel):
-    instrument = models.ForeignKey(Instrument, related_name="instrument_event",
+    instrument = models.ForeignKey(Instrument, related_name="events",
                                    on_delete=models.CASCADE)
     event_date = models.DateField(
         'event date')  # precisa mesmo armazenar hora?
