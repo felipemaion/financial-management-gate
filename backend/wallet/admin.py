@@ -11,7 +11,7 @@ class AdminMoviment(admin.ModelAdmin):
     exclude= ('type',)
 
 class AdminWallet(admin.ModelAdmin):
-    list_display = ['user', 'description', "get_moviments"] # Movements estão aqui para teste... o correto seria Position
+    list_display = ['user', 'description']
     list_filter = ['user']
 
 

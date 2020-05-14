@@ -18,17 +18,6 @@ class Wallet(models.Model):
     description = models.TextField(_("Description"), max_length=80)
     assets = []
 
-    def get_moviments(self):
-        return self.moviments.all()
-        # moviments =list(Moviment.objects.all().filter(wallet=self))
-        # self.assets = set([mov.instrument for mov in moviments])
-        # return moviments
-    get_moviments.short_description = 'Moviments'
-    get_moviments.admin_order_field = 'wallet__movements'
-    # def events(self):
-    #     intruments = [asset for asset in self.position()["tckrSymb"]] ## Ouch.. nop... yeap... nop.. idk
-    #     return Events.objects.all().filter(intruments) # This don't exists yet.
-
     objects = WalletQuerySetManager()
 
     def position(self, date=datetime.now()):
@@ -38,14 +27,21 @@ class Wallet(models.Model):
         VALUE = $ (sum(ASSETS[PL]))
         """
         moviments = self.moviments.all()
+        assets = set(mov.instrument.tckrSymb for mov in moviments)
         events = {}
-        for asset in self.assets:
-            earliest_mov = Moviment.objects.all().filter(
-                wallet=self, instrument=asset).earliest('date')
+        for asset in assets:
+            earliest_mov = moviments.filter(instrument__tckrSymb=asset).earliest('date')
+
             print(asset, "\n", earliest_mov)
-            query = Q(instrument=asset)
-            # query.add(Q(event_date__gte=earliest_mov), Q.AND)
-            events[asset.tckrSymb] = Event.objects.filter(query)
+            print('Moviments')
+            print(earliest_mov)
+            events = earliest_mov.instrument.events.all().filter(event_date__gte=earliest_mov.date) 
+            # for mov in moviments_asset:
+            #     events = mov.instrument.events.all()
+            #     print('Events')
+            #     print(events)
+
+            
         return events  # TODO
 
     def __str__(self):
