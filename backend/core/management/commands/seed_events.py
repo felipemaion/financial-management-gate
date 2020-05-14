@@ -14,19 +14,19 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS(
             'Populando Eventos dos Instrumentos'))
 		# ta errado demais. Ahahah percebi.. como é o certo? Usando o Q?
-        query = Q(sgmtNm="CASH", Q.AND)
+        query = Q(sgmtNm="CASH")
         query.add(Q(sctyCtgyNm="SHARES"), Q.OR)
         query.add(Q(sctyCtgyNm="UNIT"), Q.OR)
         query.add(Q(sctyCtgyNm="FUNDS"), Q.OR)
 		
         instruments = Instrument.objects.all().filter(query)
-
-        for instrument in instruments:
+        # da pra pegar o tamanho com o count ex: instruments.count()
+        size_instruments = len(instruments)
+        for i,instrument in enumerate(instruments):
             # Busca events relacionados ao instrument por yfinance
-
+            print("({}/{})".format(i,size_instruments))
             events_origin = instrument.populate_events()
             # o try vai ficar aqui mesmo
-
             try:
                 if not events_origin.empty:
                     for index, event in events_origin.iterrows():  # como pega apenas a data (id) da scrita no terminal
@@ -36,12 +36,9 @@ class Command(BaseCommand):
                             dividends=event['Dividends'],
                             stock_splits=event['Stock Splits']
                         )
-                        self.stdout.write(self.style.SUCCESS(
+                    self.stdout.write(self.style.SUCCESS(
                             'Criado'))
-                        )
-                        self.stdout.write(self.style.SUCCESS(
-                            'Criado'))
-
+                        
             except:
                 print('error')
                 pass

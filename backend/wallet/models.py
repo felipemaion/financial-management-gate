@@ -1,7 +1,8 @@
 from django.db import models
+from django.db.models import Q
 from django.utils.translation import ugettext as _
 from account.models import User
-from instrument.models import Instrument
+from instrument.models import Instrument, Event
 from core.models import BaseTimeModel
 from datetime import datetime
 
@@ -9,9 +10,11 @@ from datetime import datetime
 class Wallet(models.Model):
     user = models.ForeignKey(User, related_name="user_wallet", on_delete=models.CASCADE)
     description = models.TextField(_("Description"), max_length=80)
-
+    assets = []
     def get_moviments(self):
-        return list(Moviment.objects.all().filter(wallet=self))
+        moviments =list(Moviment.objects.all().filter(wallet=self))
+        self.assets = set([mov.instrument for mov in moviments])
+        return moviments
     get_moviments.short_description = 'Moviments'
     get_moviments.admin_order_field = 'wallet__movements'
     # def events(self):
@@ -22,7 +25,16 @@ class Wallet(models.Model):
         # Should return the Position, i.e:
         # ASSETS = [{INTRUMENT QUANTITY PAID/INSTRUMENT CurrentPRICE/INSTRUMENT PL(=QTD*CurrPRICE)}]
         # VALUE = $ (sum(ASSETS[PL]))
-        return #TODO
+        mov = self.get_moviments()
+        # print(self.assets)
+        events={}
+        for asset in self.assets:
+            earliest_mov = Moviment.objects.all().filter(wallet=self, instrument=asset).earliest('date') 
+            print(asset, "\n", earliest_mov)
+            query = Q(instrument=asset)
+            # query.add(Q(event_date__gte=earliest_mov), Q.AND)
+            events[asset.tckrSymb] = Event.objects.all().filter(query)
+        return events#TODO
 
     def __str__(self):
         return "{}:{}".format(self.user, self.description)
@@ -32,7 +44,12 @@ class Wallet(models.Model):
         unique_together = [['user', 'description']]
 
 
-
+class Position(BaseTimeModel):
+    wallet = models.ForeignKey(Wallet, related_name="wallet_position", on_delete=models.CASCADE)
+    position = {} #{'MGLU3':{"quantity":100, "total_investment":16000}}
+    assets = []
+    quantities = []
+    total_investments = []
 
 
 class Moviment(BaseTimeModel):
