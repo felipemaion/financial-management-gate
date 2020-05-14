@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Wallet, Instrument, Moviment
+from .models import Wallet, Moviment
+from instrument.models import Event, Instrument
 # Register your models here.
 
 
@@ -14,6 +15,12 @@ class AdminWallet(admin.ModelAdmin):
     list_filter = ['user']
 
 
-admin.site.register(Wallet,AdminWallet)
 
-admin.site.register(Moviment,AdminMoviment)
+class AdminEvent(admin.ModelAdmin):
+    list_display = ['instrument', 'dividends', 'stock_splits', 'event_date']
+    list_filter = ['instrument']
+
+
+admin.site.register(Wallet, AdminWallet)
+admin.site.register(Moviment, AdminMoviment)
+admin.site.register(Event, AdminEvent)
