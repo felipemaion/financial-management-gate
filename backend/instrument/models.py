@@ -118,3 +118,23 @@ class Event(BaseTimeModel):
         verbose_name = 'Event'
         verbose_name_plural = 'Events'
         ordering = ['-event_date']
+
+
+class History(BaseTimeModel):
+    instrument = models.ForeignKey(Instrument, related_name="history",
+                                   on_delete=models.CASCADE)
+    date = models.DateField(
+        'date')  # precisa mesmo armazenar hora?
+    open = models.DecimalField(
+        'open', decimal_places=6, max_digits=20)
+    high = models.DecimalField(
+        'high', decimal_places=6, max_digits=20)
+    low = models.DecimalField(
+        'low', decimal_places=6, max_digits=20)
+    close = models.DecimalField(
+        'close', decimal_places=6, max_digits=20)
+    adj_close = models.DecimalField(
+        'adj_close', decimal_places=6, max_digits=20)
+    volume = models.DecimalField(
+        'volume', decimal_places=0, max_digits=20)   
+    lastUpdate = models.DateTimeField('last update', blank=True, null=True)
