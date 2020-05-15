@@ -136,5 +136,5 @@ class History(BaseTimeModel):
     adj_close = models.DecimalField(
         'adj_close', decimal_places=6, max_digits=20)
     volume = models.DecimalField(
-        'volume', decimal_places=0, max_digits=20)   
+        'volume', decimal_places=0, max_digits=20)  
     lastUpdate = models.DateTimeField('last update', blank=True, null=True)
