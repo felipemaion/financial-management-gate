@@ -2,7 +2,7 @@ from django.db import models
 from django.db.models import Q
 from django.utils.translation import ugettext as _
 from account.models import User
-from instrument.models import Instrument, Event
+from instrument.models import Instrument, Event, History
 from core.models import BaseTimeModel
 from selic.models import Selic
 from datetime import datetime
@@ -22,19 +22,27 @@ class Wallet(models.Model):
     assets = []
 
     objects = WalletQuerySetManager()
-    def get_prices(self, assets=assets, start=datetime.now(), end=datetime.now()):
+    def get_assets(self,moviments=None):
+        if not moviments: moviments = self.moviments.all()
+        self.assets = set(mov.instrument.tckrSymb for mov in moviments)
+        return self.assets
+
+    def get_prices(self, assets=[], start=datetime.now(), end=datetime.now()):
         # FIX ASSETS (Hey this seems wrong...)
-        if assets==[]:
-                moviments = self.moviments.all()
-                assets = set(mov.instrument.tckrSymb for mov in moviments)
-        
-        assets = [asset + ".SA" for asset in assets]
+        if assets==[]:assets = self.get_assets()
+        print("Prices for",assets)
+        # assets = [asset + ".SA" for asset in assets] # so para o yfinances
         
         try:
-            data = yf.download(assets, start=start, end=end, period="1d", group_by="Ticker")
+            ### TODO utilizar o History para armazenar e pegar as info.
+            #return yf.download(assets, start=start, end=end, period="1d", group_by="Ticker")
+            prices = {}
+            for asset in assets:
+                prices[asset] = History.objects.filter(instrument=asset).lastest()
         except:
+            print("Erro getting prices")
             pass
-        return data
+        return 
 
     def position(self, date=datetime.now()):
         """
