@@ -123,7 +123,7 @@ class Event(BaseTimeModel):
 class History(BaseTimeModel):
     instrument = models.ForeignKey(Instrument, related_name="history",
                                    on_delete=models.CASCADE)
-    date = models.DateField(
+    date = models.DateTimeField(
         'date')  # precisa mesmo armazenar hora?
     open = models.DecimalField(
         'open', decimal_places=6, max_digits=20)
