@@ -4,8 +4,10 @@ from django.utils.translation import ugettext as _
 from account.models import User
 from instrument.models import Instrument, Event
 from core.models import BaseTimeModel
+from selic.models import Selic
 from datetime import datetime
 from decimal import Decimal
+import yfinance as yf
 
 
 class WalletQuerySetManager(models.Manager):
@@ -20,28 +22,70 @@ class Wallet(models.Model):
     assets = []
 
     objects = WalletQuerySetManager()
+    def get_prices(self, assets=assets, start=datetime.now(), end=datetime.now()):
+        # FIX ASSETS (Hey this seems wrong...)
+        if assets==[]:
+                moviments = self.moviments.all()
+                assets = set(mov.instrument.tckrSymb for mov in moviments)
+        
+        assets = [asset + ".SA" for asset in assets]
+        
+        try:
+            data = yf.download(assets, start=start, end=end, period="1d", group_by="Ticker")
+        except:
+            pass
+        return data
 
     def position(self, date=datetime.now()):
         """
-        Should return the Position, i.e:
-        ASSETS = [{INTRUMENT QUANTITY PAID/INSTRUMENT CurrentPRICE/INSTRUMENT PL(=QTD*CurrPRICE)}]
-        VALUE = $ (sum(ASSETS[PL]))
+        Should return the Position of the Wallet, i.e:
+                    {
+                    "net_worth": Sum of all current value of the assets
+                    "total_dividends": Sum of the total amount of provents (JCP + Div + Rent) of all Assets
+                    "total_invested": Sum of the amount of money invested. Without correction of value.
+                    "total_invested_selic": Sum of the amout of money invested corrected by the interest rate SELIC
+                    "assets": List of the assests in the Wallet
+                    "moviments": All the moviments in this Wallet 
+                    "position":position[asset] = {
+                                        "sum_quantity": qt_total, 
+                                        "sum_dividends": dividends_total, 
+                                        "sum_investments": total_investments, 
+                                        "sum_costs": total_costs, 
+                                        "sum_invested_selic":total_selic}
+                    }
         """
 
         moviments = self.moviments.all()
         assets = set(mov.instrument.tckrSymb for mov in moviments)
+        self.assets = assets
+        # Carregar preço atual do grupo ## TODO
+        
+        wallet = {
+                    "net_worth":0.0,
+                    "total_dividends":0.0,
+                    "total_invested":0.0,
+                    "total_invested_selic":0.0,
+                    "assets":assets,
+                    "moviments":moviments,
+                    "position":{}
+                    }
+        net_worth = 0.0
+        total_dividends = 0.0
+        total_invested = 0.0
+        total_invested_selic= 0.0
         position = {}
         for asset in assets:
             dividends_total = 0
             print("Getting Online Price for", asset)
             current_price = Instrument.objects.filter(tckrSymb=asset)[0].get_price() 
             position[asset] = {"sum_quantity": 0, "sum_dividends": 0,
-                               "sum_investments": 0.00, "sum_costs": 0.00}
+                               "sum_investments": 0.00, "sum_costs": 0.00, "sum_invested_selic":0.0}
             asset_moviments = moviments.filter(instrument__tckrSymb=asset).order_by(
                 'date')  # de modo reverso -date
             qt_total = 0
             total_investments = 0
             total_costs = 0
+            total_selic = 0
             # earliest_mov = asset_moviments.earliest('date')
             for moviment in asset_moviments:
                 # quantidade inicial no movimento:
@@ -49,6 +93,7 @@ class Wallet(models.Model):
                 qt = moviment.quantity
                 total_investments += moviment.total_investment
                 total_costs += moviment.total_costs
+                total_selic += moviment.present_value()
                 dividends = 0
                 # Pega os eventos depois do movimento:
                 events = moviment.instrument.events.all().filter(event_date__gte=moviment.date).order_by('event_date')
@@ -65,21 +110,32 @@ class Wallet(models.Model):
                 dividends_total += dividends
                 qt_total += qt
                 position[asset] = {
-                    "sum_quantity": qt_total, "sum_dividends": dividends_total, "sum_investments": total_investments, "sum_costs": total_costs}
-                # print(position[asset])
-        print('Quantidade', position[asset]['sum_quantity'])
-        print('Proventos Recebidos', position[asset]['sum_dividends'])
-        print('Total Investido', position[asset]['sum_investments'] + position[asset]['sum_costs'])
-        print('Patrimônio Atual', Decimal(current_price)*position[asset]['sum_quantity']) ## PODE DEMORAR PARA PEGAR O PREÇO ONLINE!
+                    "sum_quantity": qt_total,
+                    "sum_dividends": dividends_total, 
+                    "sum_investments": total_investments, 
+                    "sum_costs": total_costs, 
+                    "sum_invested_selic":total_selic
+                    }
+                net_worth += total_investments
+                total_dividends += dividends_total
+                total_invested += total_investments
+                total_invested_selic += total_selic
+        # print(position[asset])
+        # print('Quantidade', position[asset]['sum_quantity'])
+        # print('Proventos Recebidos', position[asset]['sum_dividends'])
+        # print('Total Investido', position[asset]['sum_investments'] + position[asset]['sum_costs'])
+        # print('Patrimônio Atual', Decimal(current_price)*position[asset]['sum_quantity']) ## PODE DEMORAR PARA PEGAR O PREÇO ONLINE!
         # its ok
-        return position
-
-        # for mov in moviments_asset:
-        #     events = mov.instrument.events.all()
-        #     print('Events')
-        #     print(events)
-
-        return events  # TODO
+        wallet = {
+                "net_worth":net_worth,
+                "total_dividends":total_dividends,
+                "total_invested":total_invested,
+                "total_invested_selic":total_invested_selic,
+                "assets":assets,
+                "moviments":moviments,
+                "position":position
+                }
+        return wallet
 
     def __str__(self):
         return "{}:{}".format(self.user, self.description)
@@ -116,6 +172,9 @@ class Moviment(BaseTimeModel):
     total_costs = models.DecimalField(
         'costs', decimal_places=2, max_digits=10, blank=True, null=True)
     date = models.DateField('date')
+
+    def present_value(self, final_date=None):
+        return Selic().present_value(self.total_investment,self.date, final_date=final_date) 
 
     def save(self, *args, **kwargs):
         if self.quantity > 0:
