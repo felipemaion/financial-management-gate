@@ -1,84 +1,100 @@
-<div *ngIf="loading" class="ui active inverted dimmer">
-  <div class="ui large text loader">Carregando...</div>
-</div>
+<mat-toolbar color="primary">
+  <mat-toolbar-row>
+    <button color="accent" mat-icon-button (click)="openSideNav()">
+      <mat-icon>account_balance_wallet</mat-icon>
+    </button>
+
+    <button mat-button (click)="openDialogWallet()">
+      <mat-icon>add</mat-icon>
+      Nova Carteira
+    </button>
+    <span class="spacer"></span>
+
+  </mat-toolbar-row>
+</mat-toolbar>
 
 
-<div style="display: flex;
-justify-content: space-between;
-align-items: center">
-
-  <button (click)="openDialogWallet()" class="ui icon button">
-    <i class="add icon"></i>
-    Nova Carteira
-  </button>
-
-
-  <div *ngIf="carteiras?.length > 0">
-
-    <mat-form-field>
-      <mat-label>Selecionar Carteira</mat-label>
-      <mat-select [(ngModel)]="carteiraSelected">
-        <mat-option *ngFor="let item of carteiras" [value]="item?.description">
-          {{item?.description}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
+<div style="padding: 16px;">
+  <div *ngIf="loading" class="ui active inverted dimmer">
+    <div class="ui large text loader">Carregando...</div>
   </div>
-</div>
-
-<div *ngIf="carteiraSelected && !loadingCsv">
-  <label [hidden]="loadingCsv" for="attachmentName" class="ui icon button labeled btn-file">
-    <i class="file alternate outline icon"></i> Importar CSV
-    <input (change)="handleCSVFileInput($event.target.files)" type="file" accept=".csv" id="attachmentName"
-      name="attachmentName" style="display: none" />
-  </label>
-  <button [disabled]="loadingCsv" *ngIf="formData.get('file')" (click)="enviarCsv()"
-    class="ui right labeled icon button">
-    <i class="right plane icon"></i>
-    Enviar
-  </button>
-  <div *ngIf="loadingCsv" class="ui active centered inline loader"></div>
-  {{csvName}}
-
-  <mat-tab-group animationDuration="0ms">
-    <mat-tab label="Acoes">
-
-      <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-        <!-- Position Column -->
-        <ng-container matColumnDef="position">
-          <mat-header-cell *matHeaderCellDef> No. </mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{element.position}} </mat-cell>
-        </ng-container>
-      
-        <!-- Name Column -->
-        <ng-container matColumnDef="name">
-          <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
-        </ng-container>
-      
-        <!-- Weight Column -->
-        <ng-container matColumnDef="weight">
-          <mat-header-cell *matHeaderCellDef> Weight </mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{element.weight}} </mat-cell>
-        </ng-container>
-      
-        <!-- Symbol Column -->
-        <ng-container matColumnDef="symbol">
-          <mat-header-cell *matHeaderCellDef> Symbol </mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{element.symbol}} </mat-cell>
-        </ng-container>
-      
-        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-      </mat-table>
 
 
+  <div style="display: flex;
+  justify-content: space-between;
+  align-items: center">
+    <div>
+      <div *ngIf="carteiraSelected">
+        <label [hidden]="loadingCsv" for="attachmentName" class="ui icon button labeled btn-file">
+          <i class="file alternate outline icon"></i> Importar CSV
+          <input (change)="handleCSVFileInput($event.target.files)" type="file" accept=".csv" id="attachmentName"
+            name="attachmentName" style="display: none" />
+        </label>
+        <button [disabled]="loadingCsv" *ngIf="formData.get('file')" (click)="enviarCsv()"
+          class="ui right labeled icon button">
+          <i class="right plane icon"></i>
+          Enviar
+        </button>
+        <div *ngIf="loadingCsv" class="ui active centered inline loader"></div>
+        {{csvName}}
+      </div>
+    </div>
 
-    </mat-tab>
-    <mat-tab label="Fiis">Content 2</mat-tab>
-    <mat-tab label="Etc">Content 3</mat-tab>
-    <mat-tab label="Etc">Content 3</mat-tab>
-    <mat-tab label="Etc">Content 3</mat-tab>
-  </mat-tab-group>
 
+    <div *ngIf="carteiras?.length > 0">
+
+      <mat-form-field>
+        <mat-label>Selecionar Carteira</mat-label>
+        <mat-select [(ngModel)]="carteiraSelected">
+          <mat-option *ngFor="let item of carteiras" [value]="item?.description">
+            {{item?.description}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div *ngIf="carteiraSelected && !loadingCsv">
+
+
+    <mat-tab-group animationDuration="0ms">
+      <mat-tab label="Acoes">
+
+        <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+          <!-- Position Column -->
+          <ng-container matColumnDef="position">
+            <mat-header-cell *matHeaderCellDef> Acao </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.position}} </mat-cell>
+          </ng-container>
+
+          <!-- Name Column -->
+          <ng-container matColumnDef="name">
+            <mat-header-cell *matHeaderCellDef> Quantidade </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
+          </ng-container>
+
+          <!-- Weight Column -->
+          <ng-container matColumnDef="weight">
+            <mat-header-cell *matHeaderCellDef> Weight </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.weight}} </mat-cell>
+          </ng-container>
+
+          <!-- Symbol Column -->
+          <ng-container matColumnDef="symbol">
+            <mat-header-cell *matHeaderCellDef> Symbol </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.symbol}} </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table>
+
+
+
+      </mat-tab>
+      <mat-tab label="FI`s">Content 2</mat-tab>
+
+    </mat-tab-group>
+
+  </div>
 </div>

@@ -1,5 +1,13 @@
-<app-header></app-header>
+<mat-drawer-container [hasBackdrop]="true" autosize
+  style="position: absolute;right: 0px;left: 0px;bottom: 0px;top: 0px;">
+  <mat-drawer-content>
 
-<div style="padding: 16px;">
-  <router-outlet></router-outlet>
-</div>
+
+    <app-header></app-header>
+    <app-sidenav></app-sidenav>
+
+    <router-outlet></router-outlet>
+
+  </mat-drawer-content>
+
+</mat-drawer-container>

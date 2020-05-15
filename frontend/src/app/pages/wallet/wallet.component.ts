@@ -1,10 +1,12 @@
-import { Component, OnInit, OnDestroy, Inject } from "@angular/core";
+import { Component, OnInit, OnDestroy, Inject, ViewChild } from "@angular/core";
 import { Subscription } from "rxjs";
 import { Wallet } from "src/app/models/wallet.models";
 import { MatDialog } from "@angular/material/dialog";
 import { WalletService } from "./services/wallet.service";
 import { DialogWallet } from "./dialogs/wallet.dialog.component";
 import { DialogMessage } from "./dialogs/message.dialog.component";
+import { MatSidenav } from "@angular/material/sidenav";
+import { SidenavService } from 'src/app/layout/sidenav/sidenav.service';
 
 export interface DialogData {
   description: string;
@@ -18,16 +20,16 @@ export interface PeriodicElement {
 }
 
 const ELEMENT_DATA: PeriodicElement[] = [
-  {position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H'},
-  {position: 2, name: 'Helium', weight: 4.0026, symbol: 'He'},
-  {position: 3, name: 'Lithium', weight: 6.941, symbol: 'Li'},
-  {position: 4, name: 'Beryllium', weight: 9.0122, symbol: 'Be'},
-  {position: 5, name: 'Boron', weight: 10.811, symbol: 'B'},
-  {position: 6, name: 'Carbon', weight: 12.0107, symbol: 'C'},
-  {position: 7, name: 'Nitrogen', weight: 14.0067, symbol: 'N'},
-  {position: 8, name: 'Oxygen', weight: 15.9994, symbol: 'O'},
-  {position: 9, name: 'Fluorine', weight: 18.9984, symbol: 'F'},
-  {position: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne'},
+  { position: 1, name: "Hydrogen", weight: 1.0079, symbol: "H" },
+  { position: 2, name: "Helium", weight: 4.0026, symbol: "He" },
+  { position: 3, name: "Lithium", weight: 6.941, symbol: "Li" },
+  { position: 4, name: "Beryllium", weight: 9.0122, symbol: "Be" },
+  { position: 5, name: "Boron", weight: 10.811, symbol: "B" },
+  { position: 6, name: "Carbon", weight: 12.0107, symbol: "C" },
+  { position: 7, name: "Nitrogen", weight: 14.0067, symbol: "N" },
+  { position: 8, name: "Oxygen", weight: 15.9994, symbol: "O" },
+  { position: 9, name: "Fluorine", weight: 18.9984, symbol: "F" },
+  { position: 10, name: "Neon", weight: 20.1797, symbol: "Ne" },
 ];
 
 @Component({
@@ -37,6 +39,7 @@ const ELEMENT_DATA: PeriodicElement[] = [
 })
 export class WalletComponent implements OnInit, OnDestroy {
   subscriptions: Subscription = new Subscription();
+
   description: string = "";
   carteiras: Wallet[]; // pq em pt?
   loading = false;
@@ -47,10 +50,10 @@ export class WalletComponent implements OnInit, OnDestroy {
   loadingCsv = false;
   csvName: string = "Nada Selecionado";
 
-  displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
+  displayedColumns: string[] = ["position", "name", "weight", "symbol"];
   dataSource = ELEMENT_DATA;
-  
-  constructor(private walletService: WalletService, public dialog: MatDialog) {}
+
+  constructor(private walletService: WalletService, public dialog: MatDialog,private sideNavService:SidenavService) {}
 
   ngOnInit(): void {
     this.getWallets();
@@ -109,13 +112,10 @@ export class WalletComponent implements OnInit, OnDestroy {
       )
     );
   }
-
-
-
-  
+  openSideNav(){
+    this.sideNavService.openNav()
+  }
   ngOnDestroy() {
     this.subscriptions.unsubscribe();
   }
 }
-
-

@@ -1,5 +1,33 @@
-/* comentario  */
-/* comentario dois */
-/* Caralho o Felipe é muito chato */
+/* 
+mat-drawer-content {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+} */
 
-/* Comentario 4 */
+/* app-sidenav { display: flex; }
+mat-drawer-container { flex: 1 1 auto; } */
+
+
+.icon {
+  padding: 0 14px;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+.mat-toolbar-multiple-rows {
+  min-height: 53px;
+}
+
+.mat-toolbar-row, .mat-toolbar-single-row {
+  height: 53px;
+}
+.mat-toolbar{
+  height: 53px!important;
+  
+}
+.mat-toolbar-row{
+  height: 53px!important;
+}
