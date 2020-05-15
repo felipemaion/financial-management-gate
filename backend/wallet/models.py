@@ -5,6 +5,7 @@ from account.models import User
 from instrument.models import Instrument, Event
 from core.models import BaseTimeModel
 from datetime import datetime
+from decimal import Decimal
 
 
 class WalletQuerySetManager(models.Manager):
@@ -26,22 +27,58 @@ class Wallet(models.Model):
         ASSETS = [{INTRUMENT QUANTITY PAID/INSTRUMENT CurrentPRICE/INSTRUMENT PL(=QTD*CurrPRICE)}]
         VALUE = $ (sum(ASSETS[PL]))
         """
+
         moviments = self.moviments.all()
         assets = set(mov.instrument.tckrSymb for mov in moviments)
-        events = {}
+        position = {}
         for asset in assets:
-            earliest_mov = moviments.filter(instrument__tckrSymb=asset).earliest('date')
+            dividends_total = 0
+            print("Getting Online Price for", asset)
+            current_price = Instrument.objects.filter(tckrSymb=asset)[0].get_price() 
+            position[asset] = {"sum_quantity": 0, "sum_dividends": 0,
+                               "sum_investments": 0.00, "sum_costs": 0.00}
+            asset_moviments = moviments.filter(instrument__tckrSymb=asset).order_by(
+                'date')  # de modo reverso -date
+            qt_total = 0
+            total_investments = 0
+            total_costs = 0
+            # earliest_mov = asset_moviments.earliest('date')
+            for moviment in asset_moviments:
+                # quantidade inicial no movimento:
 
-            print(asset, "\n", earliest_mov)
-            print('Moviments')
-            print(earliest_mov)
-            events = earliest_mov.instrument.events.all().filter(event_date__gte=earliest_mov.date) 
-            # for mov in moviments_asset:
-            #     events = mov.instrument.events.all()
-            #     print('Events')
-            #     print(events)
+                qt = moviment.quantity
+                total_investments += moviment.total_investment
+                total_costs += moviment.total_costs
+                dividends = 0
+                # Pega os eventos depois do movimento:
+                events = moviment.instrument.events.all().filter(event_date__gte=moviment.date).order_by('event_date')
+                # agora o looping nos eventos que se aplicam para esse movimento:
+                for event in events:  # continua
+                    div_per_share = event.dividends
+                    split_per_share = event.stock_splits
 
-            
+                    if split_per_share != 0.0:
+                        qt *= split_per_share
+                    if div_per_share != 0:
+                        dividends += qt*div_per_share
+
+                dividends_total += dividends
+                qt_total += qt
+                position[asset] = {
+                    "sum_quantity": qt_total, "sum_dividends": dividends_total, "sum_investments": total_investments, "sum_costs": total_costs}
+                # print(position[asset])
+        print('Quantidade', position[asset]['sum_quantity'])
+        print('Proventos Recebidos', position[asset]['sum_dividends'])
+        print('Total Investido', position[asset]['sum_investments'] + position[asset]['sum_costs'])
+        print('Patrimônio Atual', Decimal(current_price)*position[asset]['sum_quantity']) ## PODE DEMORAR PARA PEGAR O PREÇO ONLINE!
+        # its ok
+        return position
+
+        # for mov in moviments_asset:
+        #     events = mov.instrument.events.all()
+        #     print('Events')
+        #     print(events)
+
         return events  # TODO
 
     def __str__(self):
