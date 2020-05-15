@@ -143,6 +143,25 @@ class History(BaseTimeModel):
         'volume', decimal_places=0, max_digits=20)  
     lastUpdate = models.DateTimeField('last update', blank=True, null=True)
     
+    def __str__(self):
+        return "{} {} R$ {}".format(self.date,self.instrument,self.adj_close)
+
+    def save(self, *args, **kwargs):
+        if not self.open.isnumeric(): self.open = 0
+        if not self.high.isnumeric(): self.high = 0
+        if not self.low.isnumeric(): self.low = 0
+        if not self.close.isnumeric(): self.close = 0
+        if not self.adj_close.isnumeric(): self.adj_close = 0
+        if not self.volume.isnumeric(): self.volume = 0
+        if self.volume + self.adj_close + self.close + self.low + self.high + self.open = 0: return
+        #     self.type = 0  # C
+        # else:
+        #     self.type = 1  # V
+        # if self.total_costs == None:
+        #     self.total_costs = 0
+
+        super(Moviment, self).save(*args, **kwargs)
+
     class Meta:
         unique_together = ('instrument', 'date',)
         verbose_name = 'History'

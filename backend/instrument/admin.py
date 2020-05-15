@@ -13,7 +13,7 @@ class AdminInstrument(admin.ModelAdmin):
         #ordering = ['tckrSymb']
 
 class AdminHistory(admin.ModelAdmin):
-    list_display = ["instrument", "date", "open", "high", "low", "close", "adj_close", "volume", "lastUpdate"] # aqui vc precisa colocar as colunas que vc quer ver
+    list_display = ["instrument", "date", "open", "high", "low", "close", "adj_close", "volume", "lastUpdate", "updated_at"] # aqui vc precisa colocar as colunas que vc quer ver
     search_fields = ["date","instrument__tckrSymb", "instrument__crpnNm"]
     list_filter = ["instrument"]
 

@@ -39,6 +39,7 @@ class Wallet(models.Model):
             prices = {}
             for asset in assets:
                 prices[asset] = History.objects.filter(instrument=asset).lastest()
+            return prices
         except:
             print("Erro getting prices")
             pass
@@ -67,7 +68,8 @@ class Wallet(models.Model):
         assets = set(mov.instrument.tckrSymb for mov in moviments)
         self.assets = assets
         # Carregar preço atual do grupo ## TODO
-        
+        prices = self.get_prices(assets)
+        print(prices)
         wallet = {
                     "net_worth":0.0,
                     "total_dividends":0.0,

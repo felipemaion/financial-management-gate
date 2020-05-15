@@ -32,20 +32,27 @@ class Command(BaseCommand):
         print("Trying to populate History with data:")
         size = len(assets)
         for i, asset in enumerate(assets):
-            print("({}/{})".format(i,size))
+            print("({}/{}):{}".format(i,size-1,asset))
             instrument = Instrument.objects.filter(tckrSymb=asset[:-3])[0]
             for date, info in data[asset].iterrows():
-                # print(instrument,date,info['Open'],info['Close'],info['High'],info['Low'],info['Adj Close'],info['Volume'])
-                history = History.objects.get_or_create(
-                    instrument=instrument,
-                    date=date,
-                    open=info['Open'],
-                    high=info['High'],
-                    low=info['Low'],
-                    close=info['Close'],
-                    adj_close=info['Adj Close'],
-                    volume=info['Volume'],
-                    )
+                print(instrument,date,info['Open'],info['Close'],info['High'],info['Low'],info['Adj Close'],info['Volume'])
+                try:
+                    history = History.objects.get_or_create(
+                        instrument=instrument,
+                        date=date,
+                        open=info['Open'],
+                        high=info['High'],
+                        low=info['Low'],
+                        close=info['Close'],
+                        adj_close=info['Adj Close'],
+                        volume=info['Volume'],
+                        )
+                    print("\tNew History added for", instrument)
+                except Exception as error:
+                    print("Falha no ativo:{}\n{}".format(asset,error))
+                    pass
+                    # Sério... acho q tô pulando errado o ativo...
+                    # break
         self.stdout.write(self.style.SUCCESS(
         'Vixe... deu certo.. populou preços'))
         # except:
