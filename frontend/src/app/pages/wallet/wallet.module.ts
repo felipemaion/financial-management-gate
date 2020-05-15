@@ -8,6 +8,8 @@ import { MatSelectModule } from "@angular/material/select";
 import { WalletService } from "./services/wallet.service";
 import { MatDialogModule } from "@angular/material/dialog";
 import { DialogWallet } from './dialogs/wallet.dialog.component';
+import {MatTabsModule} from '@angular/material/tabs';
+import {MatTableModule} from '@angular/material/table';
 
 @NgModule({
   declarations: [
@@ -17,6 +19,8 @@ import { DialogWallet } from './dialogs/wallet.dialog.component';
   imports: [
     CommonModule,
     MatSelectModule,
+    MatTabsModule,
+    MatTableModule,
     FormsModule,
     WalletRoutingModule,
     MatDialogModule,
