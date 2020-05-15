@@ -3,7 +3,7 @@ from wallet.models import Wallet, Moviment
 from instrument.models import Instrument
 
 from account.models import User
-from selic.models import Selic
+
 
 import pandas as pd
 # o nome do comando é o nome do arquivo no caso seed excuta ai ./manage.py seed
@@ -14,10 +14,7 @@ class Command(BaseCommand):
 	def handle(self, *args, **options):
 		self.populateInstrument(*args, **options)
 		self.walletFullTest(*args, **options)
-		selic = Selic()
-		selic.update_me()  # Essa call deveria rodar uma vez por dia. Cron no servidor?
 
-		
 
 
 	def populateInstrument(self, *args, **options):
