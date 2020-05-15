@@ -32,7 +32,7 @@ class Command(BaseCommand):
         print("Trying to populate History with data:")
         size = len(assets)
         for i, asset in enumerate(assets):
-            print("({}/{}".format(i,size))
+            print("({}/{})".format(i,size))
             instrument = Instrument.objects.filter(tckrSymb=asset[:-3])[0]
             for date, info in data[asset].iterrows():
                 # print(instrument,date,info['Open'],info['Close'],info['High'],info['Low'],info['Adj Close'],info['Volume'])
