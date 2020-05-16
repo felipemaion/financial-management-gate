@@ -1,47 +1,41 @@
-<mat-drawer class="drawer" #drawer mode="over">
-
-  <mat-toolbar color="primary">
-    <mat-toolbar-row>
-      <span>Cash Flow</span>
-      <span class="spacer"></span>
-      <button (click)="drawer.toggle()" mat-icon-button aria-label="Example icon button with a menu icon">
-        <mat-icon>close</mat-icon>
-      </button>
-    </mat-toolbar-row>
-  </mat-toolbar>
+<mat-toolbar color="primary">
+  <mat-toolbar-row>
+    <span>Cash Flow</span>
+    <span class="spacer"></span>
+    <button (click)="toggle()" mat-icon-button aria-label="Example icon button with a menu icon">
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-toolbar-row>
+</mat-toolbar>
 
 
 
 
-  <mat-expansion-panel class="expansion" expanded="true">
-    <mat-expansion-panel-header>
-      Incomes
-    </mat-expansion-panel-header>
+<mat-expansion-panel class="expansion" expanded="true">
+  <mat-expansion-panel-header>
+    Incomes
+  </mat-expansion-panel-header>
 
-    <mat-list>
-      <mat-list-item> Acao</mat-list-item>
-      <mat-list-item> Salario </mat-list-item>
-      <mat-list-item> Renta </mat-list-item>
-      <mat-list-item> Renta </mat-list-item>
-      <mat-list-item> Renta </mat-list-item>
-    </mat-list>
+  <mat-list>
+    <mat-list-item> Acao</mat-list-item>
+    <mat-list-item> Salario </mat-list-item>
+    <mat-list-item> Renta </mat-list-item>
+    <mat-list-item> Renta </mat-list-item>
+    <mat-list-item> Renta </mat-list-item>
+  </mat-list>
 
-  </mat-expansion-panel>
-  <mat-divider></mat-divider>
+</mat-expansion-panel>
+<mat-divider></mat-divider>
 
-  <mat-expansion-panel class="expansion" expanded="true">
-    <mat-expansion-panel-header>
-      <mat-panel-title>
-        Expenses
-      </mat-panel-title>
-    </mat-expansion-panel-header>
-    <mat-list>
-      <mat-list-item> Food</mat-list-item>
-      <mat-list-item> Rent </mat-list-item>
-      <mat-list-item> Mortgade </mat-list-item>
-    </mat-list>
-  </mat-expansion-panel>
-
-
-
-</mat-drawer>
+<mat-expansion-panel class="expansion" expanded="true">
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      Expenses
+    </mat-panel-title>
+  </mat-expansion-panel-header>
+  <mat-list>
+    <mat-list-item> Food</mat-list-item>
+    <mat-list-item> Rent </mat-list-item>
+    <mat-list-item> Mortgade </mat-list-item>
+  </mat-list>
+</mat-expansion-panel>

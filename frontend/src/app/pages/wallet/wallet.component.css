@@ -1,3 +1,18 @@
 .spacer {
   flex: 1 1 auto;
 }
+
+.mat-toolbar-multiple-rows {
+  min-height: 53px;
+}
+
+.mat-toolbar-row, .mat-toolbar-single-row {
+  height: 53px;
+}
+.mat-toolbar{
+  height: 53px!important;
+  
+}
+.mat-toolbar-row{
+  height: 53px!important;
+}

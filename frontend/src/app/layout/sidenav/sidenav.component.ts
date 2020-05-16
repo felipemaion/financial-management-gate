@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from "@angular/core";
 import { MatSidenav } from "@angular/material/sidenav";
-import { SidenavService } from "./sidenav.service";
+import { SidenavglobalService } from "src/app/services/sidenavglobal.service";
 
 @Component({
   selector: "app-sidenav",
@@ -10,13 +10,13 @@ import { SidenavService } from "./sidenav.service";
 export class SidenavComponent implements OnInit, AfterViewInit {
   @ViewChild("drawer") drawer: MatSidenav;
 
-  constructor(private navService: SidenavService) {}
+  constructor(private navService: SidenavglobalService) {}
 
   ngAfterViewInit() {
-    this.navService.appDrawer = this.drawer
+    this.navService.appDrawer = this.drawer;
   }
   toggle() {
-    this.drawer.toggle();
+    this.navService.closeNav();
   }
 
   ngOnInit(): void {}

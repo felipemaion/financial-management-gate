@@ -5,8 +5,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { WalletService } from "./services/wallet.service";
 import { DialogWallet } from "./dialogs/wallet.dialog.component";
 import { DialogMessage } from "./dialogs/message.dialog.component";
-import { MatSidenav } from "@angular/material/sidenav";
-import { SidenavService } from 'src/app/layout/sidenav/sidenav.service';
+import { SidenavglobalService } from "src/app/services/sidenavglobal.service";
 
 export interface DialogData {
   description: string;
@@ -53,7 +52,11 @@ export class WalletComponent implements OnInit, OnDestroy {
   displayedColumns: string[] = ["position", "name", "weight", "symbol"];
   dataSource = ELEMENT_DATA;
 
-  constructor(private walletService: WalletService, public dialog: MatDialog,private sideNavService:SidenavService) {}
+  constructor(
+    private walletService: WalletService,
+    public dialog: MatDialog,
+    private sideGlobalService: SidenavglobalService
+  ) {}
 
   ngOnInit(): void {
     this.getWallets();
@@ -112,8 +115,9 @@ export class WalletComponent implements OnInit, OnDestroy {
       )
     );
   }
-  openSideNav(){
-    this.sideNavService.openNav()
+ 
+  openGlobalSide() {
+    this.sideGlobalService.appDrawer.toggle();
   }
   ngOnDestroy() {
     this.subscriptions.unsubscribe();

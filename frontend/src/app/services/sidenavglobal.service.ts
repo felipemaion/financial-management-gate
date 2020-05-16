@@ -4,7 +4,7 @@ import { MatSidenav } from "@angular/material/sidenav";
 @Injectable({
   providedIn: "root",
 })
-export class SidenavService {
+export class SidenavglobalService {
   public appDrawer: MatSidenav;
 
   constructor() {}
@@ -13,7 +13,7 @@ export class SidenavService {
     this.appDrawer.close();
   }
   public openNav() {
-    console.log("abrindo menu esquerdo");
+    console.log("Abrindo Menu Esquerdo");
     this.appDrawer.open();
   }
 }

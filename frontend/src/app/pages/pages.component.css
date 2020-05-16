@@ -1,14 +1,8 @@
-/* 
-mat-drawer-content {
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-} */
-
-/* app-sidenav { display: flex; }
-mat-drawer-container { flex: 1 1 auto; } */
-
+.drawer {
+  width: 300px;
+  border: none;
+  box-shadow: -14px -10px 20px 0px black;
+}
 
 .icon {
   padding: 0 14px;

@@ -9,8 +9,9 @@ import { MatButtonModule } from "@angular/material/button";
 import { SidenavComponent } from "./sidenav/sidenav.component";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatSidenavModule } from "@angular/material/sidenav";
-import { SidenavService } from "./sidenav/sidenav.service";
+
 import { MatListModule } from "@angular/material/list";
+import { SidenavglobalService } from "../services/sidenavglobal.service";
 
 const COMPONENTS = [HeaderComponent, SidenavComponent];
 
@@ -27,7 +28,7 @@ const COMPONENTS = [HeaderComponent, SidenavComponent];
     MatListModule,
     RouterModule,
   ],
-  providers: [SidenavService],
+  providers: [SidenavglobalService],
   exports: [COMPONENTS],
 })
 export class LayoutModule {}
