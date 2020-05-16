@@ -17,12 +17,16 @@
   </mat-expansion-panel-header>
 
   <mat-list>
-    <mat-list-item> Acao</mat-list-item>
-    <mat-list-item> Salario </mat-list-item>
-    <mat-list-item> Renta </mat-list-item>
-    <mat-list-item> Renta </mat-list-item>
-    <mat-list-item> Renta </mat-list-item>
+    <mat-list-item *ngFor="let item of [1,2,3,4,5,6,7,8,9,10,11,12,13,14]">
+      <b> 10000,00</b>
+      <div mat-line>Salario {{item}} </div>
+    </mat-list-item>
   </mat-list>
+  <mat-action-row>
+    <button mat-icon-button color="primary">
+      <mat-icon>add</mat-icon>
+    </button>
+  </mat-action-row>
 
 </mat-expansion-panel>
 <mat-divider></mat-divider>
@@ -34,8 +38,27 @@
     </mat-panel-title>
   </mat-expansion-panel-header>
   <mat-list>
-    <mat-list-item> Food</mat-list-item>
-    <mat-list-item> Rent </mat-list-item>
-    <mat-list-item> Mortgade </mat-list-item>
+    <mat-list-item *ngFor="let item of [1,2,3,4,5,6,7,8,9,10,11,12,13,14]">
+      <b> 340000,00</b>
+      <div mat-line>Expenses {{item}} </div>
+    </mat-list-item>
   </mat-list>
+
+  <mat-action-row>
+    <button mat-icon-button color="primary">
+      <mat-icon>add</mat-icon>
+    </button>
+  </mat-action-row>
 </mat-expansion-panel>
+
+<mat-list>
+  <mat-list-item>
+    
+    <b>R$200000,00</b>
+    <div mat-line>Net Cash Flow </div>
+  </mat-list-item>
+  <mat-list-item>
+    <b>R$205000,00</b>
+    <div mat-line>Passive Income</div>
+  </mat-list-item>
+</mat-list>
