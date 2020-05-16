@@ -12,7 +12,6 @@ import { MatSidenavModule } from "@angular/material/sidenav";
 import { MatListModule } from "@angular/material/list";
 import { SidenavglobalService } from "../services/sidenavglobal.service";
 import { SideNavContentComponent } from "./sidenav-content/sidenav-content.component";
-import { MatBottomSheetModule } from "@angular/material/bottom-sheet";
 
 const COMPONENTS = [HeaderComponent, SideNavContentComponent];
 

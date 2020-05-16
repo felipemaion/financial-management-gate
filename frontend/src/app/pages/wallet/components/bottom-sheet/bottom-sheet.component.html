@@ -7,3 +7,59 @@
     </button>
   </mat-toolbar-row>
 </mat-toolbar>
+
+
+<mat-grid-list cols="2">
+
+  <mat-grid-tile>
+    <mat-expansion-panel class="box box-assets" expanded="true">
+      <mat-expansion-panel-header>
+        Assets
+      </mat-expansion-panel-header>
+
+      <mat-list>
+        <mat-list-item *ngFor="let item of [1,2,3,4,5,6,7,8,9,10,11,12,13,14]">
+          <b> 10000,00</b>
+          <div mat-line>Salario {{item}} </div>
+        </mat-list-item>
+      </mat-list>
+
+
+    </mat-expansion-panel>
+  </mat-grid-tile>
+
+  <mat-grid-tile>
+    <div style="width: 100%;">
+      <mat-expansion-panel class="box box-liabilites " expanded="true">
+        <mat-expansion-panel-header>
+          Liabilits
+        </mat-expansion-panel-header>
+
+        <mat-list>
+          <mat-list-item *ngFor="let item of [1,2,3,4,5,6,7,8,9,10,11,12,13,14]">
+            <b> 10000,00</b>
+            <div mat-line>Salario {{item}} </div>
+          </mat-list-item>
+        </mat-list>
+
+
+      </mat-expansion-panel>
+      <mat-expansion-panel class="box box-equity " expanded="true">
+        <mat-expansion-panel-header>
+          Equity
+        </mat-expansion-panel-header>
+
+        <mat-list>
+          <mat-list-item>
+            <b> 10000,00</b>
+            <div mat-line>Equity </div>
+          </mat-list-item>
+        </mat-list>
+
+
+      </mat-expansion-panel>
+
+    </div>
+  </mat-grid-tile>
+
+</mat-grid-list>

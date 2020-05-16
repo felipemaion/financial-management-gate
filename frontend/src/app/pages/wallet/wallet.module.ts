@@ -15,6 +15,9 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { MatBottomSheetModule } from "@angular/material/bottom-sheet";
 import { BottomSheetComponent } from "./components/bottom-sheet/bottom-sheet.component";
+import { MatGridListModule } from "@angular/material/grid-list";
+import { MatExpansionModule } from "@angular/material/expansion";
+import { MatListModule } from "@angular/material/list";
 
 @NgModule({
   declarations: [WalletComponent, DialogWallet, BottomSheetComponent],
@@ -28,8 +31,11 @@ import { BottomSheetComponent } from "./components/bottom-sheet/bottom-sheet.com
     FormsModule,
     MatIconModule,
     WalletRoutingModule,
+    MatExpansionModule,
     MatDialogModule,
+    MatListModule,
     MatBottomSheetModule,
+    MatGridListModule,
   ],
   providers: [WalletService],
   entryComponents: [BottomSheetComponent],
