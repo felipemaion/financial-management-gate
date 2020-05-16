@@ -102,11 +102,13 @@ class Wallet(models.Model):
                 # Pega os eventos depois do movimento:
                 events = moviment.instrument.events.all().filter(event_date__gte=moviment.date).order_by('event_date')
                 # agora o looping nos eventos que se aplicam para esse movimento:
+                if asset == "LCAM3": print(*list(events), sep="\n")
                 for event in events:  # continua
                     div_per_share = event.dividends
                     split_per_share = event.stock_splits
 
                     if split_per_share != 0.0:
+                        if asset == "LCAM3": print(qt," x",split_per_share)
                         qt *= split_per_share
                     if div_per_share != 0:
                         dividends += qt*div_per_share

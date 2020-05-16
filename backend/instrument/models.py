@@ -19,7 +19,7 @@ class Instrument(BaseTimeModel):
         'corpGovnLvlNm', max_length=20, blank=True, null=True)
     lastUpdate = models.DateTimeField('last update', blank=True, null=True)
 
-    def PriceHistory(self):
+    def history(self):
         return yf.download(  # or pdr.get_data_yahoo(...
             # tickers list or string as well
             # This .SA is for South America (since the instruments are (for now) from SA). Future bug reported.
@@ -68,7 +68,7 @@ class Instrument(BaseTimeModel):
             pass
         return events
         # In [58]: stock = yf.Ticker("MGLU3.SA")
-        # In [59]: h = stock.PriceHistory(period="max")
+        # In [59]: h = stock.history(period="max")
         # In [60]: h[h["Stock Splits"]!=0]
         # Out[60]:
         #             Open   High    Low  Close    Volume  Dividends  Stock Splits
@@ -108,7 +108,7 @@ class Event(BaseTimeModel):
     )
 
     def __str__(self):
-        return 'SIMBOL:{} Date:{} Dividends: {} Stock Splits: {}' .format(
+        return 'Ticker:{} Date:{} Dividends: {} Stock Splits: {}' .format(
             self.instrument.tckrSymb,
             str(self.event_date),
             str(self.dividends),
@@ -125,7 +125,7 @@ class PriceHistory(BaseTimeModel):
     '''
     instrument, date, open, high, low, close, adj_close, volume, lastUpdate
     '''
-    instrument = models.ForeignKey(Instrument, related_name="PriceHistory",
+    instrument = models.ForeignKey(Instrument, related_name="history",
                                    on_delete=models.CASCADE)
     date = models.DateField(
         'date')  # precisa mesmo armazenar hora?
@@ -165,6 +165,6 @@ class PriceHistory(BaseTimeModel):
 
     class Meta:
         unique_together = ('instrument', 'date',)
-        verbose_name = 'PriceHistory'
-        verbose_name_plural = 'Histories'
+        verbose_name = 'Price History'
+        verbose_name_plural = 'Price Histories'
         ordering = ['-date']

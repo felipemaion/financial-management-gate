@@ -43,7 +43,7 @@ class Command(BaseCommand):
                 if not info.empty:
                     # print(instrument,date,info['Open'],info['Close'],info['High'],info['Low'],info['Adj Close'],info['Volume'])
                     try:
-                        PriceHistory = PriceHistory.objects.get_or_create(
+                        history = PriceHistory.objects.get_or_create(
                             instrument=instrument,
                             date=date,
                             open=info['Open'],
@@ -67,7 +67,7 @@ class Command(BaseCommand):
         
 
 
-    #         instrument = models.ForeignKey(Instrument, related_name="PriceHistory",
+    #         instrument = models.ForeignKey(Instrument, related_name="history",
     #                                on_delete=models.CASCADE)
     # date = models.DateTimeField(
     #     'date')  # precisa mesmo armazenar hora?

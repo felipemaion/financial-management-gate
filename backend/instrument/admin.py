@@ -12,7 +12,7 @@ class AdminInstrument(admin.ModelAdmin):
         verbose_name_plural = "Admin Instruments"
         #ordering = ['tckrSymb']
 
-class AdminPriceHistory(admin.ModelAdmin):
+class AdminHistory(admin.ModelAdmin):
     list_display = ["instrument", "date", "open", "high", "low", "close", "adj_close", "volume", "lastUpdate", "updated_at"] # aqui vc precisa colocar as colunas que vc quer ver
     search_fields = ["date","instrument__tckrSymb", "instrument__crpnNm"]
     list_filter = ["instrument"]
@@ -24,4 +24,4 @@ class AdminPriceHistory(admin.ModelAdmin):
         ordering = ["instrument"]
 
 admin.site.register(Instrument, AdminInstrument)
-admin.site.register(PriceHistory, AdminPriceHistory)
+admin.site.register(PriceHistory, AdminHistory)

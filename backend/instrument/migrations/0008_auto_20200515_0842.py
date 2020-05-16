@@ -11,16 +11,16 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AlterModelOptions(
-            name='PriceHistory',
+            name='history',
             options={'ordering': ['-date'], 'verbose_name': 'PriceHistory', 'verbose_name_plural': 'Histories'},
         ),
         migrations.AlterField(
-            model_name='PriceHistory',
+            model_name='history',
             name='date',
             field=models.DateField(verbose_name='date'),
         ),
         migrations.AlterUniqueTogether(
-            name='PriceHistory',
+            name='history',
             unique_together={('instrument', 'date')},
         ),
     ]
