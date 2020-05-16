@@ -1,18 +1,21 @@
 <mat-toolbar color="primary">
   <mat-toolbar-row>
-    <button color="accent" mat-icon-button (click)="openGlobalSide()">
-      <mat-icon>account_balance_wallet</mat-icon>
+    <button mat-icon-button (click)="openGlobalSide()">
+      <mat-icon>monetization_on</mat-icon>
     </button>
-    <button color="accent" mat-icon-button (click)="openBalanceBottomSheet()">
+    <button mat-icon-button (click)="openBalanceBottomSheet()">
       <mat-icon>account_balance</mat-icon>
     </button>
-    
+
     <button mat-button (click)="openDialogWallet()">
       <mat-icon>add</mat-icon>
       Nova Carteira
     </button>
     <span class="spacer"></span>
+    <button mat-icon-button>
+      <mat-icon>help_outline</mat-icon>
 
+    </button>
   </mat-toolbar-row>
 </mat-toolbar>
 
