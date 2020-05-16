@@ -79,8 +79,9 @@ class Instrument(BaseTimeModel):
 
     def get_price(self, date=datetime.now()):
         try:
-            data = yf.download(self.tckrSymb + '.SA', date)
-            return data['Adj Close'][0]
+            # data = yf.download(self.tckrSymb + '.SA', date)
+            data = History.objects.filter(instrument=self).latest('date').adj_close
+            return data
         except:
             return 0
     get_price.short_description = 'Price'
@@ -89,7 +90,7 @@ class Instrument(BaseTimeModel):
     class Meta:
         verbose_name = "Instrument"
         verbose_name_plural = "Instruments"
-        ordering = ['-id']
+        ordering = ['tckrSymb']
 
     def __str__(self):
         return "{}: {}".format(self.tckrSymb, self.crpnNm)
@@ -146,21 +147,21 @@ class History(BaseTimeModel):
     def __str__(self):
         return "{} {} R$ {}".format(self.date,self.instrument,self.adj_close)
 
-    def save(self, *args, **kwargs):
-        if not self.open.isnumeric(): self.open = 0
-        if not self.high.isnumeric(): self.high = 0
-        if not self.low.isnumeric(): self.low = 0
-        if not self.close.isnumeric(): self.close = 0
-        if not self.adj_close.isnumeric(): self.adj_close = 0
-        if not self.volume.isnumeric(): self.volume = 0
-        if self.volume + self.adj_close + self.close + self.low + self.high + self.open = 0: return
-        #     self.type = 0  # C
-        # else:
-        #     self.type = 1  # V
-        # if self.total_costs == None:
-        #     self.total_costs = 0
+    # def save(self, *args, **kwargs):
+    #     if not self.open.isnull(): self.open = 0.
+    #     if not self.high.isnull(): self.high = 0.
+    #     if not self.low.isnull(): self.low = 0.
+    #     if not self.close.isnull(): self.close = 0.
+    #     if not self.adj_close.isnull(): self.adj_close = 0.
+    #     if not self.volume.isnull(): self.volume = 0.
+    #     if self.volume + self.adj_close + self.close + self.low + self.high + self.open == 0.: return False
+    #     #     self.type = 0  # C
+    #     # else:
+    #     #     self.type = 1  # V
+    #     # if self.total_costs == None:
+    #     #     self.total_costs = 0
 
-        super(Moviment, self).save(*args, **kwargs)
+    #     super(History, self).save(*args, **kwargs)
 
     class Meta:
         unique_together = ('instrument', 'date',)
