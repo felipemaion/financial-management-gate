@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AlterField(
-            model_name='history',
+            model_name='PriceHistory',
             name='date',
             field=models.DateTimeField(verbose_name='date'),
         ),

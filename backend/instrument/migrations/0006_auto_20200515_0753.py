@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='events', to='instrument.Instrument'),
         ),
         migrations.CreateModel(
-            name='History',
+            name='PriceHistory',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='created at')),
@@ -30,7 +30,7 @@ class Migration(migrations.Migration):
                 ('adj_close', models.DecimalField(decimal_places=6, max_digits=20, verbose_name='adj_close')),
                 ('volume', models.DecimalField(decimal_places=0, max_digits=20, verbose_name='volume')),
                 ('lastUpdate', models.DateTimeField(blank=True, null=True, verbose_name='last update')),
-                ('instrument', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='history', to='instrument.Instrument')),
+                ('instrument', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='PriceHistory', to='instrument.Instrument')),
             ],
             options={
                 'abstract': False,

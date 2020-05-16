@@ -2,7 +2,7 @@ from django.db import models
 from django.db.models import Q
 from django.utils.translation import ugettext as _
 from account.models import User
-from instrument.models import Instrument, Event, History
+from instrument.models import Instrument, Event, PriceHistory
 from core.models import BaseTimeModel
 from selic.models import Selic
 from datetime import datetime
@@ -36,7 +36,7 @@ class Wallet(models.Model):
            
         for asset in assets:
             instrument = Instrument.objects.filter(tckrSymb=asset)[0]
-            prices[asset] = History.objects.filter(instrument=instrument).latest('date').adj_close
+            prices[asset] = PriceHistory.objects.filter(instrument=instrument).latest('date').adj_close
         return prices
 
 
@@ -47,7 +47,7 @@ class Wallet(models.Model):
                     "total_networth": Sum of all current value of the assets
                     "total_dividends": Sum of the total amount of provents (JCP + Div + Rent) of all Assets
                     "total_invested": Sum of the amount of money invested. Without correction of value.
-                    "total_invested_selic": Sum of the amout of money invested corrected by the interest rate SELIC
+                    "total_selic": Sum of the amout of money invested corrected by the interest rate SELIC
                     "assets": List of the assests in the Wallet
                     "moviments": All the moviments in this Wallet 
                     "position":position[asset] = {
@@ -69,7 +69,7 @@ class Wallet(models.Model):
                     "total_networth":0.0,
                     "total_dividends":0.0,
                     "total_invested":0.0,
-                    "total_invested_selic":0.0,
+                    "total_selic":0.0,
                     "assets":assets,
                     "moviments":moviments,
                     "position":{}
@@ -77,7 +77,7 @@ class Wallet(models.Model):
         total_networth = Decimal(0.0)
         total_dividends = Decimal(0.0)
         total_invested = Decimal(0.0)
-        total_invested_selic= Decimal(0.0)
+        total_selic= Decimal(0.0)
         position = {}
         for asset in assets:
             asset_dividends = 0
@@ -113,6 +113,7 @@ class Wallet(models.Model):
 
                 asset_dividends += dividends
                 asset_quantity += qt
+                print("{} {} * {} = {}".format(asset,asset_quantity,asset_price, asset_quantity * asset_price))
                 asset_networth += asset_quantity * asset_price
                 position[asset] = {
                     "quantity": asset_quantity,
@@ -125,7 +126,7 @@ class Wallet(models.Model):
                 
                 total_dividends += asset_dividends
                 total_invested += asset_investiments
-                total_invested_selic += asset_selic
+                total_selic += asset_selic
                 total_networth += asset_networth
         # print(position[asset])
         # print('Quantidade', position[asset]['quantity'])
@@ -137,7 +138,7 @@ class Wallet(models.Model):
                 "total_networth":total_networth,
                 "total_dividends":total_dividends,
                 "total_invested":total_invested,
-                "total_invested_selic":total_invested_selic,
+                "total_selic":total_selic,
                 "assets":assets,
                 "moviments":moviments,
                 "position":position

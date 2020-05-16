@@ -19,7 +19,7 @@ class Instrument(BaseTimeModel):
         'corpGovnLvlNm', max_length=20, blank=True, null=True)
     lastUpdate = models.DateTimeField('last update', blank=True, null=True)
 
-    def history(self):
+    def PriceHistory(self):
         return yf.download(  # or pdr.get_data_yahoo(...
             # tickers list or string as well
             # This .SA is for South America (since the instruments are (for now) from SA). Future bug reported.
@@ -68,7 +68,7 @@ class Instrument(BaseTimeModel):
             pass
         return events
         # In [58]: stock = yf.Ticker("MGLU3.SA")
-        # In [59]: h = stock.history(period="max")
+        # In [59]: h = stock.PriceHistory(period="max")
         # In [60]: h[h["Stock Splits"]!=0]
         # Out[60]:
         #             Open   High    Low  Close    Volume  Dividends  Stock Splits
@@ -80,7 +80,7 @@ class Instrument(BaseTimeModel):
     def get_price(self, date=datetime.now()):
         try:
             # data = yf.download(self.tckrSymb + '.SA', date)
-            data = History.objects.filter(instrument=self).latest('date').adj_close
+            data = PriceHistory.objects.filter(instrument=self).latest('date').adj_close
             return data
         except:
             return 0
@@ -121,11 +121,11 @@ class Event(BaseTimeModel):
         ordering = ['-event_date']
 
 
-class History(BaseTimeModel):
+class PriceHistory(BaseTimeModel):
     '''
     instrument, date, open, high, low, close, adj_close, volume, lastUpdate
     '''
-    instrument = models.ForeignKey(Instrument, related_name="history",
+    instrument = models.ForeignKey(Instrument, related_name="PriceHistory",
                                    on_delete=models.CASCADE)
     date = models.DateField(
         'date')  # precisa mesmo armazenar hora?
@@ -161,10 +161,10 @@ class History(BaseTimeModel):
     #     # if self.total_costs == None:
     #     #     self.total_costs = 0
 
-    #     super(History, self).save(*args, **kwargs)
+    #     super(PriceHistory, self).save(*args, **kwargs)
 
     class Meta:
         unique_together = ('instrument', 'date',)
-        verbose_name = 'History'
+        verbose_name = 'PriceHistory'
         verbose_name_plural = 'Histories'
         ordering = ['-date']

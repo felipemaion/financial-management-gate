@@ -74,7 +74,9 @@ class Command(BaseCommand):
 		self.stdout.write(self.style.SUCCESS("User: OK - User.name: " + user.username))
 
 		print("\tTrying to get or create Wallet:")
-		wallet = Wallet.objects.get_or_create(user=user, description="On Demand")[0] # Pega ou cria a carteira 
+		wallet = Wallet.objects.get_or_create(user=user, description="On Demand")[0] # Pega ou cria a carteira
+		wallet.delete()
+		wallet = Wallet.objects.get_or_create(user=user, description="On Demand")[0] # Pega ou cria a carteira
 		self.stdout.write(self.style.SUCCESS("Wallet: OK - Wallet.description: " +  wallet.description))
 
 		print("\tTrying to open file :")

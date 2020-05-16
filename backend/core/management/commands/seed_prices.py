@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from instrument.models import Instrument, History
+from instrument.models import Instrument, PriceHistory
 import pandas as pd
 from django.db.models import Q
 from datetime import datetime
@@ -25,14 +25,14 @@ class Command(BaseCommand):
         error_log = []
         assets = [asset + ".SA" for asset in assets]
         try:
-            ### TODO utilizar o History para armazenar e pegar as info.
+            ### TODO utilizar o PriceHistory para armazenar e pegar as info.
             print("Getting ONLINE Data for Assets:", assets)
             data = yf.download(assets, start="2010-01-01", end=datetime.now(), period="1d", group_by="Ticker")
             
         except:
             print("Error getting Online Data.")
         # try:
-        print("Trying to populate History with data:")
+        print("Trying to populate PriceHistory with data:")
         size = len(assets)
         for i, asset in enumerate(assets):
             print("({}/{}):{}".format(i,size-1,asset))
@@ -43,7 +43,7 @@ class Command(BaseCommand):
                 if not info.empty:
                     # print(instrument,date,info['Open'],info['Close'],info['High'],info['Low'],info['Adj Close'],info['Volume'])
                     try:
-                        history = History.objects.get_or_create(
+                        PriceHistory = PriceHistory.objects.get_or_create(
                             instrument=instrument,
                             date=date,
                             open=info['Open'],
@@ -53,7 +53,7 @@ class Command(BaseCommand):
                             adj_close=info['Adj Close'],
                             volume=info['Volume'],
                             )
-                        # print("\tNew History added for", instrument)
+                        # print("\tNew PriceHistory added for", instrument)
                     except Exception as error:
                         print("Falha no ativo:{}\n{}".format(asset,error))
                         pass
@@ -62,12 +62,12 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS(
         'Vixe... deu certo.. populou preços'))
         # except:
-        #     print("Error trying to populate History")
+        #     print("Error trying to populate PriceHistory")
         #     pass
         
 
 
-    #         instrument = models.ForeignKey(Instrument, related_name="history",
+    #         instrument = models.ForeignKey(Instrument, related_name="PriceHistory",
     #                                on_delete=models.CASCADE)
     # date = models.DateTimeField(
     #     'date')  # precisa mesmo armazenar hora?
