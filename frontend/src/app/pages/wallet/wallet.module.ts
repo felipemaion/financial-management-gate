@@ -13,10 +13,11 @@ import { MatTableModule } from "@angular/material/table";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
-
+import { MatBottomSheetModule } from "@angular/material/bottom-sheet";
+import { BottomSheetComponent } from "./components/bottom-sheet/bottom-sheet.component";
 
 @NgModule({
-  declarations: [WalletComponent, DialogWallet],
+  declarations: [WalletComponent, DialogWallet, BottomSheetComponent],
   imports: [
     CommonModule,
     MatSelectModule,
@@ -28,7 +29,9 @@ import { MatButtonModule } from "@angular/material/button";
     MatIconModule,
     WalletRoutingModule,
     MatDialogModule,
+    MatBottomSheetModule,
   ],
   providers: [WalletService],
+  entryComponents: [BottomSheetComponent],
 })
 export class WalletModule {}

@@ -6,6 +6,8 @@ import { WalletService } from "./services/wallet.service";
 import { DialogWallet } from "./dialogs/wallet.dialog.component";
 import { DialogMessage } from "./dialogs/message.dialog.component";
 import { SidenavglobalService } from "src/app/services/sidenavglobal.service";
+import { MatBottomSheet } from "@angular/material/bottom-sheet";
+import { BottomSheetComponent } from "./components/bottom-sheet/bottom-sheet.component";
 
 export interface DialogData {
   description: string;
@@ -55,7 +57,8 @@ export class WalletComponent implements OnInit, OnDestroy {
   constructor(
     private walletService: WalletService,
     public dialog: MatDialog,
-    private sideGlobalService: SidenavglobalService
+    private sideGlobalService: SidenavglobalService,
+    private _bottomSheet: MatBottomSheet
   ) {}
 
   ngOnInit(): void {
@@ -115,10 +118,17 @@ export class WalletComponent implements OnInit, OnDestroy {
       )
     );
   }
- 
+
   openGlobalSide() {
     this.sideGlobalService.appDrawer.toggle();
   }
+
+  openBalanceBottomSheet() {
+    this._bottomSheet.open(BottomSheetComponent, {
+      panelClass: "balance-sheet",
+    });
+  }
+
   ngOnDestroy() {
     this.subscriptions.unsubscribe();
   }

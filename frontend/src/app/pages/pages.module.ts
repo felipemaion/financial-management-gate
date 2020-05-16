@@ -23,6 +23,7 @@ import { SidenavglobalService } from "../services/sidenavglobal.service";
     MatButtonModule,
     PagesRoutingModule,
     LayoutModule,
+
   ],
   providers: [SidenavglobalService],
 })
