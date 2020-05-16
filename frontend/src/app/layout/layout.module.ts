@@ -6,14 +6,14 @@ import { RouterModule } from "@angular/router";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
-import { SidenavComponent } from "./sidenav/sidenav.component";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatSidenavModule } from "@angular/material/sidenav";
 
 import { MatListModule } from "@angular/material/list";
 import { SidenavglobalService } from "../services/sidenavglobal.service";
+import { SideNavContentComponent } from "./sidenav-content/sidenav-content.component";
 
-const COMPONENTS = [HeaderComponent, SidenavComponent];
+const COMPONENTS = [HeaderComponent, SideNavContentComponent];
 
 @NgModule({
   declarations: COMPONENTS,

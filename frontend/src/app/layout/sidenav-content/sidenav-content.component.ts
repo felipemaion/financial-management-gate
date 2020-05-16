@@ -3,11 +3,11 @@ import { MatSidenav } from "@angular/material/sidenav";
 import { SidenavglobalService } from "src/app/services/sidenavglobal.service";
 
 @Component({
-  selector: "app-sidenav",
-  templateUrl: "./sidenav.component.html",
-  styleUrls: ["./sidenav.component.scss"],
+  selector: "app-sidenav-content",
+  templateUrl: "./sidenav-content.component.html",
+  styleUrls: ["./sidenav-content.component.scss"],
 })
-export class SidenavComponent implements OnInit, AfterViewInit {
+export class SideNavContentComponent implements OnInit, AfterViewInit {
   @ViewChild("drawer") drawer: MatSidenav;
 
   constructor(private navService: SidenavglobalService) {}
