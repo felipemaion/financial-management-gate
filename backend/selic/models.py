@@ -26,7 +26,7 @@ class Selic(models.Model):
         if self.validate_unique():
             super(Selic, self).save(*args, **kwargs)
 
-    def present_value(amount, initial_date, final_date=None):
+    def present_value(self, amount, initial_date, final_date=None):
         # update_me()
         amount = Decimal(amount)
         today = datetime.date.today()

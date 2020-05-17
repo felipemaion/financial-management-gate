@@ -79,8 +79,9 @@ class Instrument(BaseTimeModel):
 
     def get_price(self, date=datetime.now()):
         try:
-            data = yf.download(self.tckrSymb + '.SA', date)
-            return data['Adj Close'][0]
+            # data = yf.download(self.tckrSymb + '.SA', date)
+            data = PriceHistory.objects.filter(instrument=self).latest('date').adj_close
+            return data
         except:
             return 0
     get_price.short_description = 'Price'
@@ -89,7 +90,7 @@ class Instrument(BaseTimeModel):
     class Meta:
         verbose_name = "Instrument"
         verbose_name_plural = "Instruments"
-        ordering = ['-id']
+        ordering = ['tckrSymb']
 
     def __str__(self):
         return "{}: {}".format(self.tckrSymb, self.crpnNm)
@@ -107,7 +108,7 @@ class Event(BaseTimeModel):
     )
 
     def __str__(self):
-        return 'SIMBOL:{} Date:{} Dividends: {} Stock Splits: {}' .format(
+        return 'Ticker:{} Date:{} Dividends: {} Stock Splits: {}' .format(
             self.instrument.tckrSymb,
             str(self.event_date),
             str(self.dividends),
@@ -118,3 +119,52 @@ class Event(BaseTimeModel):
         verbose_name = 'Event'
         verbose_name_plural = 'Events'
         ordering = ['-event_date']
+
+
+class PriceHistory(BaseTimeModel):
+    '''
+    instrument, date, open, high, low, close, adj_close, volume, lastUpdate
+    '''
+    instrument = models.ForeignKey(Instrument, related_name="history",
+                                   on_delete=models.CASCADE)
+    date = models.DateField(
+        'date')  # precisa mesmo armazenar hora?
+    ## open é palavra protegida?
+    open = models.DecimalField(
+        'open', decimal_places=6, max_digits=20)
+    high = models.DecimalField(
+        'high', decimal_places=6, max_digits=20)
+    low = models.DecimalField(
+        'low', decimal_places=6, max_digits=20)
+    close = models.DecimalField(
+        'close', decimal_places=6, max_digits=20)
+    adj_close = models.DecimalField(
+        'adj_close', decimal_places=6, max_digits=20)
+    volume = models.DecimalField(
+        'volume', decimal_places=0, max_digits=20)  
+    lastUpdate = models.DateTimeField('last update', blank=True, null=True)
+    
+    def __str__(self):
+        return "{} {} R$ {}".format(self.date,self.instrument,self.adj_close)
+
+    # def save(self, *args, **kwargs):
+    #     if not self.open.isnull(): self.open = 0.
+    #     if not self.high.isnull(): self.high = 0.
+    #     if not self.low.isnull(): self.low = 0.
+    #     if not self.close.isnull(): self.close = 0.
+    #     if not self.adj_close.isnull(): self.adj_close = 0.
+    #     if not self.volume.isnull(): self.volume = 0.
+    #     if self.volume + self.adj_close + self.close + self.low + self.high + self.open == 0.: return False
+    #     #     self.type = 0  # C
+    #     # else:
+    #     #     self.type = 1  # V
+    #     # if self.total_costs == None:
+    #     #     self.total_costs = 0
+
+    #     super(PriceHistory, self).save(*args, **kwargs)
+
+    class Meta:
+        unique_together = ('instrument', 'date',)
+        verbose_name = 'Price History'
+        verbose_name_plural = 'Price Histories'
+        ordering = ['-date']
