@@ -1,4 +1,21 @@
-<div class="ui secondary top menu">
+<mat-toolbar color="primary">
+  <mat-toolbar-row class="shadow">
+    <span>FmG</span>
+    <button mat-button routerLink="/user/home" routerLinkActive="active">Inicio</button>
+    <button mat-button routerLink="/user/wallets" routerLinkActive="active">Carteiras</button>
+    <button mat-button routerLink="/user/suport" routerLinkActive="active">Suporte</button>
+    <button mat-button routerLink="/user/sugestion" routerLinkActive="active">Sujerir</button>
+
+    <span class="spacer"></span>
+
+    <button mat-icon-button (click)="sair()">
+      <mat-icon>power_settings_new</mat-icon>
+    </button>
+
+  </mat-toolbar-row>
+</mat-toolbar>
+
+<!-- <div class="ui secondary top menu">
   <a class="item">Financial App Manager</a>
   <a class="item" routerLink="/user/home" routerLinkActive="active">
     <i class="icon shopping bag"></i> Inicio</a>
@@ -12,4 +29,4 @@
       <i class="icon power off"></i>
       Sair</a>
   </div>
-</div>
+</div> -->

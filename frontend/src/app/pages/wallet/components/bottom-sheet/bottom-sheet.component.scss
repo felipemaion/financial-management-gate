@@ -1,0 +1,66 @@
+.title {
+  display: flex;
+  justify-content: space-between;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+.mat-toolbar-multiple-rows {
+  min-height: 32px;
+}
+
+.mat-toolbar-row,
+.mat-toolbar-single-row {
+  height: 32px;
+}
+.mat-toolbar {
+  height: 32px !important;
+}
+.mat-toolbar-row {
+  height: 32px !important;
+  padding: 0 0 0 16px;
+}
+
+::ng-deep .mat-grid-tile .mat-figure {
+  align-items: start !important;
+  justify-content: start !important;
+}
+// Box Assets
+::ng-deep {
+  .box {
+    width: 100%;
+    background-color: #bcdaff !important;
+    .mat-expansion-panel-header {
+      padding: 0px 16px;
+      height: 30px !important;
+    }
+    .mat-expansion-panel-body {
+      padding: 0px !important;
+      overflow-y: auto;
+      background-color: #e6f1ff;
+    }
+    
+  }
+  .box-assets .mat-expansion-panel-body {
+    height: 186px !important;
+
+  }
+  .box-liabilites .mat-expansion-panel-body {
+    height: 123px !important;
+  }
+  .box-equity .mat-expansion-panel-body {
+    height: 34px !important;
+  }
+}
+
+::ng-deep .mat-grid-list {
+  padding-bottom: 0px !important;
+}
+::ng-deep .mat-list-item {
+  height: 22px !important;
+}
+
+::ng-deep .mat-bottom-sheet-container {
+  overflow: hidden !important;
+}

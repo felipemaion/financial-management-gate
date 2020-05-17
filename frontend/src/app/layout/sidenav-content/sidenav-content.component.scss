@@ -1,0 +1,50 @@
+.icon {
+  padding: 0 14px;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+.mat-toolbar-multiple-rows {
+  min-height: 53px;
+}
+
+.mat-toolbar-row,
+.mat-toolbar-single-row {
+  height: 53px;
+  
+}
+.mat-toolbar {
+  height: 53px !important;
+}
+.mat-toolbar-row {
+  height: 53px !important;
+  padding: 0 2px 0 16px!important;
+
+}
+
+::ng-deep .expansion{
+  background-color: #bcdaff !important;
+  border-radius: 0px!important;
+}
+
+::ng-deep .expansion .mat-expansion-panel-body {
+  padding: 0px !important;
+  overflow-y: auto;
+  height: 150px;
+  background-color: #e6f1ff;
+}
+::ng-deep .expansion .mat-expansion-panel-header {
+  height: 43px !important;
+  padding: 0px 16px;
+}
+::ng-deep .expansion .mat-action-row {
+  border-top-style: none;
+  padding: 0px;
+  background-color: #e6f1ff;
+
+}
+
+::ng-deep .mat-list-item {
+  height: 22px !important;
+}

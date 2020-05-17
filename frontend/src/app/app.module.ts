@@ -6,7 +6,6 @@ import { AppComponent } from './app.component';
 import { SuiModule } from 'ng2-semantic-ui';
 import { LayoutModule } from './layout/layout.module';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { PagesModule } from './pages/pages.module';
 import { WalletModule } from './pages/wallet/wallet.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';

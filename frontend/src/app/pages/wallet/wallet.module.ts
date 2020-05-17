@@ -7,20 +7,37 @@ import { FormsModule } from "@angular/forms";
 import { MatSelectModule } from "@angular/material/select";
 import { WalletService } from "./services/wallet.service";
 import { MatDialogModule } from "@angular/material/dialog";
-import { DialogWallet } from './dialogs/wallet.dialog.component';
+import { DialogWallet } from "./dialogs/wallet.dialog.component";
+import { MatTabsModule } from "@angular/material/tabs";
+import { MatTableModule } from "@angular/material/table";
+import { MatToolbarModule } from "@angular/material/toolbar";
+import { MatIconModule } from "@angular/material/icon";
+import { MatButtonModule } from "@angular/material/button";
+import { MatBottomSheetModule } from "@angular/material/bottom-sheet";
+import { BottomSheetComponent } from "./components/bottom-sheet/bottom-sheet.component";
+import { MatGridListModule } from "@angular/material/grid-list";
+import { MatExpansionModule } from "@angular/material/expansion";
+import { MatListModule } from "@angular/material/list";
 
 @NgModule({
-  declarations: [
-    WalletComponent,
-    DialogWallet
-  ],
+  declarations: [WalletComponent, DialogWallet, BottomSheetComponent],
   imports: [
     CommonModule,
     MatSelectModule,
+    MatTabsModule,
+    MatTableModule,
+    MatButtonModule,
+    MatToolbarModule,
     FormsModule,
+    MatIconModule,
     WalletRoutingModule,
+    MatExpansionModule,
     MatDialogModule,
+    MatListModule,
+    MatBottomSheetModule,
+    MatGridListModule,
   ],
   providers: [WalletService],
+  entryComponents: [BottomSheetComponent],
 })
 export class WalletModule {}
