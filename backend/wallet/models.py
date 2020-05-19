@@ -91,9 +91,10 @@ class Wallet(models.Model):
             asset_selic = 0
             asset_networth = 0
             # earliest_mov = asset_moviments.earliest('date')
+            print("Asset:", asset)
             for moviment in asset_moviments:
                 # quantidade inicial no movimento:
-
+                print(f"Applying events to the moviment: {moviment}")
                 qt = moviment.quantity
                 asset_investiments += moviment.total_investment
                 asset_cost += moviment.total_costs
@@ -102,20 +103,22 @@ class Wallet(models.Model):
                 # Pega os eventos depois do movimento:
                 events = moviment.instrument.events.all().filter(event_date__gte=moviment.date).order_by('event_date')
                 # agora o looping nos eventos que se aplicam para esse movimento:
-                if asset == "LCAM3": print(*list(events), sep="\n")
-                for event in events:  # continua
+                print("Event Date \t \t Dividends \t Splits \t Total Dividends \t Posição para Movimentação")
+                for event in events:
+                    # Read events for this asset:
+                    event_date = event.event_date
                     div_per_share = event.dividends
                     split_per_share = event.stock_splits
-
+                    
                     if split_per_share != 0.0:
-                        if asset == "LCAM3": print(qt," x",split_per_share)
+                        # if asset == "LCAM3": print(qt," x",split_per_share)
                         qt *= split_per_share
                     if div_per_share != 0:
                         dividends += qt*div_per_share
-
+                    print(f"Event:\t{event_date} \t {div_per_share} \t {split_per_share} ->\t {qt*div_per_share:.2f} \t \t {qt:.2f}")
                 asset_dividends += dividends
                 asset_quantity += qt
-                print("{} {} * {} = {}".format(asset,asset_quantity,asset_price, asset_quantity * asset_price))
+                
                 asset_networth += asset_quantity * asset_price
                 position[asset] = {
                     "quantity": asset_quantity,
@@ -130,6 +133,7 @@ class Wallet(models.Model):
                 total_invested += asset_investiments
                 total_selic += asset_selic
                 total_networth += asset_networth
+            print(f"\n{asset}: {asset_quantity:.2f} * {asset_price:.2f} = NetWorth R$ {asset_quantity * asset_price:.2f}; Total Dividends Received: R$ {asset_dividends:.2f}")
         # print(position[asset])
         # print('Quantidade', position[asset]['quantity'])
         # print('Proventos Recebidos', position[asset]['dividends'])
