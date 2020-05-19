@@ -22,23 +22,26 @@ class Wallet(models.Model):
     assets = []
 
     objects = WalletQuerySetManager()
-    def get_assets(self,moviments=None):
-        if not moviments: moviments = self.moviments.all()
+
+    def get_assets(self, moviments=None):
+        if not moviments:
+            moviments = self.moviments.all()
         self.assets = set(mov.instrument.tckrSymb for mov in moviments)
         return self.assets
 
     def get_prices(self, assets=[], start=datetime.now(), end=datetime.now()):
         # FIX ASSETS (Hey this seems wrong...)
-        if assets==[]:assets = self.get_assets()
-        print("Prices for",assets)
+        if assets == []:
+            assets = self.get_assets()
+        print("Prices for", assets)
         # assets = [asset + ".SA" for asset in assets] # so para o yfinances
         prices = {}
-           
+
         for asset in assets:
             instrument = Instrument.objects.filter(tckrSymb=asset)[0]
-            prices[asset] = PriceHistory.objects.filter(instrument=instrument).latest('date').adj_close
+            prices[asset] = PriceHistory.objects.filter(
+                instrument=instrument).latest('date').adj_close
         return prices
-
 
     def position(self, date=datetime.now()):
         """
@@ -62,29 +65,31 @@ class Wallet(models.Model):
         moviments = self.moviments.all()
         assets = set(mov.instrument.tckrSymb for mov in moviments)
         self.assets = assets
-        # Carregar preço atual do grupo ## 
+        # Carregar preço atual do grupo ##
         prices = self.get_prices(assets)
         # print(prices)
         wallet = {
-                    "total_networth":0.0,
-                    "total_dividends":0.0,
-                    "total_invested":0.0,
-                    "total_selic":0.0,
-                    "assets":assets,
-                    "moviments":moviments,
-                    "position":{}
-                    }
+            "total_networth": 0.0,
+            "total_dividends": 0.0,
+            "total_invested": 0.0,
+            "total_selic": 0.0,
+            "assets": assets,
+            "moviments": moviments,
+            "position": {}
+        }
         total_networth = Decimal(0.0)
         total_dividends = Decimal(0.0)
         total_invested = Decimal(0.0)
-        total_selic= Decimal(0.0)
+        total_selic = Decimal(0.0)
         position = {}
         for asset in assets:
             asset_dividends = 0
-            asset_price = prices[asset] #Instrument.objects.filter(tckrSymb=asset)[0].get_price() 
+            # Instrument.objects.filter(tckrSymb=asset)[0].get_price()
+            asset_price = prices[asset]
             position[asset] = {"quantity": 0, "dividends": 0,
-                               "investments": 0.00, "sum_costs": 0.00, "index_selic":0.0}
-            asset_moviments = moviments.filter(instrument__tckrSymb=asset).order_by('date')  # de modo reverso -date
+                               "investments": 0.00, "sum_costs": 0.00, "index_selic": 0.0}
+            asset_moviments = moviments.filter(instrument__tckrSymb=asset).order_by(
+                'date')  # de modo reverso -date
             asset_quantity = 0
             asset_investiments = 0
             asset_cost = 0
@@ -101,34 +106,37 @@ class Wallet(models.Model):
                 asset_selic += moviment.present_value()
                 dividends = 0
                 # Pega os eventos depois do movimento:
-                events = moviment.instrument.events.all().filter(event_date__gte=moviment.date).order_by('event_date')
+                events = moviment.instrument.events.all().filter(
+                    event_date__gte=moviment.date).order_by('event_date')
                 # agora o looping nos eventos que se aplicam para esse movimento:
-                print("Event Date \t \t Dividends \t Splits \t Total Dividends \t Posição para Movimentação")
+                print(
+                    "Event Date \t \t Dividends \t Splits \t Total Dividends \t Posição para Movimentação")
                 for event in events:
                     # Read events for this asset:
                     event_date = event.event_date
                     div_per_share = event.dividends
                     split_per_share = event.stock_splits
-                    
+
                     if split_per_share != 0.0:
                         # if asset == "LCAM3": print(qt," x",split_per_share)
                         qt *= split_per_share
                     if div_per_share != 0:
                         dividends += qt*div_per_share
-                    print(f"Event:\t{event_date} \t {div_per_share} \t {split_per_share} ->\t {qt*div_per_share:.2f} \t \t {qt:.2f}")
+                    print(
+                        f"Event:\t{event_date} \t {div_per_share} \t {split_per_share} ->\t {qt*div_per_share:.2f} \t \t {qt:.2f}")
                 asset_dividends += dividends
                 asset_quantity += qt
-                
+
                 asset_networth += asset_quantity * asset_price
                 position[asset] = {
                     "quantity": asset_quantity,
-                    "dividends": asset_dividends, 
-                    "investments": asset_investiments, 
-                    "costs": asset_cost, 
-                    "index_selic":asset_selic,
-                    "networth":asset_networth
-                    }
-                
+                    "dividends": asset_dividends,
+                    "investments": asset_investiments,
+                    "costs": asset_cost,
+                    "index_selic": asset_selic,
+                    "networth": asset_networth
+                }
+
                 total_dividends += asset_dividends
                 total_invested += asset_investiments
                 total_selic += asset_selic
@@ -141,14 +149,14 @@ class Wallet(models.Model):
         # print('Patrimônio Atual', Decimal(asset_price)*position[asset]['quantity']) ## PODE DEMORAR PARA PEGAR O PREÇO ONLINE!
         # its ok
         wallet = {
-                "total_networth":total_networth,
-                "total_dividends":total_dividends,
-                "total_invested":total_invested,
-                "total_selic":total_selic,
-                "assets":assets,
-                "moviments":moviments,
-                "position":position
-                }
+            "total_networth": total_networth,
+            "total_dividends": total_dividends,
+            "total_invested": total_invested,
+            "total_selic": total_selic,
+            "assets": assets,
+            "moviments": moviments,
+            "position": position
+        }
         return wallet
 
     def __str__(self):
@@ -188,7 +196,7 @@ class Moviment(BaseTimeModel):
     date = models.DateField('date')
 
     def present_value(self, final_date=None):
-        return Selic().present_value(self.total_investment,self.date, final_date=final_date) 
+        return Selic().present_value(self.total_investment, self.date, final_date=final_date)
 
     def save(self, *args, **kwargs):
         if self.quantity > 0:
