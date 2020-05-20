@@ -79,13 +79,14 @@ class Wallet(models.Model):
         total_dividends = Decimal(0.0)
         total_invested = Decimal(0.0)
         total_selic = Decimal(0.0)
-        positions = {}
+        positions = []
         for asset in assets:
+            asset_ticker = asset
             asset_dividends = 0
             # Instrument.objects.filter(tckrSymb=asset)[0].get_price()
             asset_price = prices[asset]
-            positions[asset] = {"quantity": 0, "dividends": 0,
-                               "investments": 0.00, "sum_costs": 0.00, "index_selic": 0.0}
+            # positions[asset] = {"quantity": 0, "dividends": 0,
+            #                    "investments": 0.00, "sum_costs": 0.00, "index_selic": 0.0}
             asset_moviments = moviments.filter(instrument__tckrSymb=asset).order_by(
                 'date')  # de modo reverso -date
             asset_quantity = 0
@@ -126,14 +127,15 @@ class Wallet(models.Model):
                 asset_quantity += qt
 
                 asset_networth += asset_quantity * asset_price
-                positions[asset] = {
+                positions.append({
+                    "ticker": asset_ticker,
                     "quantity": asset_quantity,
                     "dividends": asset_dividends,
                     "investments": asset_investiments,
                     "costs": asset_cost,
                     "index_selic": asset_selic,
                     "networth": asset_networth
-                }
+                })
 
                 total_dividends += asset_dividends
                 total_invested += asset_investiments
