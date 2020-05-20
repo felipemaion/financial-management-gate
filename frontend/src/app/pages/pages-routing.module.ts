@@ -16,6 +16,11 @@ const routes: Routes = [
           import("./home/home.module").then((m) => m.HomeModule),
       },
       {
+        path: "extras",
+        loadChildren: () =>
+          import("./extras/extras.module").then((m) => m.ExtrasModule),
+      },
+      {
         path: "sugestion",
         component: SugestionComponent,
       },

@@ -30,17 +30,14 @@ export interface PeriodicElement {
   styleUrls: ["./wallet.component.css"],
 })
 export class WalletComponent implements OnInit, OnDestroy {
-  subscriptions: Subscription = new Subscription();
 
+  subscriptions: Subscription = new Subscription();
   description: string = "";
   carteiras: Wallet[]; // pq em pt?
   loading = false;
   collapse: false;
   carteiraSelected;
 
-  formData: FormData = new FormData();
-  loadingCsv = false;
-  csvName: string = "Nada Selecionado";
 
   displayedColumns: string[] = [
     "ticker",
@@ -51,6 +48,7 @@ export class WalletComponent implements OnInit, OnDestroy {
     "index_selic",
     "networth",
   ];
+
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   position: PositionWallet;
   dataSource;
@@ -91,33 +89,6 @@ export class WalletComponent implements OnInit, OnDestroy {
         this.carteiras.push(result);
       }
     });
-  }
-
-  handleCSVFileInput(event) {
-    console.log(event);
-    if (event.length > 0) {
-      this.formData.append("file", event[0], event[0].name);
-      this.csvName = event[0].name;
-    }
-  }
-  enviarCsv() {
-    this.loading = true;
-    this.subscriptions.add(
-      this.walletService.sendCsv(this.formData).subscribe(
-        (data) => {
-          this.loading = false;
-          this.dialog.open(DialogMessage, {
-            data: { message: "Sucesso Ao Fazer Upload" },
-          });
-        },
-        (error) => {
-          this.loading = false;
-          this.dialog.open(DialogMessage, {
-            data: { message: "Error Ao Fazer Upload" },
-          });
-        }
-      )
-    );
   }
 
   openGlobalSide() {
