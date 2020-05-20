@@ -43,11 +43,13 @@ export class WalletComponent implements OnInit, OnDestroy {
   csvName: string = "Nada Selecionado";
 
   displayedColumns: string[] = [
-    "acao",
+    "ticker",
     "quantity",
-    "total_investment",
-    "total_costs",
-    "date",
+    "dividends",
+    "investments",
+    "costs",
+    "index_selic",
+    "networth",
   ];
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   position: PositionWallet;

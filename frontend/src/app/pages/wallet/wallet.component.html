@@ -71,34 +71,45 @@
 
         <mat-table matSort [dataSource]="dataSource" class="mat-elevation-z8">
 
-          <ng-container matColumnDef="acao">
-            <mat-header-cell mat-sort-header *matHeaderCellDef> Acao </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.instrument.tckrSymb}} </mat-cell>
+          <ng-container matColumnDef="ticker">
+            <mat-header-cell mat-sort-header *matHeaderCellDef> Ticker </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.ticker}} </mat-cell>
           </ng-container>
 
 
           <ng-container matColumnDef="quantity">
-            <mat-header-cell  mat-sort-header *matHeaderCellDef> Quantidade </mat-header-cell>
+            <mat-header-cell  mat-sort-header *matHeaderCellDef> Quantity </mat-header-cell>
             <mat-cell *matCellDef="let element"> {{element.quantity}} </mat-cell>
           </ng-container>
 
 
-          <ng-container matColumnDef="total_investment">
-            <mat-header-cell *matHeaderCellDef> Total Investiments </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.total_costs}} </mat-cell>
+          <ng-container matColumnDef="dividends">
+            <mat-header-cell *matHeaderCellDef> Dividends </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.dividends}} </mat-cell>
           </ng-container>
 
 
-          <ng-container matColumnDef="total_costs">
-            <mat-header-cell mat-sort-header *matHeaderCellDef> Total Costs </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.total_investment}} </mat-cell>
+          <ng-container matColumnDef="investments">
+            <mat-header-cell mat-sort-header *matHeaderCellDef> Investiments </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.investments}} </mat-cell>
           </ng-container>
 
-          <ng-container matColumnDef="date">
-            <mat-header-cell mat-sort-header *matHeaderCellDef> Date </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.date|date}} </mat-cell>
-
+          <ng-container matColumnDef="costs">
+            <mat-header-cell mat-sort-header *matHeaderCellDef> Costs </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.costs}} </mat-cell>
           </ng-container>
+
+          <ng-container matColumnDef="index_selic">
+            <mat-header-cell mat-sort-header *matHeaderCellDef> Index </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.index_selic}} </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="networth">
+            <mat-header-cell mat-sort-header *matHeaderCellDef> Networth </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.networth}} </mat-cell>
+          </ng-container>
+
+
           <mat-header-row mat-sort-header  *matHeaderRowDef="displayedColumns"></mat-header-row>
           <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
         </mat-table>
