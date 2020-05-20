@@ -18,6 +18,8 @@ import { BottomSheetComponent } from "./components/bottom-sheet/bottom-sheet.com
 import { MatGridListModule } from "@angular/material/grid-list";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatListModule } from "@angular/material/list";
+import { MatSortModule } from '@angular/material/sort';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 @NgModule({
   declarations: [WalletComponent, DialogWallet, BottomSheetComponent],
@@ -36,6 +38,8 @@ import { MatListModule } from "@angular/material/list";
     MatListModule,
     MatBottomSheetModule,
     MatGridListModule,
+    MatSortModule,
+    MatPaginatorModule
   ],
   providers: [WalletService],
   entryComponents: [BottomSheetComponent],
