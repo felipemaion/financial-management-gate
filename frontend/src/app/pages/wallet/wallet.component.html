@@ -1,5 +1,6 @@
 <mat-toolbar color="primary">
   <mat-toolbar-row>
+
     <button mat-icon-button (click)="openGlobalSide()">
       <mat-icon>monetization_on</mat-icon>
     </button>
@@ -7,11 +8,21 @@
       <mat-icon>account_balance</mat-icon>
     </button>
 
+    <span class="spacer"></span>
+    <div *ngIf="carteiras?.length > 0">
+      <mat-form-field>
+        <mat-label>Selecionar Carteira</mat-label>
+        <mat-select [(ngModel)]="carteiraSelected" (ngModelChange)="getPositionWallet()">
+          <mat-option *ngFor="let item of carteiras" [value]="item?.id">
+            {{item?.description}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
     <button mat-button (click)="openDialogWallet()">
       <mat-icon>add</mat-icon>
       Nova Carteira
     </button>
-    <span class="spacer"></span>
     <button mat-icon-button>
       <mat-icon>help_outline</mat-icon>
 
@@ -21,6 +32,8 @@
 
 
 <div style="padding: 16px;">
+
+
   <div *ngIf="loading" class="ui active inverted dimmer">
     <div class="ui large text loader">Carregando...</div>
   </div>
@@ -47,17 +60,7 @@
     </div>
 
 
-    <div *ngIf="carteiras?.length > 0">
 
-      <mat-form-field>
-        <mat-label>Selecionar Carteira</mat-label>
-        <mat-select [(ngModel)]="carteiraSelected" (ngModelChange)="getPositionWallet()">
-          <mat-option *ngFor="let item of carteiras" [value]="item?.id">
-            {{item?.description}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
   </div>
 
   <div *ngIf="carteiraSelected && !loadingCsv">
@@ -78,7 +81,7 @@
 
 
           <ng-container matColumnDef="quantity">
-            <mat-header-cell  mat-sort-header *matHeaderCellDef> Quantity </mat-header-cell>
+            <mat-header-cell mat-sort-header *matHeaderCellDef> Quantity </mat-header-cell>
             <mat-cell *matCellDef="let element"> {{element.quantity}} </mat-cell>
           </ng-container>
 
@@ -110,7 +113,7 @@
           </ng-container>
 
 
-          <mat-header-row mat-sort-header  *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-header-row mat-sort-header *matHeaderRowDef="displayedColumns"></mat-header-row>
           <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
         </mat-table>
 
