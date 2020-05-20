@@ -6,7 +6,7 @@ from instrument.models import Instrument, Event, PriceHistory
 from core.models import BaseTimeModel
 from selic.models import Selic
 from datetime import datetime
-from decimal import Decimal
+from decimal import *
 import yfinance as yf
 
 
@@ -67,10 +67,10 @@ class Wallet(models.Model):
         prices = self.get_prices(assets)
         # print(prices)
         wallet = {
-            "total_networth": 0.0,
-            "total_dividends": 0.0,
-            "total_invested": 0.0,
-            "total_selic": 0.0,
+            "total_networth": Decimal(0.0),
+            "total_dividends": Decimal(0.0),
+            "total_invested": Decimal(0.0),
+            "total_selic": Decimal(0.0),
             "assets": assets,
             "moviments": moviments,
             "positions": {}
@@ -82,7 +82,7 @@ class Wallet(models.Model):
         positions = []
         for asset in assets:
             asset_ticker = asset
-            asset_dividends = 0
+            asset_dividends = Decimal(0.0)
             # Instrument.objects.filter(tckrSymb=asset)[0].get_price()
             asset_price = prices[asset]
             # positions[asset] = {"quantity": 0, "dividends": 0,
@@ -129,12 +129,12 @@ class Wallet(models.Model):
                 asset_networth += asset_quantity * asset_price
             positions.append({
                 "ticker": asset_ticker,
-                "quantity": asset_quantity,
-                "dividends": asset_dividends,
-                "investments": asset_investiments,
-                "costs": asset_cost,
-                "index_selic": asset_selic,
-                "networth": asset_networth
+                "quantity": int(asset_quantity), # Será sempre INT?? Stocks dos EUA sei que não é.
+                "dividends": asset_dividends.quantize(Decimal('.01'), rounding=ROUND_DOWN),
+                "investments": asset_investiments.quantize(Decimal('.01'), rounding=ROUND_DOWN),
+                "costs": asset_cost.quantize(Decimal('.01'), rounding=ROUND_DOWN),
+                "index_selic": asset_selic.quantize(Decimal('.01'), rounding=ROUND_DOWN),
+                "networth": asset_networth.quantize(Decimal('.01'), rounding=ROUND_DOWN)
             })
 
             total_dividends += asset_dividends
@@ -149,10 +149,10 @@ class Wallet(models.Model):
         # print('Patrimônio Atual', Decimal(asset_price)*positions[asset]['quantity']) ## PODE DEMORAR PARA PEGAR O PREÇO ONLINE!
         # its ok
         wallet = {
-            "total_networth": total_networth,
-            "total_dividends": total_dividends,
-            "total_invested": total_invested,
-            "total_selic": total_selic,
+            "total_networth": total_networth.quantize(Decimal('.01'), rounding=ROUND_DOWN),
+            "total_dividends": total_dividends.quantize(Decimal('.01'), rounding=ROUND_DOWN),
+            "total_invested": total_invested.quantize(Decimal('.01'), rounding=ROUND_DOWN),
+            "total_selic": total_selic.quantize(Decimal('.01'), rounding=ROUND_DOWN),
             "assets": assets,
             "moviments": moviments,
             "positions": positions
