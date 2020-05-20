@@ -12,7 +12,7 @@ router.register("wallet", WalletModelViewSet)
 urlpatterns = [
     path('', include(router.urls)),
     path('csv',ImportWalletCsv.as_view()),
-    path('position',PositionWallet.as_view()),
+    path('position/<int:pk>',PositionWallet.as_view()),
     path('auth/', include(urls_auth)),
 
 ]

@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { environment } from "src/environments/environment";
 import { HttpClient } from "@angular/common/http";
 import { Wallet } from "src/app/models/wallet.models";
+import { Position } from "src/app/models/position.models";
 
 @Injectable({
   providedIn: "root",
@@ -20,5 +21,9 @@ export class WalletService {
 
   sendCsv(csv) {
     return this.http.post(`${this.api}csv`, csv);
+  }
+
+  getPositionWallet(walletId: string) {
+    return this.http.get<Position>(`${this.api}position/${walletId}`);
   }
 }

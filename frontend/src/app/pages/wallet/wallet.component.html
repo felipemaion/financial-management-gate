@@ -51,8 +51,8 @@
 
       <mat-form-field>
         <mat-label>Selecionar Carteira</mat-label>
-        <mat-select [(ngModel)]="carteiraSelected">
-          <mat-option *ngFor="let item of carteiras" [value]="item?.description">
+        <mat-select [(ngModel)]="carteiraSelected" (ngModelChange)="getPositionWallet()">
+          <mat-option *ngFor="let item of carteiras" [value]="item?.id">
             {{item?.description}}
           </mat-option>
         </mat-select>
@@ -61,45 +61,51 @@
   </div>
 
   <div *ngIf="carteiraSelected && !loadingCsv">
-
+    Total Selic {{position?.total_selic}} <br>
+    Total invested: {{position?.total_invested}} <br>
+    Total NetWorth {{position?.total_networth}} <br>
+    Total Dividents {{position?.total_dividends}} <br>
 
     <mat-tab-group animationDuration="0ms">
       <mat-tab label="Acoes">
 
-        <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-          <!-- Position Column -->
-          <ng-container matColumnDef="position">
-            <mat-header-cell *matHeaderCellDef> Acao </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.position}} </mat-cell>
+        <mat-table matSort [dataSource]="dataSource" class="mat-elevation-z8">
+
+          <ng-container matColumnDef="acao">
+            <mat-header-cell mat-sort-header *matHeaderCellDef> Acao </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.instrument.tckrSymb}} </mat-cell>
           </ng-container>
 
-          <!-- Name Column -->
-          <ng-container matColumnDef="name">
-            <mat-header-cell *matHeaderCellDef> Quantidade </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
+
+          <ng-container matColumnDef="quantity">
+            <mat-header-cell  mat-sort-header *matHeaderCellDef> Quantidade </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.quantity}} </mat-cell>
           </ng-container>
 
-          <!-- Weight Column -->
-          <ng-container matColumnDef="weight">
-            <mat-header-cell *matHeaderCellDef> Weight </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.weight}} </mat-cell>
+
+          <ng-container matColumnDef="total_investment">
+            <mat-header-cell *matHeaderCellDef> Total Investiments </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.total_costs}} </mat-cell>
           </ng-container>
 
-          <!-- Symbol Column -->
-          <ng-container matColumnDef="symbol">
-            <mat-header-cell *matHeaderCellDef> Symbol </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.symbol}} </mat-cell>
+
+          <ng-container matColumnDef="total_costs">
+            <mat-header-cell mat-sort-header *matHeaderCellDef> Total Costs </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.total_investment}} </mat-cell>
           </ng-container>
 
-          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <ng-container matColumnDef="date">
+            <mat-header-cell mat-sort-header *matHeaderCellDef> Date </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.date|date}} </mat-cell>
+
+          </ng-container>
+          <mat-header-row mat-sort-header  *matHeaderRowDef="displayedColumns"></mat-header-row>
           <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
         </mat-table>
 
 
 
       </mat-tab>
-      <mat-tab label="FI`s">Content 2</mat-tab>
-
     </mat-tab-group>
 
   </div>

@@ -55,10 +55,9 @@ class WalletModelViewSet(mixins.ListModelMixin,
 
 
 class PositionWallet(APIView):
-    # permission_classes = [IsAuthenticated, ]
-    def get(self, request):
-        description = request.GET['description']
-        wallet = Wallet.objects.get(description=description)
+    permission_classes = [IsAuthenticated, ]
+    def get(self, request, pk):
+        wallet = Wallet.objects.get(id=pk,user=request.user)
         position = wallet.position()
         moviment_serialized = MovimentSerializer(position['moviments'], many=True)
         position['moviments'] = moviment_serialized.data

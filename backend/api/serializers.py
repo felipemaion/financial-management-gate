@@ -2,6 +2,7 @@
 from rest_framework import serializers
 from aporte.models import Aporte, Grupo#, Corrige
 from wallet.models import Wallet, Moviment
+from instrument.models import Instrument
 
 
 class AporteSerializer(serializers.ModelSerializer):
@@ -37,7 +38,14 @@ class WalletSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class InstrumentSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Instrument
+        fields = '__all__'
+
 class MovimentSerializer(serializers.ModelSerializer):
+    instrument = InstrumentSerializer(read_only=True)
     class Meta:
         model = Moviment
         fields = '__all__'
