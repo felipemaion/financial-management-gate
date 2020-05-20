@@ -36,11 +36,9 @@ class Wallet(models.Model):
         print("Prices for", assets)
         # assets = [asset + ".SA" for asset in assets] # so para o yfinances
         prices = {}
-
         for asset in assets:
-            instrument = Instrument.objects.filter(tckrSymb=asset)[0]
             prices[asset] = PriceHistory.objects.filter(
-                instrument=instrument).latest('date').adj_close
+                instrument__tckrSymb=asset).latest('date').adj_close
         return prices
 
     def position(self, date=datetime.now()):
@@ -61,7 +59,7 @@ class Wallet(models.Model):
                                         "index_selic":total invested corrected by selic index}
                     }
         """
-
+        
         moviments = self.moviments.all()
         assets = set(mov.instrument.tckrSymb for mov in moviments)
         self.assets = assets

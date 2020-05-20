@@ -9,7 +9,7 @@ import yfinance as yf
 
 
 class Command(BaseCommand):
-    help = 'Populacao dos eventos dos Instruments'
+    help = 'Populancao Preços de instrumentos'
 
     def handle(self, *args, **options):
         self.stdout.write(self.style.SUCCESS(
@@ -20,7 +20,7 @@ class Command(BaseCommand):
         # "MGLU3","MRVE3","MXRF11","PETR4","PETR4","PORD11","PRIO3","PRIO3","RADL3","RBBV11","RBGS11","RBRF11","RNGO11","SAPR4","SDIL11",
         # "SGPS3","SMAL11","SQIA3","TAEE11","TIET11","TRPL4","VIVA3","VVAR3","XPCM11","XPLG11","XPML11","ABEV3","FEXC11","KNRI11","RENT3",
         # 'ALSO3', 'BEEF3', 'HBOR3', 'JPSA3', 'LCAM3', 'PNVL3', 'SQIA3', 'STBP3']
-        assets = ['PNVL3','BEEF3']
+        assets = ['PNVL3','BEEF3','MGLU3']
         # TODO Testar código inválido.
         error_log = []
         assets = [asset + ".SA" for asset in assets]
