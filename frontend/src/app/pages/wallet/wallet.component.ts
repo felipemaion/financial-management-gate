@@ -8,7 +8,7 @@ import { DialogMessage } from "./dialogs/message.dialog.component";
 import { SidenavglobalService } from "src/app/services/sidenavglobal.service";
 import { MatBottomSheet } from "@angular/material/bottom-sheet";
 import { BottomSheetComponent } from "./components/bottom-sheet/bottom-sheet.component";
-import { Position } from "src/app/models/position.models";
+import { PositionWallet } from "src/app/models/position.models";
 import { MatSort } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
 
@@ -50,7 +50,7 @@ export class WalletComponent implements OnInit, OnDestroy {
     "date",
   ];
   @ViewChild(MatSort, { static: true }) sort: MatSort;
-  position: Position;
+  position: PositionWallet;
   dataSource;
 
   constructor(
@@ -135,9 +135,9 @@ export class WalletComponent implements OnInit, OnDestroy {
   getPositionWallet() {
     this.walletService
       .getPositionWallet(this.carteiraSelected)
-      .subscribe((data: Position) => {
+      .subscribe((data: PositionWallet) => {
         this.position = data;
-        this.dataSource = new MatTableDataSource(data.moviments);
+        this.dataSource = new MatTableDataSource(data.positions);
       });
   }
 }

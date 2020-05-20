@@ -1,7 +1,4 @@
 {
-  "python.pythonPath": ".venv/bin/python",
-  "python.linting.pylintEnabled": true,
-  "python.linting.enabled": true,
   "workbench.colorCustomizations": {
     "activityBarBadge.background": "#AB47BC",
     "activityBar.activeBorder": "#AB47BC",
@@ -25,8 +22,8 @@
     "menubar.selectionForeground": "#AB47BC",
     "editor.findMatchBorder": "#AB47BC",
     "selection.background": "#AB47BC40",
-    "activityBar.background": "#462515",
-    "titleBar.activeBackground": "#62341E",
-    "titleBar.activeForeground": "#FEFBFA"
+    "activityBar.background": "#3C2918",
+    "titleBar.activeBackground": "#543A22",
+    "titleBar.activeForeground": "#FCF9F7"
   }
 }

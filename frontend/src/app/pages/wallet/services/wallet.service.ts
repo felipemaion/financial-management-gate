@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { environment } from "src/environments/environment";
 import { HttpClient } from "@angular/common/http";
 import { Wallet } from "src/app/models/wallet.models";
-import { Position } from "src/app/models/position.models";
+import { PositionWallet } from "src/app/models/position.models";
 
 @Injectable({
   providedIn: "root",
@@ -24,6 +24,6 @@ export class WalletService {
   }
 
   getPositionWallet(walletId: string) {
-    return this.http.get<Position>(`${this.api}position/${walletId}`);
+    return this.http.get<PositionWallet>(`${this.api}position/${walletId}`);
   }
 }
