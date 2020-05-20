@@ -51,7 +51,7 @@ class Wallet(models.Model):
                     "total_selic": Sum of the amout of money invested corrected by the interest rate SELIC
                     "assets": List of the assests in the Wallet
                     "moviments": All the moviments in this Wallet 
-                    "position":position[asset] = {
+                    "positions":positions[asset] = {
                                         "quantity": qt_total for this asset in this wallet, 
                                         "dividends": total dividends for this asset in this wallet, 
                                         "investments": total_investments made in this asset in this wallet, 
@@ -73,18 +73,18 @@ class Wallet(models.Model):
             "total_selic": 0.0,
             "assets": assets,
             "moviments": moviments,
-            "position": {}
+            "positions": {}
         }
         total_networth = Decimal(0.0)
         total_dividends = Decimal(0.0)
         total_invested = Decimal(0.0)
         total_selic = Decimal(0.0)
-        position = {}
+        positions = {}
         for asset in assets:
             asset_dividends = 0
             # Instrument.objects.filter(tckrSymb=asset)[0].get_price()
             asset_price = prices[asset]
-            position[asset] = {"quantity": 0, "dividends": 0,
+            positions[asset] = {"quantity": 0, "dividends": 0,
                                "investments": 0.00, "sum_costs": 0.00, "index_selic": 0.0}
             asset_moviments = moviments.filter(instrument__tckrSymb=asset).order_by(
                 'date')  # de modo reverso -date
@@ -126,7 +126,7 @@ class Wallet(models.Model):
                 asset_quantity += qt
 
                 asset_networth += asset_quantity * asset_price
-                position[asset] = {
+                positions[asset] = {
                     "quantity": asset_quantity,
                     "dividends": asset_dividends,
                     "investments": asset_investiments,
@@ -140,11 +140,11 @@ class Wallet(models.Model):
                 total_selic += asset_selic
                 total_networth += asset_networth
             print(f"\n{asset}: {asset_quantity:.2f} * {asset_price:.2f} = NetWorth R$ {asset_quantity * asset_price:.2f}; Total Dividends Received: R$ {asset_dividends:.2f}")
-        # print(position[asset])
-        # print('Quantidade', position[asset]['quantity'])
-        # print('Proventos Recebidos', position[asset]['dividends'])
-        # print('Total Investido', position[asset]['investments'] + position[asset]['sum_costs'])
-        # print('Patrimônio Atual', Decimal(asset_price)*position[asset]['quantity']) ## PODE DEMORAR PARA PEGAR O PREÇO ONLINE!
+        # print(positions[asset])
+        # print('Quantidade', positions[asset]['quantity'])
+        # print('Proventos Recebidos', positions[asset]['dividends'])
+        # print('Total Investido', positions[asset]['investments'] + positions[asset]['sum_costs'])
+        # print('Patrimônio Atual', Decimal(asset_price)*positions[asset]['quantity']) ## PODE DEMORAR PARA PEGAR O PREÇO ONLINE!
         # its ok
         wallet = {
             "total_networth": total_networth,
@@ -153,7 +153,7 @@ class Wallet(models.Model):
             "total_selic": total_selic,
             "assets": assets,
             "moviments": moviments,
-            "position": position
+            "positions": positions
         }
         return wallet
 
@@ -169,7 +169,7 @@ class Wallet(models.Model):
 class Position(BaseTimeModel):
     wallet = models.ForeignKey(
         Wallet, related_name="wallet_position", on_delete=models.CASCADE)
-    position = {}  # {'MGLU3':{"quantity":100, "total_investment":16000}}
+    positions = {}  # {'MGLU3':{"quantity":100, "total_investment":16000}}
     assets = []
     quantities = []
     total_investments = []
