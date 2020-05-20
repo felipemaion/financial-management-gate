@@ -127,20 +127,20 @@ class Wallet(models.Model):
                 asset_quantity += qt
 
                 asset_networth += asset_quantity * asset_price
-                positions.append({
-                    "ticker": asset_ticker,
-                    "quantity": asset_quantity,
-                    "dividends": asset_dividends,
-                    "investments": asset_investiments,
-                    "costs": asset_cost,
-                    "index_selic": asset_selic,
-                    "networth": asset_networth
-                })
+            positions.append({
+                "ticker": asset_ticker,
+                "quantity": asset_quantity,
+                "dividends": asset_dividends,
+                "investments": asset_investiments,
+                "costs": asset_cost,
+                "index_selic": asset_selic,
+                "networth": asset_networth
+            })
 
-                total_dividends += asset_dividends
-                total_invested += asset_investiments
-                total_selic += asset_selic
-                total_networth += asset_networth
+            total_dividends += asset_dividends
+            total_invested += asset_investiments
+            total_selic += asset_selic
+            total_networth += asset_networth
             print(f"\n{asset}: {asset_quantity:.2f} * {asset_price:.2f} = NetWorth R$ {asset_quantity * asset_price:.2f}; Total Dividends Received: R$ {asset_dividends:.2f}")
         # print(positions[asset])
         # print('Quantidade', positions[asset]['quantity'])
