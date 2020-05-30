@@ -160,7 +160,7 @@ class Wallet(models.Model):
         return wallet
 
     def __str__(self):
-        return "{}:{}".format(self.user, self.description)
+        return "ID:{} - User:{} - Description:{}".format(self.id, self.user, self.description)
 
     class Meta:
         verbose_name = _("Wallet")

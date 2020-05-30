@@ -35,7 +35,43 @@
   <div *ngIf="loading" class="ui active inverted dimmer">
     <div class="ui large text loader">Carregando...</div>
   </div>
-  <div *ngIf="carteiraSelected">
+
+
+  <div style="display: flex;
+  justify-content: space-between;
+  align-items: center">
+    <div>
+      <div *ngIf="carteiraSelected">
+        <label [hidden]="loadingCsv" for="attachmentName" class="ui icon button labeled btn-file">
+          <i class="file alternate outline icon"></i> Importar CSV
+          <input (change)="handleCSVFileInput($event.target.files)" type="file" accept=".csv, .xls, .xlsx" id="attachmentName"
+            name="attachmentName" style="display: none" />
+        </label>
+        <button [disabled]="loadingCsv" *ngIf="formData.get('file')" (click)="enviarCsv()"
+          class="ui right labeled icon button">
+          <i class="right plane icon"></i>
+          Enviar
+        </button>
+        <div *ngIf="loadingCsv" class="ui active centered inline loader"></div>
+        {{csvName}}
+      </div>
+    </div>
+
+
+    <div *ngIf="carteiras?.length > 0">
+
+      <mat-form-field>
+        <mat-label>Selecionar Carteira</mat-label>
+        <mat-select [(ngModel)]="carteiraSelected" (ngModelChange)="getPositionWallet()">
+          <mat-option *ngFor="let item of carteiras" [value]="item?.id">
+            {{item?.description}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div *ngIf="carteiraSelected && !loadingCsv">
     Total Selic {{position?.total_selic}} <br>
     Total invested: {{position?.total_invested}} <br>
     Total NetWorth {{position?.total_networth}} <br>
