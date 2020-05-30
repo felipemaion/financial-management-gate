@@ -19,7 +19,6 @@
   </mat-toolbar-row>
 </mat-toolbar>
 
-
 <div style="padding: 16px;">
   <div *ngIf="loading" class="ui active inverted dimmer">
     <div class="ui large text loader">Carregando...</div>
@@ -64,21 +63,30 @@
     Total Selic {{position?.total_selic}} <br>
     Total invested: {{position?.total_invested}} <br>
     Total NetWorth {{position?.total_networth}} <br>
-    Total Dividents {{position?.total_dividends}} <br>
+    Total Dividends {{position?.total_dividends}} <br>
 
     <mat-tab-group animationDuration="0ms">
       <mat-tab label="Acoes">
 
-        <mat-table matSort [dataSource]="dataSource" class="mat-elevation-z8">
+        <mat-table *ngIf="dataSource" [dataSource]="dataSource" class="mat-elevation-z8">
 
+<<<<<<< HEAD
           <ng-container matColumnDef="acao">
             <mat-header-cell mat-sort-header *matHeaderCellDef> Acao </mat-header-cell>
             <mat-cell *matCellDef="let element"> {{element.instrument.tckrSymb}} </mat-cell>
+=======
+          <ng-container matColumnDef="ticker">
+            <mat-header-cell *matHeaderCellDef> Ticker </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.ticker}} </mat-cell>
+>>>>>>> alison
           </ng-container>
 
-
           <ng-container matColumnDef="quantity">
+<<<<<<< HEAD
             <mat-header-cell  mat-sort-header *matHeaderCellDef> Quantidade </mat-header-cell>
+=======
+            <mat-header-cell *matHeaderCellDef> Quantity </mat-header-cell>
+>>>>>>> alison
             <mat-cell *matCellDef="let element"> {{element.quantity}} </mat-cell>
           </ng-container>
 
@@ -89,6 +97,7 @@
           </ng-container>
 
 
+<<<<<<< HEAD
           <ng-container matColumnDef="total_costs">
             <mat-header-cell mat-sort-header *matHeaderCellDef> Total Costs </mat-header-cell>
             <mat-cell *matCellDef="let element"> {{element.total_investment}} </mat-cell>
@@ -100,8 +109,36 @@
 
           </ng-container>
           <mat-header-row mat-sort-header  *matHeaderRowDef="displayedColumns"></mat-header-row>
+=======
+          <ng-container matColumnDef="investments">
+            <mat-header-cell *matHeaderCellDef> Investiments </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.investments}} </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="costs">
+            <mat-header-cell *matHeaderCellDef> Costs </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.costs}} </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="index_selic">
+            <mat-header-cell *matHeaderCellDef> Index </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.index_selic}} </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="networth">
+            <mat-header-cell *matHeaderCellDef> Networth </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.networth}} </mat-cell>
+          </ng-container>
+
+
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+>>>>>>> alison
           <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+
+
         </mat-table>
+
+
 
 
 

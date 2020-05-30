@@ -4,13 +4,13 @@ import { Wallet } from "src/app/models/wallet.models";
 import { MatDialog } from "@angular/material/dialog";
 import { WalletService } from "./services/wallet.service";
 import { DialogWallet } from "./dialogs/wallet.dialog.component";
-import { DialogMessage } from "./dialogs/message.dialog.component";
 import { SidenavglobalService } from "src/app/services/sidenavglobal.service";
 import { MatBottomSheet } from "@angular/material/bottom-sheet";
 import { BottomSheetComponent } from "./components/bottom-sheet/bottom-sheet.component";
-import { PositionWallet } from "src/app/models/position.models";
+import { PositionWallet, PositionAsset } from "src/app/models/position.models";
 import { MatSort } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
+import { MatPaginator } from "@angular/material/paginator";
 
 export interface DialogData {
   description: string;
@@ -24,20 +24,29 @@ export interface PeriodicElement {
   date: string;
 }
 
+//
+
+export interface UserData {
+  id: string;
+  name: string;
+  progress: string;
+  color: string;
+}
+
+/** Constants used to fill up our data base. */
+
 @Component({
   selector: "app-wallet",
   templateUrl: "./wallet.component.html",
   styleUrls: ["./wallet.component.css"],
 })
 export class WalletComponent implements OnInit, OnDestroy {
-
   subscriptions: Subscription = new Subscription();
   description: string = "";
   carteiras: Wallet[]; // pq em pt?
   loading = false;
   collapse: false;
   carteiraSelected;
-
 
   displayedColumns: string[] = [
     "ticker",
@@ -48,10 +57,11 @@ export class WalletComponent implements OnInit, OnDestroy {
     "index_selic",
     "networth",
   ];
+  dataSource: MatTableDataSource<PositionAsset>;
 
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+
   position: PositionWallet;
-  dataSource;
 
   constructor(
     private walletService: WalletService,
@@ -63,6 +73,7 @@ export class WalletComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.getWallets();
   }
+
   getWallets() {
     this.loading = true;
     this.subscriptions.add(
@@ -110,7 +121,8 @@ export class WalletComponent implements OnInit, OnDestroy {
       .getPositionWallet(this.carteiraSelected)
       .subscribe((data: PositionWallet) => {
         this.position = data;
-        this.dataSource = new MatTableDataSource(data.positions);
+        this.dataSource = new MatTableDataSource(this.position.positions);
+        this.dataSource.paginator = this.paginator;
       });
   }
 }
