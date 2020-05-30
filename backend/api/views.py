@@ -32,6 +32,8 @@ class AporteModelViewSet(ModelViewSet):
 class ImportWalletCsv(CreateAPIView):
 
     def create(self, request, *args, **kwargs):
+        # print(request.data)
+        # return Response('Que merda, ein?')
         file_request = request.FILES['file']
         
         data = file_request.read()# .decode('latin') # not sure: read()?? MemorySecurity issue??!?
@@ -57,25 +59,26 @@ class ImportWalletCsv(CreateAPIView):
         except:
             pass
         
-        try: 
-            for index, row in df.iterrows():
-                ativo = Instrument.objects.get(tckrSymb=row["ATIVO"])
-                data = row["DATA"]
-                quantidade = row["QUANTIDADE"]
-                total_investment = row["VALOR"]
-                
+        # try: 
+        for index, row in df.iterrows():
+            ativo = Instrument.objects.get(tckrSymb=row["ATIVO"])
+            data = row["DATA"]
+            quantidade = row["QUANTIDADE"]
+            total_investment = row["VALOR"]
+            
 
-                # TODO pegar o wallet do request: 
-                wallet = Wallet.objects.get(id=3) 
-                operacao = Moviment(instrument=ativo, wallet=wallet, date=data, quantity=quantidade, total_investment=total_investment)
-                print(operacao.instrument)
-                operacao.save()
-            print("Foi pra carteira")
-            # TODO Manda um update para a página com as alterações na wallet
-            return Response('Sucesso!')
-        except:
-            print("Merda")
-            return Response('Que merda, ein?')
+            # TODO pegar o wallet do request: 
+            wallet = Wallet.objects.get(id=int(request.data['wallet']))
+            print("Wallet:", wallet)
+            operacao = Moviment(instrument=ativo, wallet=wallet, date=data, quantity=quantidade, total_investment=total_investment)
+            print(operacao.instrument)
+            operacao.save()
+        print("Foi pra carteira")
+        # TODO Manda um update para a página com as alterações na wallet
+        return Response('Sucesso!')
+        # except:
+        #     print("Merda")
+        #     return Response('Que merda, ein?')
 
 
 
