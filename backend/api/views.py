@@ -13,6 +13,8 @@ import io
 import csv
 import pandas as pd
 import json
+from datetime import datetime
+import locale
 # class AporteDeleteUpdate(RetrieveUpdateDestroyAPIView):
 #     queryset = Aporte.objects.all()
 #     serializer_class = AporteSerializer
@@ -31,34 +33,47 @@ class ImportWalletCsv(CreateAPIView):
 
     def create(self, request, *args, **kwargs):
         file_request = request.FILES['file']
+        
         data = file_request.read()# .decode('latin') # not sure: read()?? MemorySecurity issue??!?
         # https://docs.djangoproject.com/en/3.0/topics/http/file-uploads/
 
 # Pretty sure I need to encapsulate this into a new method:
-        try:
+        if file_request.name.endswith('.csv'):
             io_string = io.StringIO(data.decode('latin'))
             next(io_string)
-            df = pd.read_csv(io_string, header=["ATIVO","DATA", "QUANTIDADE", "VALOR"], skip_blank_lines=True, 
-                         skipinitialspace=True,delimiter=';', encoding='latin-1')
-        except:
+            df = pd.read_csv(io_string, header=0, skip_blank_lines=True, 
+                         skipinitialspace=True,delimiter=';', encoding='latin-1',
+                         usecols=[0,1,2,3], names=['ATIVO', 'DATA', 'QUANTIDADE', 'VALOR'])
+        elif file_request.name.endswith('.xls') or file_request.name.endswith('.xlsx'):
             io_string = io.BytesIO(data)# StringIO(data)
             next(io_string)
             df = pd.read_excel(io_string)
         print(df) # For debug :P
 # Same thing here:
-        try:
-            for index, row in df.iterrows():
-                ativo = Instrument.objects.get(tckrSymb=row["ATIVO"])
-                data = row["DATA"]
-                quantidade = row["QUANTIDADE"]
-                total_investment = row["VALOR"]
-                # TODO pegar o wallet do request: 
-                operacao = Moviment(instrument=ativo, wallet=wallet, date=data, quantity=quantidade, total_investment=total_investment)
-                print(operacao.instrument)
-                operacao.save()
-            return Response('Sucesso!')
+        try: # try to prepare data... 
+            locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8') 
+            df['DATA']=pd.to_datetime(df['DATA'])
+            df['VALOR']=df['VALOR'].map(lambda x: locale.atof(x.strip("R$")))    
         except:
-            return Response('Que merda, ein?')
+            pass
+
+        for index, row in df.iterrows():
+            ativo = Instrument.objects.get(tckrSymb=row["ATIVO"])
+            data = row["DATA"]
+            quantidade = row["QUANTIDADE"]
+            total_investment = row["VALOR"]
+            
+
+            # TODO pegar o wallet do request: 
+            wallet = Wallet.objects.get(id=3) 
+            operacao = Moviment(instrument=ativo, wallet=wallet, date=data, quantity=quantidade, total_investment=total_investment)
+            print(operacao.instrument)
+            operacao.save()
+        print("Foi pra carteira")
+        return Response('Sucesso!')
+        # except:
+            # print("Merda")
+            # return Response('Que merda, ein?')
 
 
 
