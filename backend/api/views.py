@@ -32,6 +32,8 @@ class AporteModelViewSet(ModelViewSet):
 class ImportWalletCsv(CreateAPIView):
 
     def create(self, request, *args, **kwargs):
+        print(request.data)
+        wallet = Wallet.objects.get(id=int(request.data['wallet']))
         # print(request.data)
         # return Response('Que merda, ein?')
         file_request = request.FILES['file']
@@ -68,7 +70,7 @@ class ImportWalletCsv(CreateAPIView):
             
 
             # TODO pegar o wallet do request: 
-            wallet = Wallet.objects.get(id=int(request.data['wallet']))
+            
             print("Wallet:", wallet)
             operacao = Moviment(instrument=ativo, wallet=wallet, date=data, quantity=quantidade, total_investment=total_investment)
             print(operacao.instrument)
