@@ -56,24 +56,26 @@ class ImportWalletCsv(CreateAPIView):
             df['VALOR']=df['VALOR'].map(lambda x: locale.atof(x.strip("R$")))    
         except:
             pass
+        
+        try: 
+            for index, row in df.iterrows():
+                ativo = Instrument.objects.get(tckrSymb=row["ATIVO"])
+                data = row["DATA"]
+                quantidade = row["QUANTIDADE"]
+                total_investment = row["VALOR"]
+                
 
-        for index, row in df.iterrows():
-            ativo = Instrument.objects.get(tckrSymb=row["ATIVO"])
-            data = row["DATA"]
-            quantidade = row["QUANTIDADE"]
-            total_investment = row["VALOR"]
-            
-
-            # TODO pegar o wallet do request: 
-            wallet = Wallet.objects.get(id=3) 
-            operacao = Moviment(instrument=ativo, wallet=wallet, date=data, quantity=quantidade, total_investment=total_investment)
-            print(operacao.instrument)
-            operacao.save()
-        print("Foi pra carteira")
-        return Response('Sucesso!')
-        # except:
-            # print("Merda")
-            # return Response('Que merda, ein?')
+                # TODO pegar o wallet do request: 
+                wallet = Wallet.objects.get(id=3) 
+                operacao = Moviment(instrument=ativo, wallet=wallet, date=data, quantity=quantidade, total_investment=total_investment)
+                print(operacao.instrument)
+                operacao.save()
+            print("Foi pra carteira")
+            # TODO Manda um update para a página com as alterações na wallet
+            return Response('Sucesso!')
+        except:
+            print("Merda")
+            return Response('Que merda, ein?')
 
 
 
