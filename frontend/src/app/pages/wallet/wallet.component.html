@@ -41,8 +41,16 @@
     Total Dividends {{position?.total_dividends}} <br>
 
     <mat-tab-group animationDuration="0ms">
+     
       <mat-tab label="Assets">
-
+        <ng-template mat-tab-label>
+          <button mat-icon-button [routerLink]="['/wallets/importacao/'+carteiraSelected]" >
+              <mat-icon>add_circle</mat-icon>
+          </button>
+          Assets
+      </ng-template>
+         <!-- #Aqui -->
+  
         <mat-table *ngIf="dataSource" [dataSource]="dataSource" class="mat-elevation-z8">
 
           <ng-container matColumnDef="ticker">
@@ -54,23 +62,17 @@
             <mat-header-cell *matHeaderCellDef> Quantity </mat-header-cell>
             <mat-cell *matCellDef="let element"> {{element.quantity}} </mat-cell>
           </ng-container>
-
-
-          <ng-container matColumnDef="dividends">
-            <mat-header-cell *matHeaderCellDef> Dividends </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.dividends}} </mat-cell>
+<!-- 
+          <ng-container matColumnDef="costs">
+            <mat-header-cell *matHeaderCellDef> Costs </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.costs}} </mat-cell>
           </ng-container>
-
-
+           -->
           <ng-container matColumnDef="investments">
             <mat-header-cell *matHeaderCellDef> Investiments </mat-header-cell>
             <mat-cell *matCellDef="let element"> {{element.investments}} </mat-cell>
           </ng-container>
 
-          <ng-container matColumnDef="costs">
-            <mat-header-cell *matHeaderCellDef> Costs </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.costs}} </mat-cell>
-          </ng-container>
 
           <ng-container matColumnDef="index_selic">
             <mat-header-cell *matHeaderCellDef> Index </mat-header-cell>
@@ -82,6 +84,10 @@
             <mat-cell *matCellDef="let element"> {{element.networth}} </mat-cell>
           </ng-container>
 
+          <ng-container matColumnDef="dividends">
+            <mat-header-cell *matHeaderCellDef> Dividends </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.dividends}} </mat-cell>
+          </ng-container>
 
           <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
           <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>

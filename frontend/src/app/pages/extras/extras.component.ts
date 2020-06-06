@@ -50,7 +50,7 @@ export class ExtrasComponent implements OnInit {
 
   enviarCsv() {
     this.loading = true;
-    this.formData.append("wallet", this.carteiraSelected)
+    this.formData.append("wallet", this.carteiraSelected);
     this.subscriptions.add(
       this.walletService.sendCsv(this.formData).subscribe(
         (data) => {

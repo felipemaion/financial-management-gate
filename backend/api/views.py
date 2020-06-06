@@ -52,8 +52,8 @@ class ImportWalletCsv(CreateAPIView):
             io_string = io.BytesIO(data)# StringIO(data)
             next(io_string)
             df = pd.read_excel(io_string)
-        print(df) # For debug :P
-# Same thing here:
+        # print(df) # For debug :P
+# Same thing here,  should be a method (?):
         try: # try to prepare data... 
             locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8') 
             df['DATA']=pd.to_datetime(df['DATA'])
@@ -61,26 +61,22 @@ class ImportWalletCsv(CreateAPIView):
         except:
             pass
         
-        # try: 
-        for index, row in df.iterrows():
-            ativo = Instrument.objects.get(tckrSymb=row["ATIVO"])
-            data = row["DATA"]
-            quantidade = row["QUANTIDADE"]
-            total_investment = row["VALOR"]
-            
-
-            # TODO pegar o wallet do request: 
-            
-            print("Wallet:", wallet)
-            operacao = Moviment(instrument=ativo, wallet=wallet, date=data, quantity=quantidade, total_investment=total_investment)
-            print(operacao.instrument)
-            operacao.save()
-        print("Foi pra carteira")
-        # TODO Manda um update para a página com as alterações na wallet
-        return Response('Sucesso!')
-        # except:
-        #     print("Merda")
-        #     return Response('Que merda, ein?')
+        try: 
+            for index, row in df.iterrows():
+                instrument = Instrument.objects.get(tckrSymb=row["ATIVO"])
+                date = row["DATA"]
+                quantity = row["QUANTIDADE"]
+                total_investment = row["VALOR"]        
+                # print("Wallet:", wallet)
+                moviment = Moviment(instrument=instrument, wallet=wallet, date=date, quantity=quantity, total_investment=total_investment)
+                # print(moviment.instrument)
+                moviment.save()
+            # print("Foi pra carteira")
+            # TODO Manda um update redirecionando para a página com as alterações na wallet.
+            return Response('Sucesso!')
+        except:
+            print("Ei, deu merda ao carregar no banco de dados.")
+            return Response(0)
 
 
 
@@ -97,9 +93,11 @@ class WalletModelViewSet(mixins.ListModelMixin,
     serializer_class = WalletSerializer
     permission_classes = [IsAuthenticated, ]
 
-    def get_object(self):
+    def get_queryset(self):
         return Wallet.objects.filter(user_id=self.request.user.id)
 
+    def get_object(self):
+        return Wallet.objects.filter(user_id=self.request.user.id)
 
 class PositionWallet(APIView):
     # permission_classes = [IsAuthenticated, ]

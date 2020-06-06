@@ -53,7 +53,7 @@ export class WalletComponent implements OnInit, OnDestroy {
     "quantity",
     "dividends",
     "investments",
-    "costs",
+    // "costs",
     "index_selic",
     "networth",
   ];
