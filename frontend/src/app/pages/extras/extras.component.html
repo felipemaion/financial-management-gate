@@ -4,11 +4,11 @@
       <div *ngIf="loading" class="ui active inverted dimmer">
         <div class="ui large text loader">Carregando...</div>
       </div>
-      <div *ngIf="carteiras?.length > 0">
+      <div *ngIf="wallets?.length > 0">
         <mat-form-field>
           <mat-label>Selecionar Carteira</mat-label>
-          <mat-select [(ngModel)]="carteiraSelected">
-            <mat-option *ngFor="let item of carteiras" [value]="item?.id">
+          <mat-select [(ngModel)]="walletSelected">
+            <mat-option *ngFor="let item of wallets" [value]="item?.id">
               {{item?.description}}
             </mat-option>
           </mat-select>
@@ -16,7 +16,7 @@
       </div>
 
       <div>
-        <div *ngIf="carteiraSelected">
+        <div *ngIf="walletSelected">
           <label [hidden]="loadingCsv" for="attachmentName" class="ui icon button labeled btn-file">
             <i class="file alternate outline icon"></i> Selecionar Arquivo
             <input (change)="handleCSVFileInput($event.target.files)" type="file" accept=".csv,.xls,.xlsx" id="attachmentName"

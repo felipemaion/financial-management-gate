@@ -43,10 +43,10 @@ export interface UserData {
 export class WalletComponent implements OnInit, OnDestroy {
   subscriptions: Subscription = new Subscription();
   description: string = "";
-  carteiras: Wallet[]; // pq em pt?
+  wallets: Wallet[]; // pq em pt?
   loading = false;
   collapse: false;
-  carteiraSelected;
+  walletSelected;
 
   displayedColumns: string[] = [
     "ticker",
@@ -79,7 +79,7 @@ export class WalletComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.walletService.getWallets().subscribe(
         (data) => {
-          this.carteiras = data;
+          this.wallets = data;
           this.loading = false;
         },
         (error) => {
@@ -97,7 +97,7 @@ export class WalletComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.carteiras.push(result);
+        this.wallets.push(result);
       }
     });
   }
@@ -118,7 +118,7 @@ export class WalletComponent implements OnInit, OnDestroy {
 
   getPositionWallet() {
     this.walletService
-      .getPositionWallet(this.carteiraSelected)
+      .getPositionWallet(this.walletSelected)
       .subscribe((data: PositionWallet) => {
         this.position = data;
         this.dataSource = new MatTableDataSource(this.position.positions);

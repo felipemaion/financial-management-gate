@@ -20,9 +20,10 @@ import { MatExpansionModule } from "@angular/material/expansion";
 import { MatListModule } from "@angular/material/list";
 import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { ImportComponent } from './import/import.component';
 
 @NgModule({
-  declarations: [WalletComponent, DialogWallet, BottomSheetComponent],
+  declarations: [WalletComponent, DialogWallet, BottomSheetComponent, ImportComponent],
   imports: [
     CommonModule,
     MatSelectModule,

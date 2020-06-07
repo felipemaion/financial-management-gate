@@ -9,11 +9,11 @@
     </button>
 
     <span class="spacer"></span>
-    <div *ngIf="carteiras?.length > 0">
+    <div *ngIf="wallets?.length > 0">
       <mat-form-field>
         <mat-label>Selecionar Carteira</mat-label>
-        <mat-select [(ngModel)]="carteiraSelected" (ngModelChange)="getPositionWallet()">
-          <mat-option *ngFor="let item of carteiras" [value]="item?.id">
+        <mat-select [(ngModel)]="walletSelected" (ngModelChange)="getPositionWallet()">
+          <mat-option *ngFor="let item of wallets" [value]="item?.id">
             {{item?.description}}
           </mat-option>
         </mat-select>
@@ -34,7 +34,7 @@
   <div *ngIf="loading" class="ui active inverted dimmer">
     <div class="ui large text loader">Carregando...</div>
   </div>
-  <div *ngIf="carteiraSelected">
+  <div *ngIf="walletSelected">
     Total Selic {{position?.total_selic}} <br>
     Total invested: {{position?.total_invested}} <br>
     Total NetWorth {{position?.total_networth}} <br>
@@ -44,7 +44,7 @@
      
       <mat-tab label="Assets">
         <ng-template mat-tab-label>
-          <button mat-icon-button [routerLink]="['/wallets/importacao/'+carteiraSelected]" >
+          <button mat-icon-button [routerLink]="'import/'+walletSelected" >
               <mat-icon>add_circle</mat-icon>
           </button>
           Assets

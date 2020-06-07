@@ -16,8 +16,8 @@ export class ExtrasComponent implements OnInit {
   formData: FormData = new FormData();
   loadingCsv = false;
   csvName: string = "Nada Selecionado";
-  carteiraSelected;
-  carteiras: Wallet[];
+  walletSelected;
+  wallets: Wallet[];
   loading = false;
 
   constructor(public dialog: MatDialog, private walletService: WalletService) {}
@@ -30,7 +30,7 @@ export class ExtrasComponent implements OnInit {
     this.subscriptions.add(
       this.walletService.getWallets().subscribe(
         (data) => {
-          this.carteiras = data;
+          this.wallets = data;
           this.loading = false;
         },
         (error) => {
@@ -50,7 +50,7 @@ export class ExtrasComponent implements OnInit {
 
   enviarCsv() {
     this.loading = true;
-    this.formData.append("wallet", this.carteiraSelected);
+    this.formData.append("wallet", this.walletSelected);
     this.subscriptions.add(
       this.walletService.sendCsv(this.formData).subscribe(
         (data) => {
