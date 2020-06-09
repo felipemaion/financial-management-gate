@@ -32,9 +32,13 @@ class AporteModelViewSet(ModelViewSet):
 class ImportWalletCsv(CreateAPIView):
 
     def create(self, request, *args, **kwargs):
-        print(request.data)
-        wallet = Wallet.objects.get(id=int(request.data['wallet']))
-        # print(request.data)
+        print(request.user)
+        try: 
+            wallet = Wallet.objects.get(id=int(request.data['wallet']), user=request.user)
+        except:
+            print("Wallet for this User not found.")
+            return(0)
+        print(wallet)
         # return Response('Que merda, ein?')
         file_request = request.FILES['file']
         

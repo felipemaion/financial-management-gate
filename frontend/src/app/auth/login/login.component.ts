@@ -18,6 +18,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   loading = false;
   isLogged = false;
   errors;
+  
 
 
 
