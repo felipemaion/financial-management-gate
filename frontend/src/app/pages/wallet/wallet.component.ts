@@ -43,7 +43,7 @@ export interface UserData {
 export class WalletComponent implements OnInit, OnDestroy {
   subscriptions: Subscription = new Subscription();
   description: string = "";
-  wallets: Wallet[]; // pq em pt?
+  wallets: Wallet[];
   loading = false;
   collapse: false;
   walletSelected;
@@ -57,11 +57,44 @@ export class WalletComponent implements OnInit, OnDestroy {
     "index_selic",
     "networth",
   ];
-  dataSource: MatTableDataSource<PositionAsset>;
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  columnDefs = [
+    {
+      headerName: "Ticker",
+      width: 120,
+      field: "ticker",
+      sortable: true,
+      filter: true,
+    },
+    {
+      headerName: "Quantity",
+      width: 120,
+      field: "quantity",
+      sortable: true,
+      filter: true,
+    },
+    {
+      headerName: "Dividends",
+      field: "dividends",
+      sortable: true,
+      filter: true,
+    },
+    {
+      headerName: "Investments",
+      field: "investments",
+      sortable: true,
+      filter: true,
+    },
+    {
+      headerName: "Index Selic",
+      field: "index_selic",
+      sortable: true,
+      filter: true,
+    },
+    { headerName: "Networth", field: "networth", sortable: true, filter: true },
+  ];
 
-  position: PositionWallet;
+  positionWallet: PositionWallet;
 
   constructor(
     private walletService: WalletService,
@@ -120,9 +153,7 @@ export class WalletComponent implements OnInit, OnDestroy {
     this.walletService
       .getPositionWallet(this.walletSelected)
       .subscribe((data: PositionWallet) => {
-        this.position = data;
-        this.dataSource = new MatTableDataSource(this.position.positions);
-        this.dataSource.paginator = this.paginator;
+        this.positionWallet = data;
       });
   }
 }

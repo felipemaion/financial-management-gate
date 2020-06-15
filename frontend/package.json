@@ -21,6 +21,8 @@
     "@angular/platform-browser": "~9.0.2",
     "@angular/platform-browser-dynamic": "~9.0.2",
     "@angular/router": "~9.0.2",
+    "ag-grid-angular": "^23.2.0",
+    "ag-grid-community": "^23.2.0",
     "jquery": "^3.5.0",
     "jwt-decode": "^2.2.0",
     "ng2-semantic-ui": "^0.9.7",
