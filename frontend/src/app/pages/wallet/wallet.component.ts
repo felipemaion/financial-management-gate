@@ -7,6 +7,7 @@ import { DialogWallet } from "./dialogs/wallet.dialog.component";
 import { SidenavglobalService } from "src/app/services/sidenavglobal.service";
 import { MatBottomSheet } from "@angular/material/bottom-sheet";
 import { BottomSheetComponent } from "./components/bottom-sheet/bottom-sheet.component";
+import { ImportComponent } from "./import/import.component"
 import { PositionWallet, PositionAsset } from "src/app/models/position.models";
 import { MatSort } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
@@ -47,6 +48,7 @@ export class WalletComponent implements OnInit, OnDestroy {
   loading = false;
   collapse: false;
   walletSelected;
+  buttonPressed = false;
 
   displayedColumns: string[] = [
     "ticker",
@@ -155,5 +157,10 @@ export class WalletComponent implements OnInit, OnDestroy {
       .subscribe((data: PositionWallet) => {
         this.positionWallet = data;
       });
+  }
+
+  change() {
+    this.buttonPressed = !this.buttonPressed;
+    this.getPositionWallet();
   }
 }

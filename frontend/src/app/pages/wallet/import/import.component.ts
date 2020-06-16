@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Wallet } from "src/app/models/wallet.models";
 import { DialogMessage } from "../dialogs/message.dialog.component";
 import { Subscription } from "rxjs";
@@ -13,7 +13,8 @@ import { Router, ActivatedRoute } from "@angular/router"
 })
 export class ImportComponent implements OnInit {
   subscriptions: Subscription = new Subscription();
-  walletSelected; //TODO como não permitir se a carteira não pertencer ao user??
+  // walletSelected; //TODO como não permitir se a carteira não pertencer ao user??
+  @Input('wallet') walletSelected;
   formData: FormData = new FormData();
   loadingCsv = false;
   csvName: string = "Nada Selecionado";
@@ -22,7 +23,7 @@ export class ImportComponent implements OnInit {
   constructor(private router:Router, private route:ActivatedRoute, public dialog: MatDialog, private walletService: WalletService) { }
 
   ngOnInit(): void {
-    this.walletSelected = this.route.snapshot.params["wallet"];
+    // this.walletSelected = this.route.snapshot.params["wallet"];
     //console.log(this.route.snapshot.params["wallet"]);
   }
   handleCSVFileInput(event) {
@@ -45,7 +46,7 @@ export class ImportComponent implements OnInit {
           this.dialog.open(DialogMessage, {
             data: { message: "Sucesso Ao Fazer Upload" },
           });
-          this.router.navigate(['wallets']); // Não tá certo TODO.
+          // this.router.navigate(['wallets']); // Não tá certo TODO.
         },
         (error) => {
           this.loading = false;
