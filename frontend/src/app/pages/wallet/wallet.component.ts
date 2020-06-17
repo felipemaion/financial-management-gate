@@ -7,6 +7,7 @@ import { DialogWallet } from "./dialogs/wallet.dialog.component";
 import { SidenavglobalService } from "src/app/services/sidenavglobal.service";
 import { MatBottomSheet } from "@angular/material/bottom-sheet";
 import { BottomSheetComponent } from "./components/bottom-sheet/bottom-sheet.component";
+import { ImportComponent } from "./import/import.component"
 import { PositionWallet, PositionAsset } from "src/app/models/position.models";
 import { MatSort } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
@@ -43,10 +44,11 @@ export interface UserData {
 export class WalletComponent implements OnInit, OnDestroy {
   subscriptions: Subscription = new Subscription();
   description: string = "";
-  wallets: Wallet[]; // pq em pt?
+  wallets: Wallet[];
   loading = false;
   collapse: false;
   walletSelected;
+  buttonPressed = false;
 
   displayedColumns: string[] = [
     "ticker",
@@ -57,11 +59,44 @@ export class WalletComponent implements OnInit, OnDestroy {
     "index_selic",
     "networth",
   ];
-  dataSource: MatTableDataSource<PositionAsset>;
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  columnDefs = [
+    {
+      headerName: "Ticker",
+      width: 120,
+      field: "ticker",
+      sortable: true,
+      filter: true,
+    },
+    {
+      headerName: "Quantity",
+      width: 120,
+      field: "quantity",
+      sortable: true,
+      filter: true,
+    },
+    {
+      headerName: "Dividends",
+      field: "dividends",
+      sortable: true,
+      filter: true,
+    },
+    {
+      headerName: "Investments",
+      field: "investments",
+      sortable: true,
+      filter: true,
+    },
+    {
+      headerName: "Index Selic",
+      field: "index_selic",
+      sortable: true,
+      filter: true,
+    },
+    { headerName: "Networth", field: "networth", sortable: true, filter: true },
+  ];
 
-  position: PositionWallet;
+  positionWallet: PositionWallet;
 
   constructor(
     private walletService: WalletService,
@@ -120,9 +155,12 @@ export class WalletComponent implements OnInit, OnDestroy {
     this.walletService
       .getPositionWallet(this.walletSelected)
       .subscribe((data: PositionWallet) => {
-        this.position = data;
-        this.dataSource = new MatTableDataSource(this.position.positions);
-        this.dataSource.paginator = this.paginator;
+        this.positionWallet = data;
       });
+  }
+
+  change() {
+    this.buttonPressed = !this.buttonPressed;
+    this.getPositionWallet();
   }
 }

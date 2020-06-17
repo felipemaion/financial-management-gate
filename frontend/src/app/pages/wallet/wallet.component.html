@@ -35,70 +35,30 @@
     <div class="ui large text loader">Carregando...</div>
   </div>
   <div *ngIf="walletSelected">
-    Total Selic {{position?.total_selic}} <br>
-    Total invested: {{position?.total_invested}} <br>
-    Total NetWorth {{position?.total_networth}} <br>
-    Total Dividends {{position?.total_dividends}} <br>
+    Total Selic {{positionWallet?.total_selic}} <br>
+    Total invested: {{positionWallet?.total_invested}} <br>
+    Total NetWorth {{positionWallet?.total_networth}} <br>
+    Total Dividends {{positionWallet?.total_dividends}} <br>
 
     <mat-tab-group animationDuration="0ms">
-     
+
       <mat-tab label="Assets">
         <ng-template mat-tab-label>
-          <button mat-icon-button [routerLink]="'import/'+walletSelected" >
-              <mat-icon>add_circle</mat-icon>
+          <button mat-icon-button (click)="change()">
+            <!-- [routerLink]="'import/'+walletSelected"> -->
+            <mat-icon *ngIf="!buttonPressed">add_circle</mat-icon>
+            <mat-icon *ngIf="buttonPressed">remove_circle</mat-icon>
           </button>
           Assets
-      </ng-template>
-         <!-- #Aqui -->
-  
-        <mat-table *ngIf="dataSource" [dataSource]="dataSource" class="mat-elevation-z8">
-
-          <ng-container matColumnDef="ticker">
-            <mat-header-cell *matHeaderCellDef> Ticker </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.ticker}} </mat-cell>
-          </ng-container>
-
-          <ng-container matColumnDef="quantity">
-            <mat-header-cell *matHeaderCellDef> Quantity </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.quantity}} </mat-cell>
-          </ng-container>
-<!-- 
-          <ng-container matColumnDef="costs">
-            <mat-header-cell *matHeaderCellDef> Costs </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.costs}} </mat-cell>
-          </ng-container>
-           -->
-          <ng-container matColumnDef="investments">
-            <mat-header-cell *matHeaderCellDef> Investiments </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.investments}} </mat-cell>
-          </ng-container>
-
-
-          <ng-container matColumnDef="index_selic">
-            <mat-header-cell *matHeaderCellDef> Index </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.index_selic}} </mat-cell>
-          </ng-container>
-
-          <ng-container matColumnDef="networth">
-            <mat-header-cell *matHeaderCellDef> Networth </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.networth}} </mat-cell>
-          </ng-container>
-
-          <ng-container matColumnDef="dividends">
-            <mat-header-cell *matHeaderCellDef> Dividends </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.dividends}} </mat-cell>
-          </ng-container>
-
-          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-
-
-        </mat-table>
-
-
-
-
-
+        </ng-template>
+        <div *ngIf="buttonPressed; else elseBlock"> 
+          <app-import [wallet]="walletSelected"></app-import>
+        </div>
+          <ng-template #elseBlock>
+            <ag-grid-angular style="width: 100%; height: 500px;" class="ag-theme-alpine"
+              [rowData]="positionWallet?.positions" [columnDefs]="columnDefs">
+            </ag-grid-angular>
+        </ng-template>
       </mat-tab>
     </mat-tab-group>
 

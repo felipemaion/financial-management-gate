@@ -21,6 +21,7 @@ import { MatListModule } from "@angular/material/list";
 import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { ImportComponent } from './import/import.component';
+import { AgGridModule } from 'ag-grid-angular';
 
 @NgModule({
   declarations: [WalletComponent, DialogWallet, BottomSheetComponent, ImportComponent],
@@ -40,7 +41,8 @@ import { ImportComponent } from './import/import.component';
     MatBottomSheetModule,
     MatGridListModule,
     MatSortModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    AgGridModule.withComponents([])
   ],
   providers: [WalletService],
   entryComponents: [BottomSheetComponent],
