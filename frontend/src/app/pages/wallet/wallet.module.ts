@@ -22,9 +22,11 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { ImportComponent } from './import/import.component';
 import { AgGridModule } from 'ag-grid-angular';
+import { WalletImportComponent } from './dialogs/wallet-import/wallet-import.component';
+
 
 @NgModule({
-  declarations: [WalletComponent, DialogWallet, BottomSheetComponent, ImportComponent],
+  declarations: [WalletComponent, WalletImportComponent, DialogWallet, BottomSheetComponent, ImportComponent, WalletImportComponent],
   imports: [
     CommonModule,
     MatSelectModule,

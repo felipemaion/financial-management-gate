@@ -1,0 +1,28 @@
+<h1 mat-dialog-title>Wallet: {{data.wallet.description}}</h1>
+<div mat-dialog-content>
+  <label [hidden]="loadingCsv" for="attachmentName" class="ui icon button labeled btn-file">
+    <i class="file alternate outline icon"></i> Selecionar Arquivo
+    <input (change)="handleCSVFileInput($event.target.files)" type="file" accept=".csv,.xls,.xlsx" id="attachmentName"
+      name="attachmentName" style="display: none" />
+  </label>
+  <button [disabled]="loadingCsv" *ngIf="formData.get('file')" (click)="enviarCsv()"
+    class="ui right labeled icon button">
+    <i class="right plane icon"></i>
+    Enviar
+  </button>
+  <div *ngIf="loadingCsv" class="ui active centered inline loader"></div>
+  {{csvName}} <br>
+  O arquivo pode ser um .csv .xls .xsls
+
+  <br>
+  <div *ngIf="loadingMovements" class="ui active centered inline loader"></div>
+  <br>
+
+  <ag-grid-angular style="width: 100%; height: 500px;" class="ag-theme-alpine" [rowData]="movements"
+    [columnDefs]="columnDefs">
+  </ag-grid-angular>
+
+</div>
+<div mat-dialog-actions>
+  <button mat-button [mat-dialog-close]="data.wallet" cdkFocusInitial>Fechar</button>
+</div>

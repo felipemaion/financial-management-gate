@@ -7,11 +7,8 @@ import { DialogWallet } from "./dialogs/wallet.dialog.component";
 import { SidenavglobalService } from "src/app/services/sidenavglobal.service";
 import { MatBottomSheet } from "@angular/material/bottom-sheet";
 import { BottomSheetComponent } from "./components/bottom-sheet/bottom-sheet.component";
-import { ImportComponent } from "./import/import.component"
-import { PositionWallet, PositionAsset } from "src/app/models/position.models";
-import { MatSort } from "@angular/material/sort";
-import { MatTableDataSource } from "@angular/material/table";
-import { MatPaginator } from "@angular/material/paginator";
+import { PositionWallet } from "src/app/models/position.models";
+import { WalletImportComponent } from "./dialogs/wallet-import/wallet-import.component";
 
 export interface DialogData {
   description: string;
@@ -47,7 +44,7 @@ export class WalletComponent implements OnInit, OnDestroy {
   wallets: Wallet[];
   loading = false;
   collapse: false;
-  walletSelected;
+  walletSelected:Wallet;
   buttonPressed = false;
 
   displayedColumns: string[] = [
@@ -137,6 +134,17 @@ export class WalletComponent implements OnInit, OnDestroy {
     });
   }
 
+  openDialogImport(): void {
+    const dialogRef = this.dialog.open(WalletImportComponent, {
+      width: "100%",
+      data: { wallet: this.walletSelected },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log("The dialog was closed result", result);
+    });
+  }
+
   openGlobalSide() {
     this.sideGlobalService.appDrawer.toggle();
   }
@@ -153,7 +161,7 @@ export class WalletComponent implements OnInit, OnDestroy {
 
   getPositionWallet() {
     this.walletService
-      .getPositionWallet(this.walletSelected)
+      .getPositionWallet(this.walletSelected.id)
       .subscribe((data: PositionWallet) => {
         this.positionWallet = data;
       });
