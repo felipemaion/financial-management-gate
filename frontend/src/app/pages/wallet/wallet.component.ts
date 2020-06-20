@@ -44,9 +44,9 @@ export class WalletComponent implements OnInit, OnDestroy {
   wallets: Wallet[];
   loading = false;
   collapse: false;
-  walletSelected:Wallet;
+  walletSelected: Wallet;
   buttonPressed = false;
-
+  
   displayedColumns: string[] = [
     "ticker",
     "quantity",
@@ -141,7 +141,7 @@ export class WalletComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      console.log("The dialog was closed result", result);
+      this.getPositionWallet();
     });
   }
 

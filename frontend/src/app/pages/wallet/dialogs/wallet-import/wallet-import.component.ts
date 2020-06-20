@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, Input } from "@angular/core";
+import { Component, OnInit, Inject } from "@angular/core";
 import {
   MatDialogRef,
   MAT_DIALOG_DATA,
@@ -9,6 +9,8 @@ import { DialogMessage } from "../message.dialog.component";
 import { Subscription } from "rxjs";
 import { WalletService } from "../../services/wallet.service";
 import { Moviment } from "src/app/models/moviment.model";
+import { ICellRendererAngularComp } from "ag-grid-angular";
+import { MovementService } from "../../services/movement.service";
 
 export interface DialogData {
   wallet: Wallet;
@@ -35,10 +37,11 @@ export class WalletImportComponent implements OnInit {
     {
       headerName: "instrument",
       field: "instrument",
+      width: 130,
       sortable: true,
       filter: true,
       valueGetter: function (params) {
-        return params.data.instrument.tckrSymb
+        return params.data.instrument.tckrSymb;
       },
     },
     {
@@ -51,33 +54,48 @@ export class WalletImportComponent implements OnInit {
     {
       headerName: "Total Investment",
       field: "total_investment",
+      width: 150,
       sortable: true,
-      filter: true,
     },
     {
       headerName: "Total Costs",
       field: "total_costs",
+      width: 130,
       sortable: true,
-      filter: true,
     },
     {
       headerName: "Date",
       field: "date",
       sortable: true,
+      width: 120,
       filter: true,
+    },
+    {
+      headerName: "",
+      field: "id",
+      width: 120,
+      cellRendererFramework: ButtomRemoveMovement,
+      // onCellClicked: function (params) {
+      //   params.api.selectIndex(params.node.rowIndex);
+      //   var selectedData = params.api.getSelectedRows();
+      //   params.api.updateRowData({remove: selectedData});
+      //  }.bind(this)
     },
   ];
   // Table Movements
+  gridOptions = {
+    rowSelection: "single",
+  };
 
   subscriptions: Subscription = new Subscription();
   walletSelected: Wallet;
   formData: FormData = new FormData();
+  loading = false;
   loadingCsv = false;
   loadingMovements = false;
   csvName: string = "Nada Selecionado";
   wallets: Wallet[];
   movements: Moviment[];
-  loading = false;
 
   constructor(
     public dialog: MatDialog,
@@ -90,9 +108,6 @@ export class WalletImportComponent implements OnInit {
   ngOnInit(): void {
     this.getMovements();
   }
-  onNoClick(): void {
-    this.dialogRef.close();
-  }
 
   handleCSVFileInput(event) {
     if (event.length > 0) {
@@ -104,7 +119,6 @@ export class WalletImportComponent implements OnInit {
   enviarCsv() {
     this.loading = true;
     this.formData.append("wallet", this.walletSelected.id.toString());
-
     this.subscriptions.add(
       this.walletService.sendCsv(this.formData).subscribe(
         (data) => {
@@ -136,6 +150,100 @@ export class WalletImportComponent implements OnInit {
           this.loadingMovements = false;
         }
       )
+    );
+  }
+}
+
+@Component({
+  selector: "app-buttom-remove-movement",
+  template: `
+    <button (click)="deleteMethod()" mat-mini-fab color="warn" aria-label="">
+      <mat-icon>delete</mat-icon>
+    </button>
+    <button mat-mini-fab color="primary" aria-label="">
+      <mat-icon>edit</mat-icon>
+    </button>
+  `,
+})
+export class ButtomRemoveMovement implements ICellRendererAngularComp {
+  public params: any;
+  callValue: any;
+
+  constructor(private dialog: MatDialog) {}
+
+  agInit(params: any) {
+    this.callValue = params.value;
+    this.params = params;
+  }
+
+  refresh(params: any) {
+    this.callValue = params.value;
+    return true;
+  }
+
+  public deleteMethod() {
+    // this.params.api.selectIndex(this.params.node.rowIndex);
+    // var selectedData = this.params.api.getSelectedRows();
+    // this.params.api.updateRowData({ remove: selectedData });
+
+    const dialogRef = this.dialog.open(DialogDelete, {
+      width: "250px",
+      data: { movement: this.callValue },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        if (result.delete) {
+          console.log("Deleted");
+          this.params.api.selectIndex(this.params.node.rowIndex);
+          var selectedData = this.params.api.getSelectedRows();
+          this.params.api.updateRowData({ remove: selectedData });
+        }
+      }
+    });
+  }
+  public editMethod() {
+    // this.params.api.setFocusedCell(this.params.node.rowIndex, "courtname");
+    // this.params.api.startEditingCell({
+    //   rowIndex: this.params.node.rowIndex,
+    //   colKey: "courtname",
+    // });
+  }
+}
+
+// Dialog Delete
+
+@Component({
+  selector: "dialog-delete",
+  templateUrl: "./movement.dialog.html",
+})
+export class DialogDelete implements OnInit {
+  movement;
+  loading = false;
+  constructor(
+    public dialog: MatDialog,
+    private movementService: MovementService,
+    public dialogRef: MatDialogRef<DialogDelete>,
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) {
+    this.movement = data;
+  }
+  ngOnInit() {}
+
+  deleteMovement() {
+    this.loading = true;
+    this.movementService.removeMovement(this.movement.movement).subscribe(
+      (data) => {
+        this.loading = false;
+        console.log(this.movement);
+        this.dialogRef.close({
+          delete: true,
+        });
+      },
+      (error) => {
+        alert("Error on Delete");
+        this.loading = false;
+      }
     );
   }
 }

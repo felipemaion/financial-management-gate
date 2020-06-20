@@ -1,0 +1,12 @@
+<h1 mat-dialog-title>Delete Movement?</h1>
+<div mat-dialog-content></div>
+<div mat-dialog-actions>
+  <button mat-button (click)="deleteMovement()" color="warn">
+    Delete
+  </button>
+  <div *ngIf="loading" class="ui active centered inline loader"></div>
+  
+  <button mat-button [mat-dialog-close]="data.movement" cdkFocusInitial>
+    Close
+  </button>
+</div>

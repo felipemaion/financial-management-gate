@@ -111,8 +111,17 @@ class WalletModelViewSet(mixins.ListModelMixin,
         return Response(serialized_data.data)
 
 
+class MovementModelViewSet(viewsets.GenericViewSet, mixins.DestroyModelMixin):
+    permission_classes = [IsAuthenticated, ]
+    serializer_class = MovimentSerializer
+
+    def get_object(self):
+        return Moviment.objects.get(id=self.kwargs['pk'], wallet__user=self.request.user)
+
+
 class PositionWallet(APIView):
-    # permission_classes = [IsAuthenticated, ]
+    permission_classes = [IsAuthenticated, ]
+
     def get(self, request, pk):
         wallet = Wallet.objects.get(id=pk)
         position = wallet.position()

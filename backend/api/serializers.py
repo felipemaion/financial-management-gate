@@ -44,8 +44,10 @@ class InstrumentSerializer(serializers.ModelSerializer):
         model = Instrument
         fields = '__all__'
 
+
 class MovimentSerializer(serializers.ModelSerializer):
     instrument = InstrumentSerializer(read_only=True)
+
     class Meta:
         model = Moviment
         fields = '__all__'
