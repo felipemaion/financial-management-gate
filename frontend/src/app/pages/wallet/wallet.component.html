@@ -44,23 +44,21 @@
 
       <mat-tab label="Assets">
         <ng-template mat-tab-label>
-          <button mat-icon-button (click)="change()">
-            <!-- [routerLink]="'import/'+walletSelected"> -->
+          <!-- <button mat-icon-button (click)="change()">
             <mat-icon *ngIf="!buttonPressed">add_circle</mat-icon>
             <mat-icon *ngIf="buttonPressed">remove_circle</mat-icon>
-          </button>
+          </button> -->
           Assets
         </ng-template>
-        <div *ngIf="buttonPressed; else elseBlock">
+        <!-- <div *ngIf="buttonPressed; else elseBlock">
           <app-import [wallet]="walletSelected"></app-import>
-        </div>
-        <ng-template #elseBlock>
+        </div> -->
+        <!-- <ng-template #elseBlock> -->
+
 
 
           <mat-toolbar color="primary">
             <mat-toolbar-row class="shadow">
-              <button (click)="openDialogImport()" mat-button>Importar Carteira</button>
-              <span class="spacer"></span>
               <mat-label>Colunas</mat-label>
               <mat-form-field>
                 <mat-select multiple>
@@ -80,14 +78,17 @@
                   <mat-option value="toppwing">Ticker</mat-option>
                 </mat-select>
               </mat-form-field>
+              
+              <span class="spacer"></span>
+              <button (click)="openDialogImport()" mat-button class="button-import">Adicionar Movimentação</button>
+              
             </mat-toolbar-row>
           </mat-toolbar>
-
-
+            
           <ag-grid-angular style="width: 100%; height: 500px;" class="ag-theme-alpine"
             [rowData]="positionWallet?.positions" [columnDefs]="columnDefs">
           </ag-grid-angular>
-        </ng-template>
+        <!-- </ng-template> -->
       </mat-tab>
     </mat-tab-group>
 
