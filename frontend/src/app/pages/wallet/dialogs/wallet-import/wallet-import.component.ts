@@ -157,10 +157,10 @@ export class WalletImportComponent implements OnInit {
 @Component({
   selector: "app-buttom-remove-movement",
   template: `
-    <button (click)="deleteMethod()" aria-label="" class="row-button">
+    <button (click)="deleteMethod()" aria-label="" style='margin-top: 4px;' class="row-button">
       <mat-icon>delete_forever</mat-icon>
     </button>
-    <button aria-label="" class="row-button">
+    <button aria-label="" class="row-button" style='margin-top: 4px;'>
       <mat-icon>edit</mat-icon>
     </button>
   `,
