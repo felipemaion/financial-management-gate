@@ -241,7 +241,7 @@ export class DialogDelete implements OnInit {
         });
       },
       (error) => {
-        alert("Error on Delete");
+        alert("Erro ao Deletar");
         this.loading = false;
       }
     );
