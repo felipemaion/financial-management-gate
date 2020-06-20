@@ -35,11 +35,26 @@
     <div class="ui large text loader">Carregando...</div>
   </div>
   <div *ngIf="walletSelected">
-    Total Selic {{positionWallet?.total_selic}} <br>
-    Total invested: {{positionWallet?.total_invested}} <br>
-    Total NetWorth {{positionWallet?.total_networth}} <br>
-    Total Dividends {{positionWallet?.total_dividends}} <br>
-
+    <table style="width:25%">
+      <tr>
+        <td>Investimento Total</td>
+        <td>R$ {{positionWallet?.total_invested}}</td>
+      </tr>
+      <tr>
+      <td>Total Benchmark SELIC</td> 
+      <td>R$ {{positionWallet?.total_selic}}</td>
+      </tr>
+      <tr>
+        <td>Proventos Recebidos</td>
+        <td>R$ {{positionWallet?.total_dividends}}</td>
+      </tr>
+      <tr>
+        <td>Patrimônio Total</td>
+        <td>R$ {{positionWallet?.total_networth}}</td>
+      </tr>
+      
+    </table>
+     
     <mat-tab-group animationDuration="0ms">
 
       <mat-tab label="Assets">

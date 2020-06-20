@@ -59,38 +59,38 @@ export class WalletComponent implements OnInit, OnDestroy {
 
   columnDefs = [
     {
-      headerName: "Ticker",
+      headerName: "Código",
       width: 120,
       field: "ticker",
       sortable: true,
       filter: true,
     },
     {
-      headerName: "Quantity",
+      headerName: "Quantidade",
       width: 120,
       field: "quantity",
       sortable: true,
       filter: true,
     },
     {
-      headerName: "Dividends",
+      headerName: "Proventos",
       field: "dividends",
       sortable: true,
       filter: true,
     },
     {
-      headerName: "Investments",
+      headerName: "Investimento",
       field: "investments",
       sortable: true,
       filter: true,
     },
     {
-      headerName: "Index Selic",
+      headerName: "Benchmark SELIC",
       field: "index_selic",
       sortable: true,
       filter: true,
     },
-    { headerName: "Networth", field: "networth", sortable: true, filter: true },
+    { headerName: "Patrimônio", field: "networth", sortable: true, filter: true },
   ];
 
   positionWallet: PositionWallet;
