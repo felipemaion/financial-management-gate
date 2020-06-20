@@ -35,7 +35,7 @@ export class WalletImportComponent implements OnInit {
 
   columnDefs = [
     {
-      headerName: "instrument",
+      headerName: "Código",
       field: "instrument",
       width: 130,
       sortable: true,
@@ -45,26 +45,26 @@ export class WalletImportComponent implements OnInit {
       },
     },
     {
-      headerName: "Quantity",
+      headerName: "Quantidade",
       width: 120,
       field: "quantity",
       sortable: true,
       filter: true,
     },
     {
-      headerName: "Total Investment",
+      headerName: "Investimento",
       field: "total_investment",
       width: 150,
       sortable: true,
     },
     {
-      headerName: "Total Costs",
+      headerName: "Custos",
       field: "total_costs",
       width: 130,
       sortable: true,
     },
     {
-      headerName: "Date",
+      headerName: "Data",
       field: "date",
       sortable: true,
       width: 120,
@@ -157,10 +157,10 @@ export class WalletImportComponent implements OnInit {
 @Component({
   selector: "app-buttom-remove-movement",
   template: `
-    <button (click)="deleteMethod()" mat-mini-fab color="warn" aria-label="">
-      <mat-icon>delete</mat-icon>
+    <button (click)="deleteMethod()" aria-label="" class="row-button">
+      <mat-icon>delete_forever</mat-icon>
     </button>
-    <button mat-mini-fab color="primary" aria-label="">
+    <button aria-label="" class="row-button">
       <mat-icon>edit</mat-icon>
     </button>
   `,
