@@ -38,19 +38,19 @@
     <table style="width:25%">
       <tr>
         <td>Investimento Total</td>
-        <td>R$ {{positionWallet?.total_invested}}</td>
+        <td> {{positionWallet?.total_invested | currency:'BRL':true:'1.2-2'}}</td>
       </tr>
       <tr>
       <td>Total Benchmark SELIC</td> 
-      <td>R$ {{positionWallet?.total_selic}}</td>
+      <td> {{positionWallet?.total_selic | currency:'BRL':true:'1.2-2'}}</td>
       </tr>
       <tr>
         <td>Proventos Recebidos</td>
-        <td>R$ {{positionWallet?.total_dividends}}</td>
+        <td> {{positionWallet?.total_dividends | currency:'BRL':true:'1.2-2'}}</td>
       </tr>
       <tr>
         <td>Patrimônio Total</td>
-        <td>R$ {{positionWallet?.total_networth}}</td>
+        <td> {{positionWallet?.total_networth | currency:'BRL':true}}</td>
       </tr>
       
     </table>
@@ -63,7 +63,7 @@
             <mat-icon *ngIf="!buttonPressed">add_circle</mat-icon>
             <mat-icon *ngIf="buttonPressed">remove_circle</mat-icon>
           </button> -->
-          Assets
+          Renda Variável
         </ng-template>
         <!-- <div *ngIf="buttonPressed; else elseBlock">
           <app-import [wallet]="walletSelected"></app-import>

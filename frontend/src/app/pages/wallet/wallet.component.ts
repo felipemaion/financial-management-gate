@@ -9,6 +9,9 @@ import { MatBottomSheet } from "@angular/material/bottom-sheet";
 import { BottomSheetComponent } from "./components/bottom-sheet/bottom-sheet.component";
 import { PositionWallet } from "src/app/models/position.models";
 import { WalletImportComponent } from "./dialogs/wallet-import/wallet-import.component";
+import { LOCALE_ID } from '@angular/core';
+
+providers: [{provide: LOCALE_ID, useValue: 'pt-BR'}]
 
 export interface DialogData {
   description: string;
@@ -38,6 +41,9 @@ export interface UserData {
   templateUrl: "./wallet.component.html",
   styleUrls: ["./wallet.component.css"],
 })
+
+
+
 export class WalletComponent implements OnInit, OnDestroy {
   subscriptions: Subscription = new Subscription();
   description: string = "";
@@ -56,6 +62,16 @@ export class WalletComponent implements OnInit, OnDestroy {
     "index_selic",
     "networth",
   ];
+
+  CurrencyCellRendererBRL(params: any) {
+    var inrFormat = new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+      minimumFractionDigits: 2
+    });
+    return inrFormat.format(params.value);
+  }
+
 
   columnDefs = [
     {
@@ -77,20 +93,23 @@ export class WalletComponent implements OnInit, OnDestroy {
       field: "dividends",
       sortable: true,
       filter: true,
+      cellRenderer: this.CurrencyCellRendererBRL,
     },
     {
       headerName: "Investimento",
       field: "investments",
       sortable: true,
       filter: true,
+      cellRenderer: this.CurrencyCellRendererBRL,
     },
     {
       headerName: "Benchmark SELIC",
       field: "index_selic",
       sortable: true,
       filter: true,
+      cellRenderer: this.CurrencyCellRendererBRL,
     },
-    { headerName: "Patrimônio", field: "networth", sortable: true, filter: true },
+    { headerName: "Patrimônio", field: "networth", sortable: true, filter: true, cellRenderer: this.CurrencyCellRendererBRL,},
   ];
 
   positionWallet: PositionWallet;
