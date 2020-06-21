@@ -32,6 +32,14 @@ export class WalletImportComponent implements OnInit {
     "instrument",
     "created_at",
   ];
+  CurrencyCellRendererBRL(params: any) {
+    var inrFormat = new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+      minimumFractionDigits: 2
+    });
+    return inrFormat.format(params.value);
+  }
 
   columnDefs = [
     {
@@ -56,12 +64,14 @@ export class WalletImportComponent implements OnInit {
       field: "total_investment",
       width: 150,
       sortable: true,
+      cellRenderer: this.CurrencyCellRendererBRL,
     },
     {
       headerName: "Custos",
       field: "total_costs",
       width: 130,
       sortable: true,
+      cellRenderer: this.CurrencyCellRendererBRL,
     },
     {
       headerName: "Data",
