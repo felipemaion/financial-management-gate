@@ -10,10 +10,18 @@ import { WalletModule } from './pages/wallet/wallet.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { JWTInterceptor } from './interceptor';
+import ptBr from '@angular/common/locales/pt';
+import { registerLocaleData } from '@angular/common';
+import { LOCALE_ID } from '@angular/core';
+
+registerLocaleData(ptBr);
+
 
 @NgModule({
   declarations: [
     AppComponent,
+  ],
+  exports: [
   ],
   imports: [
     BrowserModule,
@@ -31,7 +39,10 @@ import { JWTInterceptor } from './interceptor';
       provide: HTTP_INTERCEPTORS,
       useClass: JWTInterceptor,
       multi: true,
-    }
+    },
+    { 
+      provide:LOCALE_ID, 
+      useValue: 'pt-BR' }
   ],
   bootstrap: [AppComponent]
 })

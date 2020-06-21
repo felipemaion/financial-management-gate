@@ -9,9 +9,6 @@ import { MatBottomSheet } from "@angular/material/bottom-sheet";
 import { BottomSheetComponent } from "./components/bottom-sheet/bottom-sheet.component";
 import { PositionWallet } from "src/app/models/position.models";
 import { WalletImportComponent } from "./dialogs/wallet-import/wallet-import.component";
-import { LOCALE_ID } from '@angular/core';
-
-providers: [{provide: LOCALE_ID, useValue: 'pt-BR'}]
 
 export interface DialogData {
   description: string;
