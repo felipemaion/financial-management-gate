@@ -1,6 +1,6 @@
 from rest_framework.viewsets import ModelViewSet
-from aporte.models import Aporte  # , Corrige
-# , CorrigeSerializer
+from aporte.models import Aporte
+from rest_framework.decorators import action
 from .serializers import AporteSerializer, WalletSerializer, MovimentSerializer
 from rest_framework import mixins, viewsets
 from rest_framework.generics import CreateAPIView
@@ -15,6 +15,8 @@ import pandas as pd
 import json
 from datetime import datetime
 import locale
+
+
 # class AporteDeleteUpdate(RetrieveUpdateDestroyAPIView):
 #     queryset = Aporte.objects.all()
 #     serializer_class = AporteSerializer
@@ -33,46 +35,47 @@ class ImportWalletCsv(CreateAPIView):
 
     def create(self, request, *args, **kwargs):
         print(request.user)
-        try: 
+        try:
             wallet = Wallet.objects.get(id=int(request.data['wallet']), user=request.user)
         except:
             print("Wallet for this User not found.")
-            return(0)
+            return (0)
         print(wallet)
         # return Response('Que merda, ein?')
         file_request = request.FILES['file']
-        
-        data = file_request.read()# .decode('latin') # not sure: read()?? MemorySecurity issue??!?
+
+        data = file_request.read()  # .decode('latin') # not sure: read()?? MemorySecurity issue??!?
         # https://docs.djangoproject.com/en/3.0/topics/http/file-uploads/
 
-# Pretty sure I need to encapsulate this into a new method:
+        # Pretty sure I need to encapsulate this into a new method:
         if file_request.name.endswith('.csv'):
             io_string = io.StringIO(data.decode('latin'))
             next(io_string)
-            df = pd.read_csv(io_string, header=0, skip_blank_lines=True, 
-                         skipinitialspace=True,delimiter=';', encoding='latin-1',
-                         usecols=[0,1,2,3], names=['ATIVO', 'DATA', 'QUANTIDADE', 'VALOR'])
+            df = pd.read_csv(io_string, header=0, skip_blank_lines=True,
+                             skipinitialspace=True, delimiter=';', encoding='latin-1',
+                             usecols=[0, 1, 2, 3], names=['ATIVO', 'DATA', 'QUANTIDADE', 'VALOR'])
         elif file_request.name.endswith('.xls') or file_request.name.endswith('.xlsx'):
-            io_string = io.BytesIO(data)# StringIO(data)
+            io_string = io.BytesIO(data)  # StringIO(data)
             next(io_string)
             df = pd.read_excel(io_string)
         # print(df) # For debug :P
-# Same thing here,  should be a method (?):
-        try: # try to prepare data... 
-            locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8') 
-            df['DATA']=pd.to_datetime(df['DATA'])
-            df['VALOR']=df['VALOR'].map(lambda x: locale.atof(x.strip("R$")))    
+        # Same thing here,  should be a method (?):
+        try:  # try to prepare data...
+            locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
+            df['DATA'] = pd.to_datetime(df['DATA'])
+            df['VALOR'] = df['VALOR'].map(lambda x: locale.atof(x.strip("R$")))
         except:
             pass
-        
-        try: 
+
+        try:
             for index, row in df.iterrows():
                 instrument = Instrument.objects.get(tckrSymb=row["ATIVO"])
                 date = row["DATA"]
                 quantity = row["QUANTIDADE"]
-                total_investment = row["VALOR"]        
+                total_investment = row["VALOR"]
                 # print("Wallet:", wallet)
-                moviment = Moviment(instrument=instrument, wallet=wallet, date=date, quantity=quantity, total_investment=total_investment)
+                moviment = Moviment(instrument=instrument, wallet=wallet, date=date, quantity=quantity,
+                                    total_investment=total_investment)
                 # print(moviment.instrument)
                 moviment.save()
             # print("Foi pra carteira")
@@ -83,8 +86,6 @@ class ImportWalletCsv(CreateAPIView):
             return Response(0)
 
 
-
-        
 # class CorrigeModelViewSet(ModelViewSet):
 #     queryset = Corrige.objects.all()
 #     serializer_class = CorrigeSerializer
@@ -103,8 +104,24 @@ class WalletModelViewSet(mixins.ListModelMixin,
     def get_object(self):
         return Wallet.objects.filter(user_id=self.request.user.id)
 
+    @action(detail=True, methods=['get'])
+    def movements(self, request, pk):
+        query = Moviment.objects.filter(wallet_id=pk, wallet__user=self.request.user)
+        serialized_data = MovimentSerializer(query, many=True)
+        return Response(serialized_data.data)
+
+
+class MovementModelViewSet(viewsets.GenericViewSet, mixins.DestroyModelMixin):
+    permission_classes = [IsAuthenticated, ]
+    serializer_class = MovimentSerializer
+
+    def get_object(self):
+        return Moviment.objects.get(id=self.kwargs['pk'], wallet__user=self.request.user)
+
+
 class PositionWallet(APIView):
-    # permission_classes = [IsAuthenticated, ]
+    permission_classes = [IsAuthenticated, ]
+
     def get(self, request, pk):
         wallet = Wallet.objects.get(id=pk)
         position = wallet.position()

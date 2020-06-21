@@ -1,4 +1,4 @@
-import { NgModule } from "@angular/core";
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
 import { WalletRoutingModule } from "./wallet-routing.module";
@@ -18,13 +18,28 @@ import { BottomSheetComponent } from "./components/bottom-sheet/bottom-sheet.com
 import { MatGridListModule } from "@angular/material/grid-list";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatListModule } from "@angular/material/list";
-import { MatSortModule } from '@angular/material/sort';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { ImportComponent } from './import/import.component';
-import { AgGridModule } from 'ag-grid-angular';
+import { MatSortModule } from "@angular/material/sort";
+import { MatPaginatorModule } from "@angular/material/paginator";
+import { ImportComponent } from "./import/import.component";
+import { AgGridModule } from "ag-grid-angular";
+import {
+  WalletImportComponent,
+  ButtomRemoveMovement,
+  DialogDelete,
+} from "./dialogs/wallet-import/wallet-import.component";
+import { MovementService } from "./services/movement.service";
 
 @NgModule({
-  declarations: [WalletComponent, DialogWallet, BottomSheetComponent, ImportComponent],
+  declarations: [
+    WalletComponent,
+    ButtomRemoveMovement,
+    DialogDelete,
+    WalletImportComponent,
+    DialogWallet,
+    BottomSheetComponent,
+    ImportComponent,
+    WalletImportComponent,
+  ],
   imports: [
     CommonModule,
     MatSelectModule,
@@ -42,9 +57,10 @@ import { AgGridModule } from 'ag-grid-angular';
     MatGridListModule,
     MatSortModule,
     MatPaginatorModule,
-    AgGridModule.withComponents([])
+    AgGridModule.withComponents([]),
   ],
-  providers: [WalletService],
+  providers: [WalletService, MovementService],
   entryComponents: [BottomSheetComponent],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class WalletModule {}

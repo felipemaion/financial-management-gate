@@ -13,7 +13,7 @@
       <mat-form-field>
         <mat-label>Selecionar Carteira</mat-label>
         <mat-select [(ngModel)]="walletSelected" (ngModelChange)="getPositionWallet()">
-          <mat-option *ngFor="let item of wallets" [value]="item?.id">
+          <mat-option *ngFor="let item of wallets" [value]="item">
             {{item?.description}}
           </mat-option>
         </mat-select>
@@ -35,30 +35,75 @@
     <div class="ui large text loader">Carregando...</div>
   </div>
   <div *ngIf="walletSelected">
-    Total Selic {{positionWallet?.total_selic}} <br>
-    Total invested: {{positionWallet?.total_invested}} <br>
-    Total NetWorth {{positionWallet?.total_networth}} <br>
-    Total Dividends {{positionWallet?.total_dividends}} <br>
-
+    <table style="width:25%">
+      <tr>
+        <td>Investimento Total</td>
+        <td> {{positionWallet?.total_invested | currency:'BRL'}}</td>
+      </tr>
+      <tr>
+      <td>Total Benchmark SELIC</td> 
+      <td> {{positionWallet?.total_selic | currency:'BRL'}}</td>
+      </tr>
+      <tr>
+        <td>Proventos Recebidos</td>
+        <td> {{positionWallet?.total_dividends | currency:'BRL'}}</td>
+      </tr>
+      <tr>
+        <td>Patrimônio Total</td>
+        <td> {{positionWallet?.total_networth | currency:'BRL'}}</td>
+      </tr>
+      
+    </table>
+     
     <mat-tab-group animationDuration="0ms">
 
       <mat-tab label="Assets">
         <ng-template mat-tab-label>
-          <button mat-icon-button (click)="change()">
-            <!-- [routerLink]="'import/'+walletSelected"> -->
+          <!-- <button mat-icon-button (click)="change()">
             <mat-icon *ngIf="!buttonPressed">add_circle</mat-icon>
             <mat-icon *ngIf="buttonPressed">remove_circle</mat-icon>
-          </button>
-          Assets
+          </button> -->
+          Renda Variável
         </ng-template>
-        <div *ngIf="buttonPressed; else elseBlock"> 
+        <!-- <div *ngIf="buttonPressed; else elseBlock">
           <app-import [wallet]="walletSelected"></app-import>
-        </div>
-          <ng-template #elseBlock>
-            <ag-grid-angular style="width: 100%; height: 500px;" class="ag-theme-alpine"
-              [rowData]="positionWallet?.positions" [columnDefs]="columnDefs">
-            </ag-grid-angular>
-        </ng-template>
+        </div> -->
+        <!-- <ng-template #elseBlock> -->
+
+
+
+          <mat-toolbar color="primary">
+            <mat-toolbar-row class="shadow">
+              <mat-label style='font-size:0.8em'>Colunas: </mat-label>
+              <mat-form-field>
+                <mat-select multiple>
+                  <mat-select-trigger>
+                    <span>
+                      s
+                    </span>
+                    <span>
+                      sw
+                    </span>
+                    <span>
+                      ww
+                    </span>
+                  </mat-select-trigger>
+                  <mat-option value="topping">Ticker</mat-option>
+                  <mat-option value="toppiwng">Ticker</mat-option>
+                  <mat-option value="toppwing">Ticker</mat-option>
+                </mat-select>
+              </mat-form-field>
+              
+              <span class="spacer"></span>
+              <button (click)="openDialogImport()" mat-button class="button-import">Editar Movimentações</button>
+              
+            </mat-toolbar-row>
+          </mat-toolbar>
+            
+          <ag-grid-angular style="width: 100%; height: 500px;" class="ag-theme-alpine"
+            [rowData]="positionWallet?.positions" [columnDefs]="columnDefs">
+          </ag-grid-angular>
+        <!-- </ng-template> -->
       </mat-tab>
     </mat-tab-group>
 
