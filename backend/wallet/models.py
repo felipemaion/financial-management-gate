@@ -37,8 +37,11 @@ class Wallet(models.Model):
         # assets = [asset + ".SA" for asset in assets] # so para o yfinances
         prices = {}
         for asset in assets:
-            prices[asset] = PriceHistory.objects.filter(
-                instrument__tckrSymb=asset).latest('date').adj_close
+            try:
+                prices[asset] = PriceHistory.objects.filter(
+                    instrument__tckrSymb=asset).latest('date').adj_close
+            except:
+                prices[asset] = Decimal(0.00)
         return prices
 
     def position(self, date=datetime.now()):
