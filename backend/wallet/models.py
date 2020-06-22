@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models import Q
 from django.utils.translation import ugettext as _
+from django.core.management.base import BaseCommand, CommandError
 from account.models import User
 from instrument.models import Instrument, Event, PriceHistory
 from core.models import BaseTimeModel
@@ -14,6 +15,18 @@ class WalletQuerySetManager(models.Manager):
     def assets(self, asset):
         return Instrument.objects.filter(tckrSymb=asset)
 
+class msg:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKGREEN = '\033[92m'
+    SUCCESS = '\033[92m'
+    WARNING = '\033[93m'
+    ERROR = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+    
 
 class Wallet(models.Model):
     user = models.ForeignKey(
@@ -40,8 +53,29 @@ class Wallet(models.Model):
             try:
                 prices[asset] = PriceHistory.objects.filter(
                     instrument__tckrSymb=asset).latest('date').adj_close
+                print(msg.SUCCESS + 'Price ok for: '+ asset + msg.ENDC)
             except:
-                prices[asset] = Decimal(0.00)
+                try: 
+                    instrument = Instrument.objects.filter(tckrSymb=asset)
+                    events_origin = instrument.populate_events()
+                except:
+                    print(msg.ERROR + 'Error Getting price for ' + asset + msg.ENDC)
+            # o try vai ficar aqui mesmo
+                    try:
+                        if not events_origin.empty:
+                            for index, event in events_origin.iterrows():  # como pega apenas a data (id) da scrita no terminal
+                                Event.objects.get_or_create(
+                                    instrument=instrument,
+                                    event_date=index.strftime("%Y-%m-%d"),
+                                    dividends=event['Dividends'],
+                                    stock_splits=event['Stock Splits']
+                                )
+                            print(msg.SUCCESS + 'Criado ' + asset + msg.ENDC)
+                                
+                    except:
+                        print(msg.ERROR + 'Error Getting ' + asset + ' at db. \nTry updatind assets list at B3' + msg.ENDC)
+                        pass
+                        prices[asset] = Decimal(0.00)
         return prices
 
     def position(self, date=datetime.now()):
