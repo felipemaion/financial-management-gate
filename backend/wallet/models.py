@@ -163,7 +163,7 @@ class Wallet(models.Model):
                 asset_dividends += dividends
                 asset_quantity += qt
 
-                asset_networth += asset_quantity * asset_price
+                asset_networth += qt * asset_price
             positions.append({
                 "ticker": asset_ticker,
                 "quantity": int(asset_quantity), # Será sempre INT?? Stocks dos EUA sei que não é.
