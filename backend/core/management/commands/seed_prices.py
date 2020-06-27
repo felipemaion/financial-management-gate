@@ -20,14 +20,16 @@ class Command(BaseCommand):
         # "MGLU3","MRVE3","MXRF11","PETR4","PETR4","PORD11","PRIO3","PRIO3","RADL3","RBBV11","RBGS11","RBRF11","RNGO11","SAPR4","SDIL11",
         # "SGPS3","SMAL11","SQIA3","TAEE11","TIET11","TRPL4","VIVA3","VVAR3","XPCM11","XPLG11","XPML11","ABEV3","FEXC11","KNRI11","RENT3",
         # 'ALSO3', 'BEEF3', 'HBOR3', 'JPSA3', 'LCAM3', 'PNVL3', 'SQIA3', 'STBP3']
-        assets = ['PNVL3','BEEF3','MGLU3']
+        # assets = ['PNVL3','BEEF3','MGLU3']
+        instruments = Instrument.objects.all()
+        assets = [instrument.tckrSymb for instrument in instruments]
         # TODO Testar código inválido.
         error_log = []
         assets = [asset + ".SA" for asset in assets]
         try:
             ### TODO utilizar o PriceHistory para armazenar e pegar as info.
             print("Getting ONLINE Data for Assets:", assets)
-            data = yf.download(assets, start="2010-01-01", end=datetime.now(), period="1d", group_by="Ticker")
+            data = yf.download(assets, start="2020-01-01", end=datetime.now(), period="1d", group_by="Ticker")
             
         except:
             print("Error getting Online Data.")
