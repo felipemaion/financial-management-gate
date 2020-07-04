@@ -175,11 +175,11 @@ class PriceHistory(BaseTimeModel):
 class Company(BaseTimeModel):
     instrument = models.ForeignKey(Instrument, related_name="company",
                                    on_delete=models.CASCADE)
-    data = JSONField(default={})
+    data = JSONField(default=dict())
     # display = JSONField()
 
     def __str__(self):
-        return self.instrument
+        return self.instrument.tckrSymb
 
     class Meta:
         # unique_together = ('instrument', 'date',)

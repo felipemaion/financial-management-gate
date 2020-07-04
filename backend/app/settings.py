@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_extensions',
+    'django_json_widget',
     'corsheaders',
     'rest_framework_jwt',
     'crispy_forms',
