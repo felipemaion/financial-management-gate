@@ -47,7 +47,7 @@ class Command(BaseCommand):
 		print("Trying to populate Instrument's into database:")
 		try:
 			for id, row in info.iterrows():
-				new_data = Instrument.objects.create(
+				new_data = Instrument.objects.get_or_create(
 					tckrSymb = row[csv_fields[0]],
 					sgmtNm = row[csv_fields[1]], 
 					mktNm = row[csv_fields[2]],

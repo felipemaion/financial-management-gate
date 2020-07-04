@@ -3,20 +3,21 @@ from django.utils.translation import ugettext as _
 from datetime import datetime
 import yfinance as yf
 from core.models import BaseTimeModel
+from django.contrib.postgres.fields import JSONField
 # Create your models here.
 
 
 class Instrument(BaseTimeModel):
     tckrSymb = models.CharField('tckrSymb', max_length=20, unique=True)
-    sgmtNm = models.CharField('sgmtNm', max_length=20, blank=True, null=True)
-    mktNm = models.CharField('mktNm', max_length=20, blank=True, null=True)
+    sgmtNm = models.CharField('sgmtNm', max_length=255, blank=True, null=True)
+    mktNm = models.CharField('mktNm', max_length=255, blank=True, null=True)
     sctyCtgyNm = models.CharField(
-        "SctyCtgyNm", max_length=20, blank=True, null=True)
-    isin = models.CharField('isin', max_length=20, blank=True, null=True)
-    cFICd = models.CharField('cFICd', max_length=20, blank=True, null=True)
-    crpnNm = models.CharField('crpnNm', max_length=20, blank=True, null=True)
+        "SctyCtgyNm", max_length=255, blank=True, null=True)
+    isin = models.CharField('isin', max_length=50, blank=True, null=True)
+    cFICd = models.CharField('cFICd', max_length=50, blank=True, null=True)
+    crpnNm = models.CharField('crpnNm', max_length=50, blank=True, null=True)
     corpGovnLvlNm = models.CharField(
-        'corpGovnLvlNm', max_length=20, blank=True, null=True)
+        'corpGovnLvlNm', max_length=255, blank=True, null=True)
     lastUpdate = models.DateTimeField('last update', blank=True, null=True)
 
     def history(self):
@@ -168,3 +169,20 @@ class PriceHistory(BaseTimeModel):
         verbose_name = 'Price History'
         verbose_name_plural = 'Price Histories'
         ordering = ['-date']
+
+
+
+class Company(BaseTimeModel):
+    instrument = models.ForeignKey(Instrument, related_name="company",
+                                   on_delete=models.CASCADE)
+    data = JSONField(default={})
+    # display = JSONField()
+
+    def __str__(self):
+        return self.instrument
+
+    class Meta:
+        # unique_together = ('instrument', 'date',)
+        verbose_name = 'Company'
+        verbose_name_plural = 'Companies'
+        ordering = ['instrument']
