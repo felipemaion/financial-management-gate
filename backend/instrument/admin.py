@@ -43,9 +43,10 @@ class CompanyAdmin(admin.ModelAdmin):
 
     def json_data(self, obj):
         data = json.loads(obj.data)['data']
+        display = json.loads(obj.data)['display']
         show = []
         for x,y in data.items():
-            show.append("({} : {})".format(x,y))
+            show.append("({} : {})".format(display,y))
         return show
 
         # for key, value in json.loads(obj.data)['data']:

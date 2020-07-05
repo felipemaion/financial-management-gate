@@ -182,7 +182,7 @@ class Company(BaseTimeModel):
         return self.instrument.tckrSymb
 
     class Meta:
-        # unique_together = ('instrument', 'date',)
+        unique_together = ('instrument', 'data',)
         verbose_name = 'Company'
         verbose_name_plural = 'Companies'
         ordering = ['instrument']

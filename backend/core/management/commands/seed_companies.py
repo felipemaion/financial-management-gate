@@ -60,7 +60,8 @@ class DataCompany():
                     contx += 2
                     conty += 2
             self.items = []
-        self.data["url"] = self.url    
+        self.data["url"] = self.url 
+        self.display_keys["url"] = "URL"   
         data = {"data":self.data, "display":self.display_keys}    
         self.json_data = json.dumps(data, ensure_ascii=False).encode("utf8").decode() 
         return self.json_data
@@ -109,6 +110,6 @@ class Command(BaseCommand):
                 instrument = Instrument.objects.filter(tckrSymb=asset)[0]
                 company = Company.objects.get_or_create(instrument=instrument, data=data)
                 self.stdout.write(self.style.SUCCESS('Populado Fundamentos de:' + asset))
-            except:
-                self.stdout.write(self.style.ERROR('Não foi possível popular Fundamentos da Compania:' + asset))
+            except Exception as e:
+                self.stdout.write(self.style.ERROR('Não foi possível popular Fundamentos da Compania:' + asset + ' erro:' + str(e) ))
                 pass
