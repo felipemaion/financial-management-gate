@@ -95,21 +95,25 @@ class DataCompany():
 
 
 class Command(BaseCommand):
-    help = 'Populando Fundamentos dos Instrumentos'
+    help = 'Seeding Fundamentos dos Instrumentos'
 
     def handle(self, *args, **options):
         self.stdout.write(self.style.SUCCESS(
-            'Populando Fundamentos dos Instrumentos'))
+            'Seeding Fundamentos dos Instrumentos'))
         instruments = Instrument.objects.all()
         assets = [instrument.tckrSymb for instrument in instruments]
         # TODO Testar código inválido.
-        error_log = []
         for asset in assets:
             try:
                 data = DataCompany(asset).getdata()
                 instrument = Instrument.objects.filter(tckrSymb=asset)[0]
-                company = Company.objects.get_or_create(instrument=instrument, data=data)
-                self.stdout.write(self.style.SUCCESS('Populado Fundamentos de:' + asset))
+                company, created = Company.objects.get_or_create(instrument=instrument)
+                # print(company.data)
+                company.data = data
+                company.save()
+                # print(company.data)
+                if created: self.stdout.write(self.style.SUCCESS('Populado Fundamentos de:' + asset))
+                if not created: self.stdout.write(self.style.SUCCESS('Atualizando Fundamentos de:' + asset))
             except Exception as e:
                 self.stdout.write(self.style.ERROR('Não foi possível popular Fundamentos da Compania:' + asset + ' erro:' + str(e) ))
                 pass
