@@ -3,6 +3,7 @@ from django.utils.translation import ugettext as _
 from datetime import datetime
 import yfinance as yf
 from core.models import BaseTimeModel
+from account.models import User
 from django.contrib.postgres.fields import JSONField
 # Create your models here.
 
@@ -19,6 +20,8 @@ class Instrument(BaseTimeModel):
     corpGovnLvlNm = models.CharField(
         'corpGovnLvlNm', max_length=255, blank=True, null=True)
     lastUpdate = models.DateTimeField('last update', blank=True, null=True)
+    external_id = models.IntegerField('external id', blank=True, null=True)
+    codigoCvm = models.IntegerField('codigoCvm', blank=True, null=True)
 
     def history(self):
         return yf.download(  # or pdr.get_data_yahoo(...
@@ -121,6 +124,107 @@ class Event(BaseTimeModel):
         verbose_name_plural = 'Events'
         ordering = ['-event_date']
 
+class EventoAcao(BaseTimeModel):
+    """
+            instrument: "Instrument", 
+            source_user: "SourceUser",
+            ex_date: "DataEx",
+            event_date: "DataPagamento"/"DataEvento",
+            accounting_date": DataContabil",
+            category: "Tipo",
+            document_link: "LinkComunicado"
+    """
+    instrument = models.ForeignKey(Instrument, related_name="events2",
+                on_delete=models.DO_NOTHING)
+
+    source_user = models.ForeignKey(User, on_delete=models.DO_NOTHING, blank=True, null=True)
+    ex_date = models.DateField(
+        'ex-date')  # precisa mesmo armazenar hora?
+    event_date = models.DateField(
+        'payment date', blank=True, null=True)
+    accounting_date = models.DateField(
+        'accounting date', blank=True, null=True)
+    
+    category = models.CharField('category', max_length=20)
+
+    document_link = models.URLField(max_length=1000, blank=True, null=True)
+
+
+    class Meta:
+        unique_together = ('instrument', 'ex_date','category', 'event_date')
+        abstract = True
+        verbose_name = 'Event'
+        verbose_name_plural = 'Events'
+        ordering = ['-ex_date']
+
+class Dividend(EventoAcao):
+    """
+            instrument: "Instrument": << AÇÃO >> 
+            source_user: "SourceUser": << USER WHO UPLOADED INFO >>,
+            ex_date: "DataEx": "<< data apartir de quando não vale o evento, inclusa. >>",
+            event_date: "DataPagamento": "<<  data do pagamento >>",
+            accounting_date: "DataContabil": "<< data contábil >>",
+            category: "Tipo": "DIV" / "JCP" ,
+            document_link: "LinkComunicado": "http://www2.bmfbovespa.com.br/empresas/consbov/ArquivoComCabecalho.asp?motivo=&protocolo=679677&funcao=visualizar&site=B",
+            
+            value: "Valor": 0.370259884,
+            adjusted_value: "ValorAjustado": 0.370259884,
+    """
+    instrument = models.ForeignKey(Instrument, related_name="dividends",
+                on_delete=models.CASCADE)
+
+   
+    value = models.DecimalField('value', decimal_places=9, max_digits=20)
+    adjusted_value = models.DecimalField('adjusted value', decimal_places=9, max_digits=20)
+    
+    
+
+    def __str__(self):
+        return 'Ticker:{} Date:{} Dividends: {}' .format(
+            self.instrument.tckrSymb,
+            str(self.ex_date),
+            str(self.value))
+
+    class Meta:
+        unique_together = ('instrument', 'ex_date','category', 'event_date', 'value')
+        verbose_name = 'Dividend'
+        verbose_name_plural = 'Dividends'
+        ordering = ['-ex_date']
+
+
+
+class Split(EventoAcao):
+    """
+            *instrument:"Empresa",
+            *category:"Tipo": "DESDOBRAMENTO"/"GRUPAMENTO",
+            *ex_date:"DataEx",
+            *event_date: "DataEvento",
+            *source_user:"Usuario"
+            *document_link:"LinkComunicado",
+
+            factor:"Fator",
+    """
+    instrument = models.ForeignKey(Instrument, related_name="splits",
+                on_delete=models.CASCADE)
+
+    factor = models.DecimalField(
+        'factor', decimal_places=9, max_digits=20)
+    
+    
+    
+
+    def __str__(self):
+        return 'Ticker:{} Date:{} Factor: {}' .format(
+            self.instrument.tckrSymb,
+            str(self.ex_date),
+            str(self.factor))
+
+    class Meta:
+        verbose_name = 'Split'
+        verbose_name_plural = 'Splits'
+        ordering = ['-ex_date']
+
+
 
 class PriceHistory(BaseTimeModel):
     '''
@@ -175,7 +279,7 @@ class PriceHistory(BaseTimeModel):
 class Company(BaseTimeModel):
     instrument = models.ForeignKey(Instrument, related_name="company",
                                    on_delete=models.CASCADE)
-    data = JSONField(default=dict())
+    data = JSONField(default=dict)
     # display = JSONField()
 
     def __str__(self):

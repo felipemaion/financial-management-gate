@@ -1,6 +1,6 @@
 from django.contrib import admin
 from wallet.models import Wallet, Moviment
-from instrument.models import Instrument, PriceHistory, Company
+from instrument.models import Instrument, PriceHistory, Company, Dividend, Split
 from django.contrib.postgres import fields
 from django_json_widget.widgets import JSONEditorWidget
 import json
@@ -26,10 +26,21 @@ class AdminHistory(admin.ModelAdmin):
         verbose_name_plural = "Admin Instruments"
         ordering = ["instrument"]
 
+class AdminDividend(admin.ModelAdmin):
+    list_display = ["instrument", "ex_date", "event_date", "category", "value"] # aqui vc precisa colocar as colunas que vc quer ver
+    search_fields = ["event_date","instrument__tckrSymb", "instrument__crpnNm", "category"]
+    list_filter = ["instrument", "category"]
+   
+
+    class Meta:
+        verbose_name = "Admin Dividend"
+        verbose_name_plural = "Admin Dividends"
+        ordering = ["-event_date"]
 
 admin.site.register(Instrument, AdminInstrument)
 admin.site.register(PriceHistory, AdminHistory)
-# admin.site.register(Company)
+admin.site.register(Dividend, AdminDividend)
+admin.site.register(Split)
 
 @admin.register(Company)
 class CompanyAdmin(admin.ModelAdmin):
