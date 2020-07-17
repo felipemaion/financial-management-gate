@@ -116,7 +116,8 @@ class Event(BaseTimeModel):
             self.instrument.tckrSymb,
             str(self.event_date),
             str(self.dividends),
-            str(self.stock_splits))
+            str(self.stock_splits)
+            )
 
     class Meta:
         unique_together = ('instrument', 'event_date',)
@@ -153,8 +154,8 @@ class EventoAcao(BaseTimeModel):
     class Meta:
         unique_together = ('instrument', 'ex_date','category', 'event_date')
         abstract = True
-        verbose_name = 'Event'
-        verbose_name_plural = 'Events'
+        verbose_name = 'event2'
+        verbose_name_plural = 'events2'
         ordering = ['-ex_date']
 
 class Dividend(EventoAcao):
@@ -203,23 +204,23 @@ class Split(EventoAcao):
             *document_link:"LinkComunicado",
 
             factor:"Fator",
+            income_tax_price:"PrecoIR"
+            fraction_price:"PrecoFracao"
+            fraction_date: "DataFracao"
+            details: "Detalhes"
     """
-    instrument = models.ForeignKey(Instrument, related_name="splits",
-                on_delete=models.CASCADE)
-
-    factor = models.DecimalField(
-        'factor', decimal_places=9, max_digits=20)
+    instrument = models.ForeignKey(Instrument, related_name="splits", on_delete=models.CASCADE)
+    factor = models.DecimalField('factor', decimal_places=9, max_digits=20, null=True, blank=True)
+    income_tax_price = models.DecimalField('income tax price', decimal_places=9, max_digits=20, null=True, blank=True)
+    fraction_price = models.DecimalField('fraction price', decimal_places=9, max_digits=20, null=True, blank=True)
+    fraction_date = models.DateField('fraction date', blank=True, null=True)
+    details = models.CharField('details', max_length=255, blank=True, null=True)
     
-    
-    
-
     def __str__(self):
-        return 'Ticker:{} Date:{} Factor: {}' .format(
-            self.instrument.tckrSymb,
-            str(self.ex_date),
-            str(self.factor))
+        return f'Ticker:{self.instrument.tckrSymb} Date:{self.ex_date} Factor: {self.factor}'
 
     class Meta:
+        unique_together = ('instrument', 'ex_date','category', 'event_date', 'factor', 'income_tax_price', 'fraction_date', 'fraction_price', 'details' ) 
         verbose_name = 'Split'
         verbose_name_plural = 'Splits'
         ordering = ['-ex_date']

@@ -141,25 +141,37 @@ class Wallet(models.Model):
                 asset_cost += moviment.total_costs
                 asset_selic += moviment.present_value()
                 dividends = 0
+
+                # TODO Implementar para os novos eventos:
+                # Criar as posições no tempo com base na primeira movimentação?
+                # Aplicar splits.
+                # Aplicar proventos.
                 # Pega os eventos depois do movimento:
                 events = moviment.instrument.events.all().filter(
                     event_date__gte=moviment.date).order_by('event_date')
+                events_splits = moviment.instrument.splits.filter(
+                    event_date__gte=moviment.date).order_by('event_date')
+                events_dividends = moviment.instrument.dividends.filter(
+                    event_data__gte=moviment.date).order_by('event_date')
                 # agora o looping nos eventos que se aplicam para esse movimento:
                 print(
                     "Event Date \t \t Dividends \t Splits \t Total Dividends \t Posição para Movimentação")
-                for event in events:
-                    # Read events for this asset:
+                # ATIVO, Carteira, Data, Tipo, Quantidade, R$ Operação,	R$ Operação Líq., Qtd Total, R$ Total
+                for event in events_splits:
                     event_date = event.event_date
-                    div_per_share = event.dividends
-                    split_per_share = event.stock_splits
+                # for event in events:
+                #     # Read events for this asset:
+                #     event_date = event.event_date
+                #     div_per_share = event.dividends
+                #     split_per_share = event.stock_splits
 
-                    if split_per_share != 0.0:
-                        # if asset == "LCAM3": print(qt," x",split_per_share)
-                        qt *= split_per_share
-                    if div_per_share != 0:
-                        dividends += qt*div_per_share
-                    print(
-                        f"Event:\t{event_date} \t {div_per_share} \t {split_per_share} ->\t {qt*div_per_share:.2f} \t \t {qt:.2f}")
+                #     if split_per_share != 0.0:
+                #         # if asset == "LCAM3": print(qt," x",split_per_share)
+                #         qt *= split_per_share
+                #     if div_per_share != 0:
+                #         dividends += qt*div_per_share
+                #     print(
+                #         f"Event:\t{event_date} \t {div_per_share} \t {split_per_share} ->\t {qt*div_per_share:.2f} \t \t {qt:.2f}")
                 asset_dividends += dividends
                 asset_quantity += qt
 
@@ -206,12 +218,34 @@ class Wallet(models.Model):
 
 
 class Position(BaseTimeModel):
+    """
+        wallet: key Wallet
+        instrument: key Instrument
+        date: Event Date
+        category: COMPRA/VENDA/DESDOBRAMENTO/GRUPAMENTO/etc 
+        quantity: Quantity for the event
+        total_quantity: Total quantity of the Asset in this Wallet at this date.
+        transaction_value: Buy: Price + Costs; Sell: Price only (withou costs).
+        net_value: # For Selling only: Total Price - Costs
+        total_value: Total R$ invested in this Asset in this Wallet at this date.
+    """
+
     wallet = models.ForeignKey(
         Wallet, related_name="wallet_position", on_delete=models.CASCADE)
-    positions = {}  # {'MGLU3':{"quantity":100, "total_investment":16000}}
-    assets = []
-    quantities = []
-    total_investments = []
+    instrument = models.ForeignKey(
+        Instrument, related_name="instrument_position", on_delete=models.CASCADE)
+    date = models.DateField('date')
+    category = models.CharField('category', max_length=255, null=True, blank=True)
+    quantity = models.IntegerField('quantity')
+    total_quantity = models.IntegerField('total quantity')
+    transaction_value = models.DecimalField('transaction value', decimal_places=2, max_digits=20) # Compra: Preço + Custos; Venda: Preço sem custos.
+    net_value = models.DecimalField('net value', decimal_places=2, max_digits=20) # Somente venda: Valor total - Custos.
+    total_value = models.DecimalField('total value', decimal_places=2, max_digits=20)
+    class Meta:
+        verbose_name = _("Position")
+        verbose_name_plural = _("Positions")
+        ordering = ['-date']
+        # unique_together = [['wallet', 'instrument', 'date', 'category']]
 
 
 class Moviment(BaseTimeModel):
