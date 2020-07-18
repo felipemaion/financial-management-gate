@@ -137,7 +137,7 @@ class Wallet(models.Model):
             for moviment in asset_moviments:
                 p = Position.objects.get_or_create(
                     wallet=self, # like that?
-                    instrument=instrument 
+                    instrument=instrument, 
                     date=moviment.date,
                     category=['COMPRA', 'VENDA'][moviment.category],
                     quantity=moviment.quantity
