@@ -12,9 +12,10 @@ class Command(BaseCommand):
 	help = 'Criação de Dados Basicos para o funcionamento de Sistema '
 	
 	def handle(self, *args, **options):
-		self.populateInstrument(*args, **options)
+		# self.populateInstrument(*args, **options)
 		self.walletFullTest(*args, **options)
 		# seed.selic
+		# seed.proventos
 		# seed.companies
 
 

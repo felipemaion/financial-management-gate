@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     'selic',
     'api',
     'rest_framework',
-    'core'
+    'core',
 ]
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 

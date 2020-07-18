@@ -61,6 +61,7 @@ class Instrument(BaseTimeModel):
         )
 
     def populate_events(self):
+        # Não me parece ser correto isso ser aqui. Está certo? TODO
         # This .SA is for South America (since the instruments are (for now) from SA).
         #  Future bug reported.
         events = None

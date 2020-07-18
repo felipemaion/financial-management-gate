@@ -118,6 +118,7 @@ class Wallet(models.Model):
         total_selic = Decimal(0.0)
         positions = []
         for asset in assets:
+            instrument=Instrument.objects.filter(tckrSymb=asset)[0]
             asset_ticker = asset
             asset_dividends = Decimal(0.0)
             # Instrument.objects.filter(tckrSymb=asset)[0].get_price()
@@ -134,6 +135,19 @@ class Wallet(models.Model):
             # earliest_mov = asset_moviments.earliest('date')
             print("Asset:", asset)
             for moviment in asset_moviments:
+                p = Position.objects.get_or_create(
+                    wallet=self, # like that?
+                    instrument=instrument 
+                    date=moviment.date,
+                    category=['COMPRA', 'VENDA'][moviment.category],
+                    quantity=moviment.quantity
+                    transaction_value: Buy: Price + Costs; Sell: Price only (withou costs).
+                    net_value: # For Selling only: Total Price - Costs
+                    
+                    total_quantity=Position.objects.filter(wallet=self, instrument=instrument, date__lt=moviment.date)
+                    total_value: Total R$ invested in this Asset in this Wallet at this date.
+                    total_selic: Total R$ corrected by the SELIC Index.    
+                    )
                 # quantidade inicial no movimento:
                 print(f"Applying events to the moviment: {moviment}")
                 qt = moviment.quantity
@@ -228,6 +242,7 @@ class Position(BaseTimeModel):
         transaction_value: Buy: Price + Costs; Sell: Price only (withou costs).
         net_value: # For Selling only: Total Price - Costs
         total_value: Total R$ invested in this Asset in this Wallet at this date.
+        total_selic: Total R$ corrected by the SELIC Index.
     """
 
     wallet = models.ForeignKey(
@@ -241,6 +256,7 @@ class Position(BaseTimeModel):
     transaction_value = models.DecimalField('transaction value', decimal_places=2, max_digits=20) # Compra: Preço + Custos; Venda: Preço sem custos.
     net_value = models.DecimalField('net value', decimal_places=2, max_digits=20) # Somente venda: Valor total - Custos.
     total_value = models.DecimalField('total value', decimal_places=2, max_digits=20)
+    total_selic = models.DecimalField('total value', decimal_places=2, max_digits=20)
     class Meta:
         verbose_name = _("Position")
         verbose_name_plural = _("Positions")
@@ -249,7 +265,15 @@ class Position(BaseTimeModel):
 
 
 class Moviment(BaseTimeModel):
-
+    """
+        wallet: ForeignKey
+        instrument: ForeignKey
+        category: (0:'BUY', 1: 'SELL')
+        quantity
+        total_investment
+        total_costs 
+        date 
+    """
     TYPE_CHOICES = (
         (0, 'COMPRA'),
         (1, 'VENDA'),
@@ -257,8 +281,8 @@ class Moviment(BaseTimeModel):
     wallet = models.ForeignKey(
         Wallet, related_name='moviments', on_delete=models.CASCADE)
     instrument = models.ForeignKey(Instrument, on_delete=models.CASCADE)
-    type = models.IntegerField(
-        'type', choices=TYPE_CHOICES, blank=True, null=True)
+    category = models.IntegerField(
+        'category', choices=TYPE_CHOICES, blank=True, null=True)
     quantity = models.IntegerField('quantity')
     total_investment = models.DecimalField(
         'price', decimal_places=2, max_digits=10)
@@ -271,13 +295,13 @@ class Moviment(BaseTimeModel):
 
     def save(self, *args, **kwargs):
         if self.quantity > 0:
-            self.type = 0  # C
+            self.category = 0  # C
         else:
-            self.type = 1  # V
+            self.category = 1  # V
         if self.total_costs == None:
             self.total_costs = 0
 
         super(Moviment, self).save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.date} {('C','V')[self.type]} {self.quantity} x {self.instrument} @ R$ {self.total_investment} (costs:R${self.total_costs}) "
+        return f"{self.date} {('C','V')[self.category]} {self.quantity} x {self.instrument} @ R$ {self.total_investment} (costs:R${self.total_costs}) "
