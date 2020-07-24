@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Wallet, Moviment
+from .models import Wallet, Moviment, Position
 from instrument.models import Instrument
 # Register your models here.
 
@@ -18,5 +18,9 @@ class AdminWallet(admin.ModelAdmin):
 
 admin.site.register(Wallet, AdminWallet)
 
-
+class AdminPosition(admin.ModelAdmin):
+    list_display = ["wallet", "instrument", "category","date", "quantity","total_quantity", "transaction_value", "net_value", "total_value", "total_selic"]
+    search_fields = ["wallet__description","instrument__tckrSymb", "category"]
+    list_filter = ["category", "wallet", ("instrument",admin.RelatedOnlyFieldListFilter)]
+admin.site.register(Position, AdminPosition)
 

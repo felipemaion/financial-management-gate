@@ -119,6 +119,8 @@ class Wallet(models.Model):
         positions = []
         for asset in assets:
             instrument=Instrument.objects.filter(tckrSymb=asset)[0]
+            # Limpa as posições atuais desse ativo nessa carteira:
+            Position.objects.filter(wallet=wallet,instrument=instrument).delete()
             asset_ticker = asset
             asset_dividends = Decimal(0.0)
             # Instrument.objects.filter(tckrSymb=asset)[0].get_price()
@@ -132,85 +134,104 @@ class Wallet(models.Model):
             asset_cost = 0
             asset_selic = 0
             asset_networth = 0
+            size_asset_moviments = len(asset_moviments)
             # earliest_mov = asset_moviments.earliest('date')
             print("Asset:", asset)
-            for moviment in asset_moviments:
+            for i, moviment in enumerate(asset_moviments):
+                # O que ocorrerá depois? Mais uma movimentação? Um evento? Nada?
+                if i < size_asset_moviments - 1:
+                    next_event = asset_moviments[i+1].date
+                else:
+                    next_event = datetime.today() ## TODO PAREI AQUI... boa sorte...s
+                events_splits = moviment.instrument.splits.filter(
+                    event_date__range=[moviment.date, next_event]).order_by('event_date')
+                # Começa a criação de novas posições para o ativo:
+                if(moviment.category=='COMPRA'):
+                    transaction_value=moviment.total_investment + moviment.total_costs
+                    net_value = Decimal(0.0)
+                else:
+                    transaction_value=moviment.total_investment
+                    net_value = moviment.total_investment - moviment.total_costs
                 p = Position.objects.get_or_create(
                     wallet=self, # like that?
                     instrument=instrument, 
                     date=moviment.date,
                     category=['COMPRA', 'VENDA'][moviment.category],
-                    quantity=moviment.quantity
-                    transaction_value: Buy: Price + Costs; Sell: Price only (withou costs).
-                    net_value: # For Selling only: Total Price - Costs
+                    quantity=moviment.quantity,
+                    transaction_value=transaction_value,
+                    net_value = net_value
+                    # transaction_value: Buy: Price + Costs; Sell: Price only (withou costs).
+                    # net_value: # For Selling only: Total Price - Costs
                     
-                    total_quantity=Position.objects.filter(wallet=self, instrument=instrument, date__lt=moviment.date)
-                    total_value: Total R$ invested in this Asset in this Wallet at this date.
-                    total_selic: Total R$ corrected by the SELIC Index.    
+                    # total_quantity=Position.objects.filter(wallet=self, instrument=instrument, date__lt=moviment.date)
+                    # total_value: Total R$ invested in this Asset in this Wallet at this date.
+                    # total_selic: Total R$ corrected by the SELIC Index.    
                     )
-                # quantidade inicial no movimento:
-                print(f"Applying events to the moviment: {moviment}")
-                qt = moviment.quantity
-                asset_investiments += moviment.total_investment
-                asset_cost += moviment.total_costs
-                asset_selic += moviment.present_value()
-                dividends = 0
 
-                # TODO Implementar para os novos eventos:
-                # Criar as posições no tempo com base na primeira movimentação?
-                # Aplicar splits.
-                # Aplicar proventos.
-                # Pega os eventos depois do movimento:
-                events = moviment.instrument.events.all().filter(
-                    event_date__gte=moviment.date).order_by('event_date')
-                events_splits = moviment.instrument.splits.filter(
-                    event_date__gte=moviment.date).order_by('event_date')
-                events_dividends = moviment.instrument.dividends.filter(
-                    event_data__gte=moviment.date).order_by('event_date')
-                # agora o looping nos eventos que se aplicam para esse movimento:
-                print(
-                    "Event Date \t \t Dividends \t Splits \t Total Dividends \t Posição para Movimentação")
-                # ATIVO, Carteira, Data, Tipo, Quantidade, R$ Operação,	R$ Operação Líq., Qtd Total, R$ Total
-                for event in events_splits:
-                    event_date = event.event_date
-                # for event in events:
-                #     # Read events for this asset:
-                #     event_date = event.event_date
-                #     div_per_share = event.dividends
-                #     split_per_share = event.stock_splits
+            #### AAAhhhhh
+            # mov_positions = Position.objects.filter(wallet=wallet,instrument=instrument).order_by('date')
+            # events_splits = mov_positions.first().instrument.splits.filter(
+            #         event_date__gte=mov_positions.first().date).order_by('event_date')
+            # for event in events_splits:
+            #     category = event.category
+            #     quantity = 1 
+            #     if category == 'DESDOBRAMENTO':
+            #         quantity = event.factor
+            #     elif category == 'GRUPAMENTO':
+            #         quantity = 1 / event.factor
 
-                #     if split_per_share != 0.0:
-                #         # if asset == "LCAM3": print(qt," x",split_per_share)
-                #         qt *= split_per_share
-                #     if div_per_share != 0:
-                #         dividends += qt*div_per_share
-                #     print(
-                #         f"Event:\t{event_date} \t {div_per_share} \t {split_per_share} ->\t {qt*div_per_share:.2f} \t \t {qt:.2f}")
-                asset_dividends += dividends
-                asset_quantity += qt
+            #     s = Position.objects.get_or_create(
+            #         wallet=self, # like that?
+            #         instrument=instrument, 
+            #         date=event.ex_date,
+            #         category=category
+            #         quantity=quantity 
+            #             )
 
-                asset_networth += qt * asset_price
-            positions.append({
-                "ticker": asset_ticker,
-                "quantity": int(asset_quantity), # Será sempre INT?? Stocks dos EUA sei que não é.
-                "dividends": asset_dividends.quantize(Decimal('.01'), rounding=ROUND_DOWN),
-                "investments": asset_investiments.quantize(Decimal('.01'), rounding=ROUND_DOWN),
-                "costs": asset_cost.quantize(Decimal('.01'), rounding=ROUND_DOWN),
-                "index_selic": asset_selic.quantize(Decimal('.01'), rounding=ROUND_DOWN),
-                "networth": asset_networth.quantize(Decimal('.01'), rounding=ROUND_DOWN)
-            })
+        #         # agora o looping nos eventos que se aplicam para esse movimento:
+        #         print(
+        #             "Event Date \t \t Dividends \t Splits \t Total Dividends \t Posição para Movimentação")
+        #         # ATIVO, Carteira, Data, Tipo, Quantidade, R$ Operação,	R$ Operação Líq., Qtd Total, R$ Total
+        #         for event in events_splits:
+        #             event_date = event.event_date
+        #         # for event in events:
+        #         #     # Read events for this asset:
+        #         #     event_date = event.event_date
+        #         #     div_per_share = event.dividends
+        #         #     split_per_share = event.stock_splits
 
-            total_dividends += asset_dividends
-            total_invested += asset_investiments
-            total_selic += asset_selic
-            total_networth += asset_networth
-            print(f"\n{asset}: {asset_quantity:.2f} * {asset_price:.2f} = NetWorth R$ {asset_quantity * asset_price:.2f}; Total Dividends Received: R$ {asset_dividends:.2f}")
-        # print(positions[asset])
-        # print('Quantidade', positions[asset]['quantity'])
-        # print('Proventos Recebidos', positions[asset]['dividends'])
-        # print('Total Investido', positions[asset]['investments'] + positions[asset]['sum_costs'])
-        # print('Patrimônio Atual', Decimal(asset_price)*positions[asset]['quantity']) ## PODE DEMORAR PARA PEGAR O PREÇO ONLINE!
-        # its ok
+        #         #     if split_per_share != 0.0:
+        #         #         # if asset == "LCAM3": print(qt," x",split_per_share)
+        #         #         qt *= split_per_share
+        #         #     if div_per_share != 0:
+        #         #         dividends += qt*div_per_share
+        #         #     print(
+        #         #         f"Event:\t{event_date} \t {div_per_share} \t {split_per_share} ->\t {qt*div_per_share:.2f} \t \t {qt:.2f}")
+        #         asset_dividends += dividends
+        #         asset_quantity += qt
+
+        #         asset_networth += qt * asset_price
+        #     positions.append({
+        #         "ticker": asset_ticker,
+        #         "quantity": int(asset_quantity), # Será sempre INT?? Stocks dos EUA sei que não é.
+        #         "dividends": asset_dividends.quantize(Decimal('.01'), rounding=ROUND_DOWN),
+        #         "investments": asset_investiments.quantize(Decimal('.01'), rounding=ROUND_DOWN),
+        #         "costs": asset_cost.quantize(Decimal('.01'), rounding=ROUND_DOWN),
+        #         "index_selic": asset_selic.quantize(Decimal('.01'), rounding=ROUND_DOWN),
+        #         "networth": asset_networth.quantize(Decimal('.01'), rounding=ROUND_DOWN)
+        #     })
+
+        #     total_dividends += asset_dividends
+        #     total_invested += asset_investiments
+        #     total_selic += asset_selic
+        #     total_networth += asset_networth
+        #     print(f"\n{asset}: {asset_quantity:.2f} * {asset_price:.2f} = NetWorth R$ {asset_quantity * asset_price:.2f}; Total Dividends Received: R$ {asset_dividends:.2f}")
+        # # print(positions[asset])
+        # # print('Quantidade', positions[asset]['quantity'])
+        # # print('Proventos Recebidos', positions[asset]['dividends'])
+        # # print('Total Investido', positions[asset]['investments'] + positions[asset]['sum_costs'])
+        # # print('Patrimônio Atual', Decimal(asset_price)*positions[asset]['quantity']) ## PODE DEMORAR PARA PEGAR O PREÇO ONLINE!
+        # # its ok
         wallet = {
             "total_networth": total_networth.quantize(Decimal('.01'), rounding=ROUND_DOWN),
             "total_dividends": total_dividends.quantize(Decimal('.01'), rounding=ROUND_DOWN),
@@ -251,12 +272,25 @@ class Position(BaseTimeModel):
         Instrument, related_name="instrument_position", on_delete=models.CASCADE)
     date = models.DateField('date')
     category = models.CharField('category', max_length=255, null=True, blank=True)
-    quantity = models.IntegerField('quantity')
-    total_quantity = models.IntegerField('total quantity')
-    transaction_value = models.DecimalField('transaction value', decimal_places=2, max_digits=20) # Compra: Preço + Custos; Venda: Preço sem custos.
-    net_value = models.DecimalField('net value', decimal_places=2, max_digits=20) # Somente venda: Valor total - Custos.
-    total_value = models.DecimalField('total value', decimal_places=2, max_digits=20)
-    total_selic = models.DecimalField('total value', decimal_places=2, max_digits=20)
+    quantity = models.IntegerField('quantity', null=True)
+    total_quantity = models.IntegerField('total quantity', null=True)
+    transaction_value = models.DecimalField('transaction value', decimal_places=2, max_digits=20, null=True) # Compra: Preço + Custos; Venda: Preço sem custos.
+    net_value = models.DecimalField('net value', decimal_places=2, max_digits=20, null=True) # Somente venda: Valor total - Custos.
+    total_value = models.DecimalField('total value', decimal_places=2, max_digits=20, null=True) # TODO Não acho q null = True seja correto, mas não sei implementar o "contador", ainda ;-)
+    total_selic = models.DecimalField('total selic', decimal_places=2, max_digits=20, null=True)
+    
+    def __str__(self):
+        return f"""wallet:{self.wallet}
+        instrument:{self.instrument}
+        date:{self.date}
+        category:{self.category}
+        quantity:{self.quantity}
+        total_quantity:{self.total_quantity}
+        transaction_value:{self.transaction_value}
+        net_value:{self.net_value}
+        total_value:{self.total_value}
+        total_selic:{self.total_selic}"""
+
     class Meta:
         verbose_name = _("Position")
         verbose_name_plural = _("Positions")
