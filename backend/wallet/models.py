@@ -116,11 +116,14 @@ class Wallet(models.Model):
         total_dividends = Decimal(0.0)
         total_invested = Decimal(0.0)
         total_selic = Decimal(0.0)
+        
         positions = []
         for asset in assets:
-            instrument=Instrument.objects.filter(tckrSymb=asset)[0]
-            # Limpa as posições atuais desse ativo nessa carteira:
-            Position.objects.filter(wallet=wallet,instrument=instrument).delete()
+            instrument = Instrument.objects.filter(tckrSymb=asset).first()
+            # Clean all Positions for this Instrument in this Wallet:
+            
+            Position.objects.filter(wallet=self,instrument=instrument).delete()
+            
             asset_ticker = asset
             asset_dividends = Decimal(0.0)
             # Instrument.objects.filter(tckrSymb=asset)[0].get_price()
@@ -138,13 +141,7 @@ class Wallet(models.Model):
             # earliest_mov = asset_moviments.earliest('date')
             print("Asset:", asset)
             for i, moviment in enumerate(asset_moviments):
-                # O que ocorrerá depois? Mais uma movimentação? Um evento? Nada?
-                if i < size_asset_moviments - 1:
-                    next_event = asset_moviments[i+1].date
-                else:
-                    next_event = datetime.today() ## TODO PAREI AQUI... boa sorte...s
-                events_splits = moviment.instrument.splits.filter(
-                    event_date__range=[moviment.date, next_event]).order_by('event_date')
+
                 # Começa a criação de novas posições para o ativo:
                 if(moviment.category=='COMPRA'):
                     transaction_value=moviment.total_investment + moviment.total_costs
@@ -159,14 +156,69 @@ class Wallet(models.Model):
                     category=['COMPRA', 'VENDA'][moviment.category],
                     quantity=moviment.quantity,
                     transaction_value=transaction_value,
-                    net_value = net_value
+                    net_value = net_value.quantize(Decimal('.01'), rounding=ROUND_DOWN),
                     # transaction_value: Buy: Price + Costs; Sell: Price only (withou costs).
                     # net_value: # For Selling only: Total Price - Costs
                     
-                    # total_quantity=Position.objects.filter(wallet=self, instrument=instrument, date__lt=moviment.date)
-                    # total_value: Total R$ invested in this Asset in this Wallet at this date.
+                    total_quantity = moviment.quantity,# Tem que ser feito depois dos eventos??
+                    total_value = 0 #net_value.quantize(Decimal('.01'), rounding=ROUND_DOWN)
                     # total_selic: Total R$ corrected by the SELIC Index.    
                     )
+                                    # O que ocorrerá depois? Mais uma movimentação? Um evento? Nada?
+                if i < size_asset_moviments - 1:
+                    next_event = asset_moviments[i+1].date
+                else:
+                    next_event = datetime.today() ## TODO PAREI AQUI... boa sorte...s
+                events_splits = moviment.instrument.splits.filter(
+                    event_date__range=[moviment.date, next_event]).order_by('event_date')
+                for event in events_splits:
+                    category = event.category
+                    quantity = 1 
+                    if category == 'DESDOBRAMENTO':
+                        quantity = event.factor
+                    elif category == 'GRUPAMENTO':
+                        quantity = 1 / event.factor
+                    s = Position.objects.get_or_create(
+                            wallet=self, # like that?
+                            instrument=instrument, 
+                            date=event.ex_date,
+                            category=category,
+                            quantity=quantity,
+                            
+                        )
+            ## In theory all positions (buy/sell/splits/etc) for this wallet and this asset are created
+            positions = Position.objects.filter(wallet=self, instrument=instrument).order_by("date")
+            for i, position in enumerate(positions):
+                if position.category == "COMPRA":
+                    position.total_quantity = positions[i-1].total_quantity + Decimal(position.quantity) if i > 1 else position.quantity
+                    position.total_value = positions[i-1].total_value + Decimal(position.transaction_value) if i > 1 else position.net_value
+                    asset_quantity = position.total_quantity
+                    # position.total_selic =+ 
+                elif position.category == "VENDA":
+                    ### Vai dar ruim na venda descoberta!
+                    position.total_value = (positions[i-1].total_value + position.quantity * (positions[i-1].total_value / positions[i-1].total_quantity)) if i > 1 else position.net_value
+                    position.total_quantity = positions[i-1].total_quantity + Decimal(position.quantity) if i > 1 else position.quantity
+                    
+                    asset_quantity = position.total_quantity
+                elif position.category == "DESDOBRAMENTO":
+                    position.total_quantity = position.quantity * positions[i-1].total_quantity
+                    asset_quantity = position.total_quantity
+                    position.total_value = positions[i-1].total_value
+                    position.transaction_value = 0
+                    position.net_value = 0
+                    # position.total_value = total_value # ??
+                elif position.category == "GRUPAMENTO": # TODO Parei aqui.
+                    position.total_quantity = position.quantity * positions[i-1].total_quantity
+                    asset_quantity = position.total_quantity
+                    position.total_value = positions[i-1].total_value
+                    position.transaction_value = 0
+                    position.net_value = 0
+                    # pass
+                else:
+                    pass
+                position.save()
+
+
 
             #### AAAhhhhh
             # mov_positions = Position.objects.filter(wallet=wallet,instrument=instrument).order_by('date')
@@ -272,8 +324,8 @@ class Position(BaseTimeModel):
         Instrument, related_name="instrument_position", on_delete=models.CASCADE)
     date = models.DateField('date')
     category = models.CharField('category', max_length=255, null=True, blank=True)
-    quantity = models.IntegerField('quantity', null=True)
-    total_quantity = models.IntegerField('total quantity', null=True)
+    quantity = models.DecimalField('quantity', decimal_places=6, max_digits=20, null=True)
+    total_quantity = models.DecimalField('total quantity', decimal_places=2, max_digits=20, null=True)
     transaction_value = models.DecimalField('transaction value', decimal_places=2, max_digits=20, null=True) # Compra: Preço + Custos; Venda: Preço sem custos.
     net_value = models.DecimalField('net value', decimal_places=2, max_digits=20, null=True) # Somente venda: Valor total - Custos.
     total_value = models.DecimalField('total value', decimal_places=2, max_digits=20, null=True) # TODO Não acho q null = True seja correto, mas não sei implementar o "contador", ainda ;-)
