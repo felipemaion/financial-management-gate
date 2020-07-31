@@ -19,7 +19,7 @@ class AdminWallet(admin.ModelAdmin):
 admin.site.register(Wallet, AdminWallet)
 
 class AdminPosition(admin.ModelAdmin):
-    list_display = ["wallet", "instrument", "category","date", "quantity","total_quantity", "transaction_value", "net_value", "total_value", "total_selic"]
+    list_display = ["wallet", "instrument", "category","date", "quantity","total_quantity", "transaction_value", "net_value", "total_value","position_selic", "total_selic"]
     search_fields = ["wallet__description","instrument__tckrSymb", "category"]
     list_filter = ["category", "wallet", ("instrument",admin.RelatedOnlyFieldListFilter)]
 admin.site.register(Position, AdminPosition)

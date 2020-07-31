@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 from instrument.models import Instrument, PriceHistory
+from wallet.models import Position
 import pandas as pd
 from django.db.models import Q
 from datetime import datetime
@@ -9,7 +10,7 @@ import yfinance as yf
 
 
 class Command(BaseCommand):
-    help = 'Populancao Preços de instrumentos'
+    help = 'Populando Preços de instrumentos'
 
     def handle(self, *args, **options):
         self.stdout.write(self.style.SUCCESS(
@@ -21,7 +22,13 @@ class Command(BaseCommand):
         # "SGPS3","SMAL11","SQIA3","TAEE11","TIET11","TRPL4","VIVA3","VVAR3","XPCM11","XPLG11","XPML11","ABEV3","FEXC11","KNRI11","RENT3",
         # 'ALSO3', 'BEEF3', 'HBOR3', 'JPSA3', 'LCAM3', 'PNVL3', 'SQIA3', 'STBP3']
         # assets = ['PNVL3','BEEF3','MGLU3']
-        instruments = Instrument.objects.all()
+        
+        # ALL:
+        # instruments = Instrument.objects.all()
+
+        # USED:
+        positions = Position.objects.all()
+        instruments = list(set([p.instrument for p in positions]))
         assets = [instrument.tckrSymb for instrument in instruments]
         # TODO Testar código inválido.
         error_log = []
@@ -29,7 +36,7 @@ class Command(BaseCommand):
         try:
             ### TODO utilizar o PriceHistory para armazenar e pegar as info.
             print("Getting ONLINE Data for Assets:", assets)
-            data = yf.download(assets, start="2020-01-01", end=datetime.now(), period="1d", group_by="Ticker")
+            data = yf.download(assets, start="2020-06-01", end=datetime.now(), period="1d", group_by="Ticker")
             
         except:
             print("Error getting Online Data.")

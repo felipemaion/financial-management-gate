@@ -61,21 +61,21 @@ class Wallet(models.Model):
                 except:
                     print(msg.ERROR + 'Error Getting price for ' + asset + msg.ENDC)
             # o try vai ficar aqui mesmo
-                    try:
-                        if not events_origin.empty:
-                            for index, event in events_origin.iterrows():  # como pega apenas a data (id) da scrita no terminal
-                                Event.objects.get_or_create(
-                                    instrument=instrument,
-                                    event_date=index.strftime("%Y-%m-%d"),
-                                    dividends=event['Dividends'],
-                                    stock_splits=event['Stock Splits']
-                                )
-                            print(msg.SUCCESS + 'Criado ' + asset + msg.ENDC)
-                                
-                    except:
-                        print(msg.ERROR + 'Error Getting ' + asset + ' at db. \nTry updatind assets list at B3' + msg.ENDC)
-                        pass
-                        prices[asset] = Decimal(0.00)
+                try:
+                    if not events_origin.empty:
+                        for index, event in events_origin.iterrows():  # como pega apenas a data (id) da scrita no terminal
+                            Event.objects.get_or_create(
+                                instrument=instrument,
+                                event_date=index.strftime("%Y-%m-%d"),
+                                dividends=event['Dividends'],
+                                stock_splits=event['Stock Splits']
+                            )
+                        print(msg.SUCCESS + 'Criado ' + asset + msg.ENDC)
+                            
+                except:
+                    print(msg.ERROR + 'Error Getting ' + asset + ' at db. \nTry to update assets list from B3' + msg.ENDC)
+                    prices[asset] = Decimal(0.00)
+                    pass
         return prices
 
     def position(self, date=datetime.now()):
@@ -88,19 +88,14 @@ class Wallet(models.Model):
                     "total_selic": Sum of the amout of money invested corrected by the interest rate SELIC
                     "assets": List of the assests in the Wallet
                     "moviments": All the moviments in this Wallet 
-                    "positions":positions[asset] = {
-                                        "quantity": qt_total for this asset in this wallet, 
-                                        "dividends": total dividends for this asset in this wallet, 
-                                        "investments": total_investments made in this asset in this wallet, 
-                                        "sum_costs": total_costs, 
-                                        "index_selic":total invested corrected by selic index}
+                    "positions":[ Position(wallet)]
                     }
         """
         
         moviments = self.moviments.all()
         assets = set(mov.instrument.tckrSymb for mov in moviments)
         self.assets = assets
-        # Carregar preço atual do grupo ##
+        # Carregar preço *atual* (?) do grupo ##
         prices = self.get_prices(assets)
         # print(prices)
         wallet = {
@@ -161,8 +156,9 @@ class Wallet(models.Model):
                     # net_value: # For Selling only: Total Price - Costs
                     
                     total_quantity = moviment.quantity,# Tem que ser feito depois dos eventos??
-                    total_value = 0 #net_value.quantize(Decimal('.01'), rounding=ROUND_DOWN)
-                    # total_selic: Total R$ corrected by the SELIC Index.    
+                    total_value = 0, #net_value.quantize(Decimal('.01'), rounding=ROUND_DOWN)
+                    total_selic = 0, # Total R$ corrected by the SELIC Index.  
+                    position_selic = moviment.present_value()  
                     )
                                     # O que ocorrerá depois? Mais uma movimentação? Um evento? Nada?
                 if i < size_asset_moviments - 1:
@@ -192,18 +188,20 @@ class Wallet(models.Model):
                 if position.category == "COMPRA":
                     position.total_quantity = positions[i-1].total_quantity + Decimal(position.quantity) if i > 1 else position.quantity
                     position.total_value = positions[i-1].total_value + Decimal(position.transaction_value) if i > 1 else position.net_value
+                    position.total_selic = positions[i-1].total_selic + Decimal(position.position_selic) if i > 1 else position.position_selic
                     asset_quantity = position.total_quantity
                     # position.total_selic =+ 
                 elif position.category == "VENDA":
                     ### Vai dar ruim na venda descoberta!
                     position.total_value = (positions[i-1].total_value + position.quantity * (positions[i-1].total_value / positions[i-1].total_quantity)) if i > 1 else position.net_value
                     position.total_quantity = positions[i-1].total_quantity + Decimal(position.quantity) if i > 1 else position.quantity
-                    
+                    position.total_selic = positions[i-1].total_selic + Decimal(position.position_selic) if i > 1 else position.position_selic
                     asset_quantity = position.total_quantity
                 elif position.category == "DESDOBRAMENTO":
                     position.total_quantity = position.quantity * positions[i-1].total_quantity
                     asset_quantity = position.total_quantity
                     position.total_value = positions[i-1].total_value
+                    position.total_selic = positions[i-1].total_selic
                     position.transaction_value = 0
                     position.net_value = 0
                     # position.total_value = total_value # ??
@@ -211,6 +209,7 @@ class Wallet(models.Model):
                     position.total_quantity = position.quantity * positions[i-1].total_quantity
                     asset_quantity = position.total_quantity
                     position.total_value = positions[i-1].total_value
+                    position.total_selic = positions[i-1].total_selic
                     position.transaction_value = 0
                     position.net_value = 0
                     # pass
@@ -316,6 +315,7 @@ class Position(BaseTimeModel):
         net_value: # For Selling only: Total Price - Costs
         total_value: Total R$ invested in this Asset in this Wallet at this date.
         total_selic: Total R$ corrected by the SELIC Index.
+        position_selic: This position corrected by the SELIC Index.
     """
 
     wallet = models.ForeignKey(
@@ -330,6 +330,7 @@ class Position(BaseTimeModel):
     net_value = models.DecimalField('net value', decimal_places=2, max_digits=20, null=True) # Somente venda: Valor total - Custos.
     total_value = models.DecimalField('total value', decimal_places=2, max_digits=20, null=True) # TODO Não acho q null = True seja correto, mas não sei implementar o "contador", ainda ;-)
     total_selic = models.DecimalField('total selic', decimal_places=2, max_digits=20, null=True)
+    position_selic = models.DecimalField('position selic', decimal_places=2, max_digits=20, null=True)
     
     def __str__(self):
         return f"""wallet:{self.wallet}
@@ -341,7 +342,8 @@ class Position(BaseTimeModel):
         transaction_value:{self.transaction_value}
         net_value:{self.net_value}
         total_value:{self.total_value}
-        total_selic:{self.total_selic}"""
+        total_selic:{self.total_selic}
+        position_selic:{self.position_selic}"""
 
     class Meta:
         verbose_name = _("Position")
@@ -377,7 +379,9 @@ class Moviment(BaseTimeModel):
     date = models.DateField('date')
 
     def present_value(self, final_date=None):
-        return Selic().present_value(self.total_investment, self.date, final_date=final_date)
+        factor = 1
+        if self.category == 1: factor = -1
+        return Selic().present_value(self.total_investment*factor, self.date, final_date=final_date)
 
     def save(self, *args, **kwargs):
         if self.quantity > 0:
