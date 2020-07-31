@@ -106,6 +106,7 @@ export class WalletImportComponent implements OnInit {
   csvName: string = "Nada Selecionado";
   wallets: Wallet[];
   movements: Moviment[];
+  events: Event[];
 
   constructor(
     public dialog: MatDialog,

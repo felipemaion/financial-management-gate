@@ -39,8 +39,9 @@ class Command(BaseCommand):
                     self.stdout.write(self.style.SUCCESS(
                             'Criado'))
                         
-            except:
-                print('error')
+            except Exception as e:
+                self.stdout.write(self.style.ERROR(
+                            'ERRO AO CRIAR EVENTO yFinance - '+ str(e)))
                 pass
                 # vendo ai, sempre é pra testar antes de inserir. Sim!
                 # nao ta iterando pq sera? Deve ter Instruments que não tem eventos

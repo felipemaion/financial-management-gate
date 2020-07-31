@@ -1,6 +1,6 @@
 from django.contrib import admin
-from .models import Wallet, Moviment
-from instrument.models import Event, Instrument
+from .models import Wallet, Moviment, Position
+from instrument.models import Instrument
 # Register your models here.
 
 
@@ -10,17 +10,17 @@ class AdminMoviment(admin.ModelAdmin):
     list_filter = ["wallet", ("instrument",admin.RelatedOnlyFieldListFilter)]
     exclude= ('type',)
 
+admin.site.register(Moviment, AdminMoviment)
+
 class AdminWallet(admin.ModelAdmin):
     list_display = ['user', 'description']
     list_filter = ['user']
 
-
-
-class AdminEvent(admin.ModelAdmin):
-    list_display = ['instrument', 'dividends', 'stock_splits', 'event_date']
-    list_filter = ['instrument']
-
-
 admin.site.register(Wallet, AdminWallet)
-admin.site.register(Moviment, AdminMoviment)
-admin.site.register(Event, AdminEvent)
+
+class AdminPosition(admin.ModelAdmin):
+    list_display = ["wallet", "instrument", "category","date", "quantity","total_quantity", "transaction_value", "net_value", "total_value","position_selic", "total_selic"]
+    search_fields = ["wallet__description","instrument__tckrSymb", "category"]
+    list_filter = ["category", "wallet", ("instrument",admin.RelatedOnlyFieldListFilter)]
+admin.site.register(Position, AdminPosition)
+

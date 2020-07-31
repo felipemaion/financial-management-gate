@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_extensions',
+    'django_json_widget',
     'corsheaders',
     'rest_framework_jwt',
     'crispy_forms',
@@ -49,7 +50,7 @@ INSTALLED_APPS = [
     'selic',
     'api',
     'rest_framework',
-    'core'
+    'core',
 ]
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
@@ -90,8 +91,15 @@ WSGI_APPLICATION = 'app.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2', #'django.db.backends.sqlite3',
+        'NAME': 'fmg',
+        'USER': 'fmg_user',
+
+        'PASSWORD': 'b4ygfmg_',
+
+        'HOST': 'localhost',
+
+        'PORT': '5432',
     }
 }
 

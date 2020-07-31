@@ -12,8 +12,11 @@ class Command(BaseCommand):
 	help = 'Criação de Dados Basicos para o funcionamento de Sistema '
 	
 	def handle(self, *args, **options):
-		self.populateInstrument(*args, **options)
+		# self.populateInstrument(*args, **options)
 		self.walletFullTest(*args, **options)
+		# seed.selic
+		# seed.proventos
+		# seed.companies
 
 
 
@@ -32,7 +35,8 @@ class Command(BaseCommand):
 
 		# db_fields = [tckrSymb, sgmtNm, mktNm, sctyCtgyNm, isin, cFICd, crpnNm, corpGovnLvlNm]
 		print("Populating Instruments:")
-		file_name = "InstrumentsConsolidatedFile_20200424_1.csv"
+		# http://www.b3.com.br/en_us/market-data-and-indices/data-services/market-data/reports/daily-bulletin/file-download/
+		file_name = "InstrumentsConsolidatedFile_20200717_1.csv" # at the root of project (same as manage.py)
 		print("Opening CSV File:")
 		try:
 			df = pd.read_csv(file_name, sep=";", encoding='latin', low_memory=False)
@@ -40,6 +44,7 @@ class Command(BaseCommand):
 			self.stdout.write(self.style.SUCCESS('Success loading file.'))
 		except:
 			self.stdout.write(self.style.ERROR('Not able to load file: ' + file_name))
+			return 0
 
 		csv_fields = ["TckrSymb", "SgmtNm", "MktNm", "SctyCtgyNm", "ISIN", "CFICd", "CrpnNm", "CorpGovnLvlNm"]
 		acoes = df.loc[df["SgmtNm"]=="CASH"]
@@ -47,7 +52,7 @@ class Command(BaseCommand):
 		print("Trying to populate Instrument's into database:")
 		try:
 			for id, row in info.iterrows():
-				new_data = Instrument.objects.create(
+				new_data = Instrument.objects.get_or_create(
 					tckrSymb = row[csv_fields[0]],
 					sgmtNm = row[csv_fields[1]], 
 					mktNm = row[csv_fields[2]],
@@ -101,5 +106,5 @@ class Command(BaseCommand):
 				print(operacao.instrument)
 				operacao.save()
 			self.stdout.write(self.style.SUCCESS('Success populating Moviments into the Wallet.'))
-		except:
-			self.stdout.write(self.style.ERROR('Not able to populate Moviments into the Wallet.'))
+		except Exception as e:
+			self.stdout.write(self.style.ERROR('Not able to populate Moviments into the Wallet. - ' + str(e)))
