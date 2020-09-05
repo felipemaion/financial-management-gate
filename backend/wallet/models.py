@@ -33,6 +33,10 @@ class Wallet(models.Model):
         User, related_name="wallets", on_delete=models.CASCADE)
     description = models.TextField(_("Description"), max_length=80)
     assets = []
+    # def __init__(self, *args, **kwargs):
+        
+    #     super().__init__(*args, **kwargs)
+        
 
     objects = WalletQuerySetManager()
 
@@ -88,16 +92,16 @@ class Wallet(models.Model):
                     "total_selic": Sum of the amout of money invested corrected by the interest rate SELIC
                     "assets": List of the assests in the Wallet
                     "moviments": All the moviments in this Wallet 
-                    "positions":[ Position(wallet)]
+                    "positions":[ Position of each Instrument for this Wallet]
                     }
         """
         
-        moviments = self.moviments.all()
+        moviments = self.moviments.filter(date__lt=date, wallet=self) 
         assets = set(mov.instrument.tckrSymb for mov in moviments)
         self.assets = assets
         # Carregar preço *atual* (?) do grupo ##
-        prices = self.get_prices(assets)
-        # print(prices)
+        prices = self.get_prices(assets) # TODO: E SE ISSO FOR PARA O FRONT-END??? :-D
+        print(prices)
         wallet = {
             "total_networth": Decimal(0.0),
             "total_dividends": Decimal(0.0),
@@ -111,32 +115,33 @@ class Wallet(models.Model):
         total_dividends = Decimal(0.0)
         total_invested = Decimal(0.0)
         total_selic = Decimal(0.0)
-        
+        self.positions = []
         positions = []
         for asset in assets:
             instrument = Instrument.objects.filter(tckrSymb=asset).first()
+
             # Clean all Positions for this Instrument in this Wallet:
-            
             Position.objects.filter(wallet=self,instrument=instrument).delete()
             
-            asset_ticker = asset
+            
             asset_dividends = Decimal(0.0)
             # Instrument.objects.filter(tckrSymb=asset)[0].get_price()
             asset_price = prices[asset]
             # positions[asset] = {"quantity": 0, "dividends": 0,
             #                    "investments": 0.00, "sum_costs": 0.00, "index_selic": 0.0}
-            asset_moviments = moviments.filter(instrument__tckrSymb=asset).order_by(
+            asset_moviments = moviments.filter(instrument__tckrSymb=asset, wallet=self).order_by(
                 'date')  # de modo reverso -date
-            asset_quantity = 0
+            print(f"Size of moviments: {len(asset_moviments)}")
+            
             asset_investiments = 0
             asset_cost = 0
             asset_selic = 0
             asset_networth = 0
             size_asset_moviments = len(asset_moviments)
             # earliest_mov = asset_moviments.earliest('date')
-            print("Asset:", asset)
+            print(f"Asset: {asset}")
             for i, moviment in enumerate(asset_moviments):
-
+                print(i, moviment)
                 # Começa a criação de novas posições para o ativo:
                 if(moviment.category=='COMPRA'):
                     transaction_value=moviment.total_investment + moviment.total_costs
@@ -144,7 +149,7 @@ class Wallet(models.Model):
                 else:
                     transaction_value=moviment.total_investment
                     net_value = moviment.total_investment - moviment.total_costs
-                p = Position.objects.get_or_create(
+                p = Position.objects.create(
                     wallet=self, # like that?
                     instrument=instrument, 
                     date=moviment.date,
@@ -158,13 +163,14 @@ class Wallet(models.Model):
                     total_quantity = moviment.quantity,# Tem que ser feito depois dos eventos??
                     total_value = 0, #net_value.quantize(Decimal('.01'), rounding=ROUND_DOWN)
                     total_selic = 0, # Total R$ corrected by the SELIC Index.  
-                    position_selic = moviment.present_value()  
+                    position_selic = moviment.present_value(final_date=date)  # TODO: from initial date until var date.
                     )
+                
                                     # O que ocorrerá depois? Mais uma movimentação? Um evento? Nada?
                 if i < size_asset_moviments - 1:
                     next_event = asset_moviments[i+1].date
                 else:
-                    next_event = datetime.today() ## TODO PAREI AQUI... boa sorte...s
+                    next_event = date#datetime.today() ## TODO PAREI AQUI... boa sorte...s
                 events_splits = moviment.instrument.splits.filter(
                     event_date__range=[moviment.date, next_event]).order_by('event_date')
                 for event in events_splits:
@@ -183,14 +189,18 @@ class Wallet(models.Model):
                             
                         )
             ## In theory all positions (buy/sell/splits/etc) for this wallet and this asset are created
+            ## Now, apply the to the positions:
+            ## THIS SHOULD MOVE!!! #TODO
             positions = Position.objects.filter(wallet=self, instrument=instrument).order_by("date")
+            print(f"Size Positions: {len(positions)}")
+            asset_quantity = 0
             for i, position in enumerate(positions):
                 if position.category == "COMPRA":
                     position.total_quantity = positions[i-1].total_quantity + Decimal(position.quantity) if i > 1 else position.quantity
                     position.total_value = positions[i-1].total_value + Decimal(position.transaction_value) if i > 1 else position.net_value
                     position.total_selic = positions[i-1].total_selic + Decimal(position.position_selic) if i > 1 else position.position_selic
                     asset_quantity = position.total_quantity
-                    # position.total_selic =+ 
+                    
                 elif position.category == "VENDA":
                     ### Vai dar ruim na venda descoberta!
                     position.total_value = (positions[i-1].total_value + position.quantity * (positions[i-1].total_value / positions[i-1].total_quantity)) if i > 1 else position.net_value
@@ -205,7 +215,7 @@ class Wallet(models.Model):
                     position.transaction_value = 0
                     position.net_value = 0
                     # position.total_value = total_value # ??
-                elif position.category == "GRUPAMENTO": # TODO Parei aqui.
+                elif position.category == "GRUPAMENTO": 
                     position.total_quantity = position.quantity * positions[i-1].total_quantity
                     asset_quantity = position.total_quantity
                     position.total_value = positions[i-1].total_value
@@ -215,7 +225,23 @@ class Wallet(models.Model):
                     # pass
                 else:
                     pass
+                position.total_networth = position.total_quantity * prices[asset]
                 position.save()
+            last_position = positions.last()
+            self.positions.append({
+                "ticker": asset,
+                "quantity": int(last_position.total_quantity), # Será sempre INT?? Stocks dos EUA sei que não é.
+                "dividends": Decimal('.01'), 
+                "investments": last_position.total_value,
+                "costs": Decimal('.01'),
+                "index_selic": last_position.total_selic,
+                "networth": last_position.total_networth
+                })
+            # self.positions[asset] = positions.last()
+                
+                
+            
+            
 
 
 
@@ -290,12 +316,12 @@ class Wallet(models.Model):
             "total_selic": total_selic.quantize(Decimal('.01'), rounding=ROUND_DOWN),
             "assets": assets,
             "moviments": moviments,
-            "positions": positions
+            "positions": self.positions
         }
         return wallet
 
     def __str__(self):
-        return "ID:{} - User:{} - Description:{}".format(self.id, self.user, self.description)
+        return f"ID:{self.id} - User:{self.user} - Description:{self.description}"
 
     class Meta:
         verbose_name = _("Wallet")
@@ -312,6 +338,7 @@ class Position(BaseTimeModel):
         quantity: Quantity for the event
         total_quantity: Total quantity of the Asset in this Wallet at this date.
         transaction_value: Buy: Price + Costs; Sell: Price only (withou costs).
+        total_networth: # total_quantity * current price.
         net_value: # For Selling only: Total Price - Costs
         total_value: Total R$ invested in this Asset in this Wallet at this date.
         total_selic: Total R$ corrected by the SELIC Index.
@@ -328,6 +355,7 @@ class Position(BaseTimeModel):
     total_quantity = models.DecimalField('total quantity', decimal_places=2, max_digits=20, null=True)
     transaction_value = models.DecimalField('transaction value', decimal_places=2, max_digits=20, null=True) # Compra: Preço + Custos; Venda: Preço sem custos.
     net_value = models.DecimalField('net value', decimal_places=2, max_digits=20, null=True) # Somente venda: Valor total - Custos.
+    total_networth = models.DecimalField('current value', decimal_places=2, max_digits=20, null=True)
     total_value = models.DecimalField('total value', decimal_places=2, max_digits=20, null=True) # TODO Não acho q null = True seja correto, mas não sei implementar o "contador", ainda ;-)
     total_selic = models.DecimalField('total selic', decimal_places=2, max_digits=20, null=True)
     position_selic = models.DecimalField('position selic', decimal_places=2, max_digits=20, null=True)
@@ -341,6 +369,7 @@ class Position(BaseTimeModel):
         total_quantity:{self.total_quantity}
         transaction_value:{self.transaction_value}
         net_value:{self.net_value}
+        total_networth:{self.total_networth}
         total_value:{self.total_value}
         total_selic:{self.total_selic}
         position_selic:{self.position_selic}"""
@@ -394,4 +423,4 @@ class Moviment(BaseTimeModel):
         super(Moviment, self).save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.date} {('C','V')[self.category]} {self.quantity} x {self.instrument} @ R$ {self.total_investment} (costs:R${self.total_costs}) "
+        return f"{{User:{self.wallet.user}@{self.wallet.description} {self.date} {('C','V')[self.category]} {self.quantity} x {self.instrument} @ R$ {self.total_investment} (costs:R${self.total_costs})}}"

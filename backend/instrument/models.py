@@ -126,6 +126,37 @@ class Event(BaseTimeModel):
         verbose_name_plural = 'Events'
         ordering = ['-event_date']
 
+class ProventoFII(BaseTimeModel):
+    """
+            instrument
+            source_user
+            ex_date
+            payment_date
+            reference_date
+            value
+            adjusted_value
+            category
+            details
+            factor
+            document_link
+    """
+    instrument = models.ForeignKey(Instrument, related_name="proventosFII",
+                on_delete=models.DO_NOTHING)
+
+    source_user = models.ForeignKey(User, on_delete=models.DO_NOTHING, blank=True, null=True)
+    ex_date = models.DateField(
+        'ex-date')  # precisa mesmo armazenar hora?
+    payment_date = models.DateField(
+        'payment date', blank=True, null=True)
+    reference_date = models.DateField(
+        'reference date', blank=True, null=True)
+    value = models.DecimalField('value', decimal_places=9, max_digits=20, null=True)
+    adjusted_value = models.DecimalField('adjusted value', decimal_places=9, max_digits=20, null=True)
+    category = models.CharField('category', max_length=20)
+    details = models.CharField('details', max_length=200, blank=True, null=True)
+    factor = models.DecimalField('value', decimal_places=9, max_digits=20, null=True)
+    document_link = models.URLField(max_length=1000, blank=True, null=True)
+
 class EventoAcao(BaseTimeModel):
     """
             instrument: "Instrument", 
@@ -150,8 +181,6 @@ class EventoAcao(BaseTimeModel):
     category = models.CharField('category', max_length=20)
 
     document_link = models.URLField(max_length=1000, blank=True, null=True)
-
-
     class Meta:
         unique_together = ('instrument', 'ex_date','category', 'event_date')
         abstract = True
