@@ -195,17 +195,18 @@ class Wallet(models.Model):
             print(f"Size Positions: {len(positions)}")
             asset_quantity = 0
             for i, position in enumerate(positions):
+                print(f"position {i}")
                 if position.category == "COMPRA":
-                    position.total_quantity = positions[i-1].total_quantity + Decimal(position.quantity) if i > 1 else position.quantity
-                    position.total_value = positions[i-1].total_value + Decimal(position.transaction_value) if i > 1 else position.net_value
-                    position.total_selic = positions[i-1].total_selic + Decimal(position.position_selic) if i > 1 else position.position_selic
+                    position.total_quantity = positions[i-1].total_quantity + Decimal(position.quantity) if i >= 1 else position.quantity
+                    position.total_value = positions[i-1].total_value + Decimal(position.transaction_value) if i >= 1 else position.net_value
+                    position.total_selic = positions[i-1].total_selic + Decimal(position.position_selic) if i >= 1 else position.position_selic
                     asset_quantity = position.total_quantity
-                    
+                    print(position)
                 elif position.category == "VENDA":
                     ### Vai dar ruim na venda descoberta!
-                    position.total_value = (positions[i-1].total_value + position.quantity * (positions[i-1].total_value / positions[i-1].total_quantity)) if i > 1 else position.net_value
-                    position.total_quantity = positions[i-1].total_quantity + Decimal(position.quantity) if i > 1 else position.quantity
-                    position.total_selic = positions[i-1].total_selic + Decimal(position.position_selic) if i > 1 else position.position_selic
+                    position.total_value = (positions[i-1].total_value + position.quantity * (positions[i-1].total_value / positions[i-1].total_quantity)) if i >= 1 else position.net_value
+                    position.total_quantity = positions[i-1].total_quantity + Decimal(position.quantity) if i >= 1 else position.quantity
+                    position.total_selic = positions[i-1].total_selic + Decimal(position.position_selic) if i >= 1 else position.position_selic
                     asset_quantity = position.total_quantity
                 elif position.category == "DESDOBRAMENTO":
                     position.total_quantity = position.quantity * positions[i-1].total_quantity
@@ -227,10 +228,15 @@ class Wallet(models.Model):
                     pass
                 position.total_networth = position.total_quantity * prices[asset]
                 position.save()
-            last_position = positions.last()
+                last_position = position
+            print("-----------")
+            print(positions)
+            print("-----------")
+            # last_position = positions[-1] # AHHAHA
+            print(last_position)
             self.positions.append({
                 "ticker": asset,
-                "quantity": int(last_position.total_quantity), # Será sempre INT?? Stocks dos EUA sei que não é.
+                "quantity": last_position.total_quantity, # Será sempre INT?? Stocks dos EUA sei que não é.
                 "dividends": Decimal('.01'), 
                 "investments": last_position.total_value,
                 "costs": Decimal('.01'),
@@ -349,7 +355,7 @@ class Position(BaseTimeModel):
         Wallet, related_name="wallet_position", on_delete=models.CASCADE)
     instrument = models.ForeignKey(
         Instrument, related_name="instrument_position", on_delete=models.CASCADE)
-    date = models.DateField('date')
+    date = models.DateTimeField('date') # Yes, I need the hour.
     category = models.CharField('category', max_length=255, null=True, blank=True)
     quantity = models.DecimalField('quantity', decimal_places=6, max_digits=20, null=True)
     total_quantity = models.DecimalField('total quantity', decimal_places=2, max_digits=20, null=True)
