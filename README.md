@@ -2,8 +2,11 @@
 
 OpenFMG - Portal de Gestão Financeira
 
-Temos como objetivo ser o principal portal de gestão financeira OpenSource, voltado para o mercado Brasileiro.
-Gestão de Fluxo de Caixa (Receitas e Despesas) e gestão de Balanço Financeiro (Ativos e Passivos).  Com Gráficos, Tabelas e afins.
+Temos como objetivo ajudar a investir melhor. Sendo o mais completo portal de gestão financeira OpenSource, voltado para o mercado Brasileiro.
+Atualmente o sistema consegue receber uma tabela de Excel com Headers: ATIVO, DATA, QUANTIDADE, VALOR. Que são as movimentações. Com isso o sistema já calcula a posição atual de cada ativo, bem como qual seria o benchmark atrelado a SELIC para essas mesmas movimentações, já levando em conta eventuais desdobramentos e agrupamentos. O processo de proventos para cada ativo está em processo de desenvolvimento, e em breve estará disponível.
+
+O objetivo é que o sistema mostre a Gestão de Fluxo de Caixa (Receitas e Despesas) e gestão de Balanço Financeiro (Ativos e Passivos).  Com Gráficos, Tabelas e afins. Para qualquer tipo de *ativos* (Renda Variável, Renda Fixa, Imóveis, Lojas, Sites, etc. Qualquer coisa que gere renda)
+Por hora, o sistema está sendo desenvolvido em torno de carteiras de ativos de Renda Variável.
 
 Em um único lugar, cadastrar e gerenciar seus ativos, bem como os proventos, rendimento de suas carteiras.
 Ainda não implementado, mas sendo um interesse, aqui poderá ser gerenciado seus gastos, e receitas.
