@@ -116,6 +116,7 @@ class Command(BaseCommand):
         return self.errors
 
     def handle(self, *args, **options):
+        self.errors = []
         self.stdout.write(self.style.SUCCESS(
             'Populando Eventos dos Instrumentos Fundos Imobiliários'))
         instruments = Instrument.objects.filter(sctyCtgyNm="FUNDS")

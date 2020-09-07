@@ -205,16 +205,14 @@ class Dividend(EventoAcao):
                 on_delete=models.CASCADE)
 
    
-    value = models.DecimalField('value', decimal_places=9, max_digits=20)
-    adjusted_value = models.DecimalField('adjusted value', decimal_places=9, max_digits=20)
+    value = models.DecimalField('value', decimal_places=10, max_digits=20)
+    adjusted_value = models.DecimalField('adjusted value', decimal_places=10, max_digits=20)
     
     
 
     def __str__(self):
-        return 'Ticker:{} Date:{} Dividends: {}' .format(
-            self.instrument.tckrSymb,
-            str(self.ex_date),
-            str(self.value))
+        return f"{self.instrument.tckrSymb} - Category:{self.category}, ex-date:{self.ex_date}, R$ per Share: {self.value}"
+
 
     class Meta:
         unique_together = ('instrument', 'ex_date','category', 'event_date', 'value')
