@@ -41,7 +41,7 @@ admin.site.register(Event, AdminEvent)
 
 
 class AdminDividend(admin.ModelAdmin):
-    list_display = ["instrument", "ex_date", "event_date", "category", "value"] # aqui vc precisa colocar as colunas que vc quer ver
+    list_display = ["instrument", "ex_date", "event_date", "category", "value", "adjusted_value"] # aqui vc precisa colocar as colunas que vc quer ver
     search_fields = ["event_date","instrument__tckrSymb", "instrument__crpnNm", "category"]
     list_filter = ["category"]
    

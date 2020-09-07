@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from wallet.models import Wallet, Moviment
+from wallet.models import Wallet, Moviment, Position
 from instrument.models import Instrument, Event, Dividend, Split
 from account.models import User
 
@@ -101,7 +101,7 @@ class Command(BaseCommand):
                 fraction_price = split["PrecoFracao"],
                 fraction_date = convert_date(split["DataFracao"])
             )
-            self.stdout.write(self.style.SUCCESS(f'Criado split para {dividend.instrument.tckrSymb} com data {dividend.ex_date}'))
+            if _==1: self.stdout.write(self.style.SUCCESS(f'Criado split para {dividend.instrument.tckrSymb} com data {dividend.ex_date}'))
         except Exception as e:
             # print(provent)
             self.errors.append([instrument.tckrSymb, convert_date(split["DataEx"])])
@@ -117,7 +117,10 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.stdout.write(self.style.SUCCESS(
             'Populando Eventos dos Instrumentos'))
-        instruments = Instrument.objects.filter(sctyCtgyNm="SHARES")
+        # instruments = Instrument.objects.filter(sctyCtgyNm="SHARES") ## ALL INSTRUMENTS!!
+        positions = Position.objects.filter(instrument__sctyCtgyNm="SHARES") ## ONLY USED INSTRUMENTS (FASTER!!)
+        instruments = list(set([p.instrument for p in positions]))
+        
         empresas = set([empresa.tckrSymb[:4] for empresa in instruments])  # ['MGLU', 'BIDI', 'PNVL'] # AS CASCUDAS! Problema ao criar Split da QUAL3, RAIL3, BBSE3 (problema com Amortização)
         maion = User.objects.filter(username="Maion")[0]
         provents = []
