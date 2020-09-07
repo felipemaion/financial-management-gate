@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Wallet, Moviment, Position, WalletProvent
+from .models import Wallet, Moviment, Position, WalletStockProvent, WalletFIIProvent
 from instrument.models import Instrument
 # Register your models here.
 
@@ -24,8 +24,14 @@ class AdminPosition(admin.ModelAdmin):
     list_filter = ["category", "wallet", ("instrument",admin.RelatedOnlyFieldListFilter)]
 admin.site.register(Position, AdminPosition)
 
-class AdminWalletProvent(admin.ModelAdmin):
+class AdminWalletStockProvent(admin.ModelAdmin):
     list_display = ["wallet","quantity", "dividend","total_value"]
     search_fields = ["wallet__description","dividend__instrument__tckrSymb", "dividend__category"]
     list_filter = ["dividend__category", "wallet", ("dividend__instrument",admin.RelatedOnlyFieldListFilter)]
-admin.site.register(WalletProvent, AdminWalletProvent)
+admin.site.register(WalletStockProvent, AdminWalletStockProvent)
+
+class AdminWalletFIIProvent(admin.ModelAdmin):
+    list_display = ["wallet","quantity", "dividend","total_value"]
+    search_fields = ["wallet__description","dividend__instrument__tckrSymb", "dividend__category"]
+    list_filter = ["dividend__category", "wallet", ("dividend__instrument",admin.RelatedOnlyFieldListFilter)]
+admin.site.register(WalletFIIProvent, AdminWalletFIIProvent)

@@ -3,10 +3,10 @@ from django.db.models import Q
 from django.utils.translation import ugettext as _
 from django.core.management.base import BaseCommand, CommandError
 from account.models import User
-from instrument.models import Instrument, Event, PriceHistory, Dividend
+from instrument.models import Instrument, Event, PriceHistory, Dividend, ProventoFII
 from core.models import BaseTimeModel
 from selic.models import Selic
-from datetime import datetime
+from datetime import datetime, timedelta
 from decimal import *
 import yfinance as yf
 
@@ -122,7 +122,8 @@ class Wallet(models.Model):
 
             # Clean all Positions for this Instrument in this Wallet:
             Position.objects.filter(wallet=self,instrument=instrument).delete()
-            WalletProvent.objects.filter(wallet=self, dividend__instrument=instrument).delete()
+            WalletStockProvent.objects.filter(wallet=self, dividend__instrument=instrument).delete()
+            WalletFIIProvent.objects.filter(wallet=self, dividend__instrument=instrument).delete()
 
             asset_dividends = Decimal(0.0)
             asset_price = prices[asset]
@@ -150,7 +151,7 @@ class Wallet(models.Model):
                 p = Position.objects.create(
                     wallet=self, # like that?
                     instrument=instrument, 
-                    date=moviment.date,
+                    date=moviment.date + timedelta(days=1),
                     category=['COMPRA', 'VENDA'][moviment.category],
                     quantity=moviment.quantity,
                     transaction_value=transaction_value,
@@ -170,7 +171,7 @@ class Wallet(models.Model):
                 else:
                     next_event = date
                 events_splits = moviment.instrument.splits.filter(
-                    event_date__range=[moviment.date, next_event]).order_by('event_date')
+                    event_date__range=[moviment.date + timedelta(days=1), next_event]).order_by('event_date')
                 for event in events_splits:
                     category = event.category
                     quantity = 1 
@@ -188,13 +189,26 @@ class Wallet(models.Model):
                         )
                 ## Now we must find all the dividends/JCP/Amortizações/Correção Selic paid:
                 events_dividends = moviment.instrument.dividends.filter(
-                    event_date__range=[moviment.date, next_event]).order_by('event_date')
-                print(f"Movimento da data {moviment.date}: {next_event}")
+                    event_date__range=[moviment.date+timedelta(days=1), next_event]).order_by('event_date')
+                print(f"Movimento da data {moviment.date+timedelta(days=1)}: {next_event}")
                 print(events_dividends)
                 
                 for event in events_dividends:
                     category = event.category
-                    d = WalletProvent.objects.get_or_create(
+                    d = WalletStockProvent.objects.get_or_create(
+                            wallet=self, # like that?
+                            dividend=event
+                            
+                        )
+                
+                events_proventosFII = moviment.instrument.proventosFII.filter(
+                    ex_date__range=[moviment.date+timedelta(days=1), next_event]).order_by('ex_date')
+                print(f"Movimento da data {moviment.date+timedelta(days=1)}: {next_event}")
+                print(events_proventosFII)
+                
+                for event in events_proventosFII:
+                    
+                    d = WalletFIIProvent.objects.get_or_create(
                             wallet=self, # like that?
                             dividend=event
                             
@@ -248,17 +262,24 @@ class Wallet(models.Model):
                 position.save()
                 last_position = position
             
-            provents = WalletProvent.objects.filter(wallet=self, dividend__instrument=instrument)#.order_by("ex date")
+            provents = WalletFIIProvent.objects.filter(wallet=self, dividend__instrument=instrument)#.order_by("ex date")
+            if not provents:
+                provents = WalletStockProvent.objects.filter(wallet=self, dividend__instrument=instrument)#.order_by("ex date")
             print(f"Size Provents: {len(provents)}")
             asset_quantity = 0
             for i, provent in enumerate(provents):
                 # pega quantidade do ativo na data do proventos. 
-                provent.quantity  = Position.objects.filter(wallet=self, instrument=instrument, date__lte=provent.dividend.ex_date).order_by("-date").first().total_quantity
+                quantity  = Position.objects.filter(wallet=self, instrument=instrument, date__lte=provent.dividend.ex_date).order_by("-date").first().total_quantity
                 fator = Decimal(0)
                 if provent.dividend.category == "JCP": 
                     fator = Decimal(0.15) # ALIQUOTA DE IR PARA JCP. Recolhido na fonte. HARDCODED??? PQP!!! FELIPE, FELIPE...TODO: ISSUE
-                provent.total_value = (provent.quantity * provent.dividend.value) - (provent.quantity * provent.dividend.value) * fator
-                print(f"EM {provent.dividend.ex_date}: {provent.quantity} * {provent.dividend.value} - IR ({(provent.quantity * provent.dividend.value) * fator:.2f}) = {provent.total_value:.2f} ")
+                if provent.dividend.category == "3":
+                    provent.total_value = 0
+                    provent.quantity = 0
+                    continue # Rendimento Subscrição TODO: Tratar disso no futuro.
+                provent.total_value = (quantity * provent.dividend.value) - (quantity * provent.dividend.value) * fator
+                provent.quantity = quantity
+                print(f"EM {provent.dividend.ex_date}: {provent.quantity} * {provent.dividend.value} - IR ({(quantity * provent.dividend.value) * fator:.2f}) = {provent.total_value:.2f} ")
                 provent.save()
             # print("-----------")
             # print(positions)
@@ -298,7 +319,7 @@ class Wallet(models.Model):
         unique_together = [['user', 'description']]
 
 
-class WalletProvent(BaseTimeModel):
+class WalletStockProvent(BaseTimeModel):
     dividend = models.ForeignKey(
         Dividend, related_name="dividend", on_delete=models.CASCADE)
 
@@ -312,9 +333,22 @@ class WalletProvent(BaseTimeModel):
         return f"ID:{self.id} - User:{self.user} - Wallet:{self.wallet}\nQuantity:{self.quantity}"
 
     class Meta:
-        verbose_name = _("Provent")
-        verbose_name_plural = _("Provents")
-        
+        verbose_name = _("Provent Stock")
+        verbose_name_plural = _("Provents Stock")
+
+class WalletFIIProvent(BaseTimeModel): 
+    dividend = models.ForeignKey(
+        ProventoFII, related_name="provento fii+", on_delete=models.CASCADE)
+
+    wallet = models.ForeignKey(
+        Wallet, related_name="wallet fii+", on_delete=models.CASCADE)
+    
+    quantity = models.DecimalField('quantity', decimal_places=6, max_digits=20, null=True)
+    total_value = models.DecimalField('total value', decimal_places=2, max_digits=20, null=True) # TODO Não acho q null = True seja correto, mas não sei implementar o "contador", ainda ;-)
+    
+    class Meta:
+        verbose_name = _("Provent FII")
+        verbose_name_plural = _("Provents FII")
    
 class Position(BaseTimeModel):
     """
