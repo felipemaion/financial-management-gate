@@ -25,6 +25,16 @@ BackEnd  - Desenvolvido em Django (Python)
 
 ## Instalação
 
+Na pasta BackEnd crie um arquivo .env como nos dados abaixo: 
+```bash
+NAME=databasename
+HOST=localhost
+PORT=5432
+DATABASEUSER=youruser
+PASSWORD=yourpassword
+```
+
+
 Na pasta BackEnd: 
 ```bash
 pip install -r requirements.txt
