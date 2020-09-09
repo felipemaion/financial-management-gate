@@ -1,27 +1,40 @@
 .shadow {
-  box-shadow: 0px 3px 20px 0px black;
+    box-shadow: 0px 3px 20px 0px black;
 }
 
 .icon {
-  padding: 0 14px;
+    padding: 0 14px;
 }
+
 .active {
-  background-color: #ff00001f;
+    background-color: #ff00001f;
 }
+
 .spacer {
-  flex: 1 1 auto;
+    flex: 1 1 auto;
 }
+
 .mat-toolbar-multiple-rows {
-  min-height: 53px;
+    min-height: 53px;
 }
 
 .mat-toolbar-row,
 .mat-toolbar-single-row {
-  height: 53px;
+    height: 53px;
 }
+
 .mat-toolbar {
-  height: 53px !important;
+    height: 53px !important;
 }
+
 .mat-toolbar-row {
-  height: 53px !important;
+    height: 53px !important;
+    display: flex;
+    overflow-x: auto;
+    .mat-button,
+    .mat-icon-button,
+    .mat-stroked-button,
+    .mat-flat-button {
+        min-width: auto!important;
+    }
 }
