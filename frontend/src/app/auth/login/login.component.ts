@@ -5,7 +5,6 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AccountService } from '../account.service';
 
-
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -13,12 +12,14 @@ import { AccountService } from '../account.service';
 })
 export class LoginComponent implements OnInit, OnDestroy {
 
+
+
   subscriptions: Subscription = new Subscription();
   form: FormGroup;
   loading = false;
   isLogged = false;
   errors;
-  
+
 
 
 

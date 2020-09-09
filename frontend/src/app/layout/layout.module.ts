@@ -1,7 +1,7 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { HeaderComponent } from "./header/header.component";
-import { SuiModule } from "ng2-semantic-ui";
+
 import { RouterModule } from "@angular/router";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { MatIconModule } from "@angular/material/icon";
@@ -24,7 +24,6 @@ const COMPONENTS = [HeaderComponent, SideNavContentComponent];
     MatIconModule,
     MatExpansionModule,
     MatToolbarModule,
-    SuiModule,
     MatListModule,
     RouterModule,
   ],

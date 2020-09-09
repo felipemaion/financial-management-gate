@@ -7,7 +7,7 @@ import { AuthRoutingModule } from './auth-routing.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AccountService } from './account.service';
 import { SharedComponentsModule } from '../shared-components/shared-components.module';
-import { SuiMessageModule } from 'ng2-semantic-ui';
+import { AlertModule } from 'ngx-bootstrap/alert';
 
 
 
@@ -20,10 +20,10 @@ import { SuiMessageModule } from 'ng2-semantic-ui';
   imports: [
     CommonModule,
     FormsModule,
-    SuiMessageModule,
     ReactiveFormsModule,
     AuthRoutingModule,
-    SharedComponentsModule
+    SharedComponentsModule,
+    AlertModule.forRoot(),
   ],
   providers: [
     AccountService

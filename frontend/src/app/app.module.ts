@@ -1,9 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { SuiModule } from 'ng2-semantic-ui';
 import { LayoutModule } from './layout/layout.module';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { WalletModule } from './pages/wallet/wallet.module';
@@ -14,6 +12,7 @@ import ptBr from '@angular/common/locales/pt';
 import { registerLocaleData } from '@angular/common';
 import { LOCALE_ID } from '@angular/core';
 
+
 registerLocaleData(ptBr);
 
 
@@ -21,18 +20,16 @@ registerLocaleData(ptBr);
   declarations: [
     AppComponent,
   ],
-  exports: [
-  ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    SuiModule,
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
     LayoutModule,
     WalletModule,
     BrowserAnimationsModule,
+
   ],
   providers: [
     {

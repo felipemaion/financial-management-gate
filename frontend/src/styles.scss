@@ -1,19 +1,28 @@
 /* You can add global styles to this file, and also import other style files */
+
 @import 'themes/primary.scss';
 @import "../node_modules/ag-grid-community/src/styles/ag-grid.scss";
 @import "../node_modules/ag-grid-community/src/styles/ag-theme-alpine/sass/ag-theme-alpine-mixin.scss";
-
 .ag-theme-alpine {
     @include ag-theme-alpine();
 }
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
-
-.balance-sheet {
-  min-height: 250px;
-  min-width: 100vw !important;
-  margin-top: 80px;
-  padding: 0px !important;
+html,
+body {
+    height: 100%;
 }
 
+body {
+    margin: 0;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.balance-sheet {
+    min-height: 250px;
+    min-width: 100vw !important;
+    margin-top: 80px;
+    padding: 0px !important;
+}
+
+$theme-colors: ( "primary": #1964c0, "danger": #ff4136);
+@import "../node_modules/bootstrap/scss/bootstrap";

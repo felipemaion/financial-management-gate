@@ -1,93 +1,124 @@
-<sui-message *ngIf="errors?.error?.non_field_errors" class="icon">
-	<i class="inbox icon"></i>
-	<div class="content">
-		<ng-container *ngFor="let error of errors?.error?.non_field_errors">
-			<p>{{error}}</p>
-		</ng-container>
-	</div>
-</sui-message>
-<br>
-<ng-container *ngFor="let error of errors?.error?.non_field_errors">
-	<div class="alert alert-dark alert-dismissible fade show" role="alert">
-		<strong> <i class="ion-android-sad"></i> </strong> {{error}}
-		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+<!-- <ng-container *ngFor="let error of errors?.error?.non_field_errors">
+    <div class="alert alert-dark alert-dismissible fade show" role="alert">
+        <strong> <i class="ion-android-sad"></i> </strong> {{error}}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
 			<span aria-hidden="true">&times;</span>
 		</button>
-	</div>
-</ng-container>
+    </div>
+</ng-container> -->
 
 <div *ngIf="!isLogged" class="ui middle aligned center aligned grid">
-	<div class="column">
-		<h2 class="ui teal image header">
-			<div class="content">
-				Register your account
-			</div>
-		</h2>
+    <div class="column">
+        <h2 class="ui teal image header">
+            <div class="content">
+                Register your account
+            </div>
+        </h2>
 
 
-		<form [formGroup]="form" (ngSubmit)="registrar()" class="ui large form">
-			<div class="ui stacked">
-				<div class="field">
-					<div class="ui left icon input">
-						<i class="user icon"></i>
-						<input autofocus autocomplete="off" formControlName="username" type="text" required
-							placeholder="Nome de usuário">
-					</div>
-					<app-campo-error [mostraError]="verificaValidTouched('username')"
-						msgError="Campo Obrigatório Minimo 3 Caracteres">
-					</app-campo-error>
-					<div class="ui mini orange message" *ngFor="let error of errors?.error?.username">
-						{{error}}
-					</div>
-				</div>
-				<div class="field">
-					<div class="ui left icon input">
-						<i class="lock icon"></i>
-						<input autocomplete="off" formControlName="email" type="email" required class="form-control"
-							placeholder="Email">
-					</div>
-					<app-campo-error [mostraError]="verificaValidTouched('email')" msgError="Campo Obrigatório ">
-					</app-campo-error>
-					<div class="ui mini orange message" *ngFor="let error of errors?.error?.email">
-						{{error}}
-					</div>
-				</div>
-				<div class="field">
-					<div class="ui left icon input">
-						<i class="lock icon"></i>
-						<input autocomplete="off" formControlName="password" type="password" required class="form-control"
-							placeholder="Senha">
-					</div>
-					<app-campo-error [mostraError]="verificaValidTouched('password')"
-						msgError="Campo Obrigatório Minimo 3 Caracteres">
-					</app-campo-error>
-					<div class="ui mini orange message" *ngFor="let error of errors?.error?.password">
-						{{error}}
-					</div>
-				</div>
+        <form [formGroup]="form" (ngSubmit)="registrar()" class="ui large form">
+            <div class="ui stacked">
 
-				<button *ngIf="loading" class="btn btn-dark mr-1" type="submit" [disabled]="loading"
-					class="ui loading button">Carregando</button>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text bg-light"> 
+                          <i class="fa fa-user"></i> 
+                        </span>
+                    </div>
+                    <input autofocus autocomplete="off" formControlName="username" type="text" class="form-control" required placeholder="Nome de usuário">
+                </div>
+                <app-campo-error [mostraError]="verificaValidTouched('email')" msgError="Campo Obrigatório ">
+                </app-campo-error>
+                <div class="ui mini orange message" *ngFor="let error of errors?.error?.email">
+                    {{error}}
+                </div>
 
-				<button *ngIf="!loading" class="ui fluid large teal submit button" type="submit">
+                <br>
+
+
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text bg-light"> 
+                          <i class="fa fa-envelope"></i> 
+                        </span>
+                    </div>
+                    <input autocomplete="off" formControlName="email" type="email" required class="form-control" placeholder="Email">
+                </div>
+                <app-campo-error [mostraError]="verificaValidTouched('email')" msgError="Campo Obrigatório ">
+                </app-campo-error>
+                <div class="ui mini orange message" *ngFor="let error of errors?.error?.email">
+                    {{error}}
+                </div>
+
+                <br>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text bg-light"> 
+                          <i class="fa fa-lock"></i> 
+                        </span>
+                    </div>
+                    <input autocomplete="off" formControlName="password" type="password" required class="form-control" placeholder="Senha">
+                </div>
+                <app-campo-error [mostraError]="verificaValidTouched('password')" msgError="Campo Obrigatório Minimo 3 Caracteres">
+                </app-campo-error>
+                <div class="ui mini orange message" *ngFor="let error of errors?.error?.password">
+                    {{error}}
+                </div>
+                <!-- <div class="field">
+                    <div class="ui left icon input">
+                        <i class="user icon"></i>
+                        <input autofocus autocomplete="off" formControlName="username" type="text" required placeholder="Nome de usuário">
+                    </div>
+                    <app-campo-error [mostraError]="verificaValidTouched('username')" msgError="Campo Obrigatório Minimo 3 Caracteres">
+                    </app-campo-error>
+                    <div class="ui mini orange message" *ngFor="let error of errors?.error?.username">
+                        {{error}}
+                    </div>
+                </div> -->
+                <!-- <div class="field">
+                    <div class="ui left icon input">
+                        <i class="lock icon"></i>
+                        <input autocomplete="off" formControlName="email" type="email" required class="form-control" placeholder="Email">
+                    </div>
+                    <app-campo-error [mostraError]="verificaValidTouched('email')" msgError="Campo Obrigatório ">
+                    </app-campo-error>
+                    <div class="ui mini orange message" *ngFor="let error of errors?.error?.email">
+                        {{error}}
+                    </div>
+                </div> -->
+                <!-- <div class="field">
+                    <div class="ui left icon input">
+                        <i class="lock icon"></i>
+                        <input autocomplete="off" formControlName="password" type="password" required class="form-control" placeholder="Senha">
+                    </div>
+                    <app-campo-error [mostraError]="verificaValidTouched('password')" msgError="Campo Obrigatório Minimo 3 Caracteres">
+                    </app-campo-error>
+                    <div class="ui mini orange message" *ngFor="let error of errors?.error?.password">
+                        {{error}}
+                    </div>
+                </div> -->
+
+                <button *ngIf="loading" class="btn btn-dark mr-1" type="submit" [disabled]="loading" class="ui loading button">Carregando</button>
+
+                <button *ngIf="!loading" class="btn btn-primary w-100 mt-3" type="submit">
 					Registrar
 				</button>
 
-			</div>
+            </div>
 
-			<div class="ui error message"></div>
 
-		</form>
 
-		<div class="ui message">
-			<a routerLink="" class="btn btn-dark">Voltar</a>
-		</div>
-	</div>
+        </form>
+
+
+        <a routerLink="" class="btn btn-dark mt-2">Voltar</a>
+
+    </div>
 </div>
 
 
 <div *ngIf="isLogged" class="ui">
-	<div class="ui active inverted dimmer">
-		<div class="ui large text loader">Direcionando...</div>
-	</div>
+    <div class="ui active inverted dimmer">
+        <div class="ui large text loader">Direcionando...</div>
+    </div>
 </div>
