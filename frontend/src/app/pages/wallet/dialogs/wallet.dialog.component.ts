@@ -15,16 +15,16 @@ import { DialogData } from '../wallet.component';
 
     <h1 mat-dialog-title>Nova Carteira</h1>
     <div mat-dialog-content>
-      <div class="ui fluid input">
-        <input [(ngModel)]="data.description" placeholder="Nome da Carteira" />
+      <div class="">
+        <input class="form-control" [(ngModel)]="data.description" placeholder="Nome da Carteira" />
       </div>
     </div>
     <br />
     <div mat-dialog-actions>
-      <button (click)="save()" class="ui button">
+      <button (click)="save()" class="btn btn-primary mr-1">
         Salvar
       </button>
-      <button (click)="closeDialog()" class="ui button">
+      <button (click)="closeDialog()" class="btn btn-primary">
         Cancelar
       </button>
     </div>

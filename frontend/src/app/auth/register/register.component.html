@@ -64,41 +64,8 @@
                 <div class="ui mini orange message" *ngFor="let error of errors?.error?.password">
                     {{error}}
                 </div>
-                <!-- <div class="field">
-                    <div class="ui left icon input">
-                        <i class="user icon"></i>
-                        <input autofocus autocomplete="off" formControlName="username" type="text" required placeholder="Nome de usuário">
-                    </div>
-                    <app-campo-error [mostraError]="verificaValidTouched('username')" msgError="Campo Obrigatório Minimo 3 Caracteres">
-                    </app-campo-error>
-                    <div class="ui mini orange message" *ngFor="let error of errors?.error?.username">
-                        {{error}}
-                    </div>
-                </div> -->
-                <!-- <div class="field">
-                    <div class="ui left icon input">
-                        <i class="lock icon"></i>
-                        <input autocomplete="off" formControlName="email" type="email" required class="form-control" placeholder="Email">
-                    </div>
-                    <app-campo-error [mostraError]="verificaValidTouched('email')" msgError="Campo Obrigatório ">
-                    </app-campo-error>
-                    <div class="ui mini orange message" *ngFor="let error of errors?.error?.email">
-                        {{error}}
-                    </div>
-                </div> -->
-                <!-- <div class="field">
-                    <div class="ui left icon input">
-                        <i class="lock icon"></i>
-                        <input autocomplete="off" formControlName="password" type="password" required class="form-control" placeholder="Senha">
-                    </div>
-                    <app-campo-error [mostraError]="verificaValidTouched('password')" msgError="Campo Obrigatório Minimo 3 Caracteres">
-                    </app-campo-error>
-                    <div class="ui mini orange message" *ngFor="let error of errors?.error?.password">
-                        {{error}}
-                    </div>
-                </div> -->
 
-                <button *ngIf="loading" class="btn btn-dark mr-1" type="submit" [disabled]="loading" class="ui loading button">Carregando</button>
+                <button *ngIf="loading" class="btn btn-primary w-100 mt-2" type="submit" [disabled]="loading">Carregando</button>
 
                 <button *ngIf="!loading" class="btn btn-primary w-100 mt-3" type="submit">
 					Registrar
