@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "../../../../../../../../../../Users/maion/OneDrive/Documentos/Documentos Felipe/programs/ruby/Python/PyCharmProjects"
+		},
+		{
+			"name": "SSH FS - apetrekos.com",
+			"uri": "ssh://apetrekos.com/"
+		}
+	],
+	"settings": {
+		"python.languageServer": "Microsoft"
+	}
+}

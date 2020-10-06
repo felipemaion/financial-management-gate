@@ -179,6 +179,8 @@ class Wallet(models.Model):
                         quantity = event.factor
                     elif category == 'GRUPAMENTO':
                         quantity = 1 / event.factor
+                    elif category == "BONIFICAÇÃO":
+                        quantity = event.factor / 100
                     s = Position.objects.get_or_create(
                             wallet=self, # like that?
                             instrument=instrument, 
@@ -222,6 +224,14 @@ class Wallet(models.Model):
             asset_quantity = 0
             for i, position in enumerate(positions):
                 print(f"position {i}")
+                # Por category
+                
+                # AMORTIZAÇÃO
+                # BONIFICAÇÃO
+                # DESDOBRAMENTO
+                # EMISSÃO
+                # GRUPAMENTO
+                # SUBSCRIÇÃO
                 if position.category == "COMPRA":
                     position.total_quantity = positions[i-1].total_quantity + Decimal(position.quantity) if i >= 1 else position.quantity
                     position.total_value = positions[i-1].total_value + Decimal(position.transaction_value) if i >= 1 else position.net_value
@@ -230,7 +240,7 @@ class Wallet(models.Model):
                     print(position)
                 elif position.category == "VENDA":
                     ### Vai dar ruim na venda descoberta!
-                    position.total_value = (positions[i-1].total_value + position.quantity * (positions[i-1].total_value / positions[i-1].total_quantity)) if i >= 1 else position.net_value
+                    position.total_value = (positions[i-1].total_value + position.quantity * (Decimal(positions[i-1].total_value) / Decimal(positions[i-1].total_quantity))) if i >= 1 else position.net_value
                     position.total_quantity = positions[i-1].total_quantity + Decimal(position.quantity) if i >= 1 else position.quantity
                     position.total_selic = positions[i-1].total_selic + Decimal(position.position_selic) if i >= 1 else position.position_selic
 
@@ -252,11 +262,28 @@ class Wallet(models.Model):
                     position.total_dividends = positions[i-1].total_dividends
                     position.transaction_value = 0
                     position.net_value = 0
-                    
+                elif position.category == "BONIFICAÇÃO": 
+                    position.total_quantity = position.quantity * positions[i-1].total_quantity
+                    asset_quantity = position.total_quantity
+                    position.total_value = positions[i-1].total_value
+                    position.total_selic = positions[i-1].total_selic
+                    position.total_dividends = positions[i-1].total_dividends
+                    position.transaction_value = 0 # Maybe not... must confirm.
+                    position.net_value = 0    
                
                 else:
-                    print(f"ATENÇÃO CATEGORIA NÃO RECONHECIDA!!!! Ver position: {position.category} - {position} ")
-
+                    print(f"""
+                    _____________________
+                    ATENÇÃO CATEGORIA NÃO RECONHECIDA!!!! Ver position: {position.category} - {position} 
+                    _____________________
+                    """)
+                    position.total_quantity = positions[i-1].total_quantity 
+                    asset_quantity = position.total_quantity
+                    position.total_value = positions[i-1].total_value
+                    position.total_selic = positions[i-1].total_selic
+                    position.total_dividends = positions[i-1].total_dividends
+                    position.transaction_value = 0 # Maybe not... must confirm.
+                    position.net_value = 0    
 
                 position.total_networth = position.total_quantity * prices[asset]
                 position.save()
@@ -268,8 +295,10 @@ class Wallet(models.Model):
             print(f"Size Provents: {len(provents)}")
             asset_quantity = 0
             for i, provent in enumerate(provents):
-                # pega quantidade do ativo na data do proventos. 
-                quantity  = Position.objects.filter(wallet=self, instrument=instrument, date__lte=provent.dividend.ex_date).order_by("-date").first().total_quantity
+                # pega quantidade do ativo na posição com data menor q a do proventos. 
+                pos  = Position.objects.filter(wallet=self, instrument=instrument, date__lte=provent.dividend.ex_date).order_by("-date")
+                print(pos)
+                quantity = pos.first().total_quantity
                 fator = Decimal(0)
                 if provent.dividend.category == "JCP": 
                     fator = Decimal(0.15) # ALIQUOTA DE IR PARA JCP. Recolhido na fonte. HARDCODED??? PQP!!! FELIPE, FELIPE...TODO: ISSUE

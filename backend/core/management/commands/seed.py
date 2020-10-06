@@ -12,8 +12,8 @@ class Command(BaseCommand):
 	help = 'Criação de Dados Basicos para o funcionamento de Sistema '
 	
 	def handle(self, *args, **options):
-		# self.populateInstrument(*args, **options)
-		self.walletFullTest(*args, **options)
+		self.populateInstrument(*args, **options)
+		# self.walletFullTest(*args, **options)
 		# seed.selic
 		# seed.proventos
 		# seed.companies
@@ -36,7 +36,9 @@ class Command(BaseCommand):
 		# db_fields = [tckrSymb, sgmtNm, mktNm, sctyCtgyNm, isin, cFICd, crpnNm, corpGovnLvlNm]
 		print("Populating Instruments:")
 		# http://www.b3.com.br/en_us/market-data-and-indices/data-services/market-data/reports/daily-bulletin/file-download/
-		file_name = "InstrumentsConsolidatedFile_20200717_1.csv" # at the root of project (same as manage.py)
+
+		#### https://arquivos.b3.com.br/tabelas/InstrumentsConsolidated/2020-09-10?lang=en 
+		file_name = "InstrumentsConsolidatedFile_20200910_1.csv" # at the root of project (same as manage.py)
 		print("Opening CSV File:")
 		try:
 			df = pd.read_csv(file_name, sep=";", encoding='latin', low_memory=False)
@@ -50,8 +52,9 @@ class Command(BaseCommand):
 		acoes = df.loc[df["SgmtNm"]=="CASH"]
 		info = acoes[csv_fields] # [2203 rows x 8 columns]
 		print("Trying to populate Instrument's into database:")
-		try:
-			for id, row in info.iterrows():
+		for id, row in info.iterrows():
+			try:
+			
 				new_data = Instrument.objects.get_or_create(
 					tckrSymb = row[csv_fields[0]],
 					sgmtNm = row[csv_fields[1]], 
@@ -63,10 +66,10 @@ class Command(BaseCommand):
 					corpGovnLvlNm = row[csv_fields[7]]
 				)
 			# print("Sucesso!!")
-			self.stdout.write(self.style.SUCCESS('Instruments populated.'))
-		except:
-			print("Error seeding Instruments into database. \n\tIs it populated already?")
-			self.stdout.write(self.style.ERROR('Error populating Instruments. Is it populated already?'))
+				self.stdout.write(self.style.SUCCESS('Instruments populated.'))
+			except:
+				print(f"Error seeding Instrument {row[csv_fields[0]]} into database. \n\tIs it populated already?")
+				self.stdout.write(self.style.ERROR('Error populating Instruments. Is it populated already?'))
 	
 	def walletFullTest(self, *args, **options):
 		print("Testing Wallet and Moviments:")

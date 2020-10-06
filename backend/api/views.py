@@ -58,7 +58,7 @@ class ImportWalletCsv(CreateAPIView):
             io_string = io.BytesIO(data)  # StringIO(data)
             next(io_string)
             df = pd.read_excel(io_string)
-        # print(df) # For debug :P
+        print(df) # For debug :P
         # Same thing here,  should be a method (?):
         try:  # try to prepare data...
             locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
@@ -69,20 +69,24 @@ class ImportWalletCsv(CreateAPIView):
 
         try:
             for index, row in df.iterrows():
-                instrument = Instrument.objects.get(tckrSymb=row["ATIVO"])
-                date = row["DATA"]
-                quantity = row["QUANTIDADE"]
-                total_investment = row["VALOR"]
-                # print("Wallet:", wallet)
-                moviment = Moviment(instrument=instrument, wallet=wallet, date=date, quantity=quantity,
-                                    total_investment=total_investment)
-                # print(moviment.instrument)
-                moviment.save()
-            # print("Foi pra carteira")
+                try:
+                    instrument = Instrument.objects.get(tckrSymb=row["ATIVO"])
+                    date = row["DATA"]
+                    quantity = row["QUANTIDADE"]
+                    total_investment = row["VALOR"]
+                    print("Wallet:", wallet)
+                    moviment = Moviment(instrument=instrument, wallet=wallet, date=date, quantity=quantity,
+                                        total_investment=total_investment)
+                    print(moviment.instrument)
+                    moviment.save()
+                    print(f"Foi pra carteira {wallet.id} o movimento: {moviment}")
+                except:
+                    print(f"Erro ao identificar o Instrumento: {row['ATIVO']}")
+                    pass
             # TODO Manda um update redirecionando para a página com as alterações na wallet.
             return Response('Sucesso!')
-        except:
-            print("Ei, deu merda ao carregar no banco de dados.")
+        except Exception as e:
+            print(f"Ei, deu merda ao carregar no banco de dados: {e}")
             return Response(0)
 
 
